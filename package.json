@@ -26,22 +26,22 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./apps/baikal/test/jest-e2e.json",
-    "app:alfa:test:e2e": "jest --config ./apps/alfa/test/jest-e2e.json",
-    "app:alfa:dev:server": "nest start --watch --tsc alfa",
-    "app:alfa:debug:server": "nest start --debug --watch --tsc alfa",
-    "app:alfa:dev:client": "npm --workspace alfa-client run dev",
-    "app:alfa:dev": "npm run app:alfa:dev:server & npm run app:alfa:dev:client",
-    "app:alfa:build:server": "nest build --tsc alfa",
-    "app:alfa:build:client": "npm run -w alfa-client generate",
-    "app:alfa:build": "npm run app:alfa:build:server & npm run app:alfa:build:client",
-    "app:alfa:prod": "node dist/apps/alfa/src/main",
-    "app:alfa:cli": "node dist/apps/alfa/src/cli",
-    "app:alfa:cli:debug": "node --inspect-brk dist/apps/alfa/src/cli",
-    "app:alfa:typeorm": "typeorm-ts-node-esm -d dist/apps/alfa/src/ormconfig.js",
-    "app:alfa:typeorm:generate": "npm run app:alfa:typeorm -- migration:generate ./apps/alfa/src/migrations/migration",
-    "app:alfa:typeorm:run": "npm run app:alfa:typeorm -- migration:run",
-    "app:alfa:typeorm:revert": "npm run app:alfa:typeorm -- migration:revert",
-    "app:alfa:fixtures": "fixtures-ts-node-esm load apps/alfa/fixtures --dataSource=dist/apps/alfa/src/ormconfig.js"
+    "app:bubbles:test:e2e": "jest --config ./apps/alfa/test/jest-e2e.json",
+    "app:bubbles:dev:server": "nest start --watch --tsc alfa",
+    "app:bubbles:debug:server": "nest start --debug --watch --tsc alfa",
+    "app:bubbles:dev:client": "npm --workspace alfa-client run dev",
+    "app:bubbles:dev": "npm run app:alfa:dev:server & npm run app:alfa:dev:client",
+    "app:bubbles:build:server": "nest build --tsc alfa",
+    "app:bubbles:build:client": "npm run -w alfa-client generate",
+    "app:bubbles:build": "npm run app:alfa:build:server & npm run app:alfa:build:client",
+    "app:bubbles:prod": "node dist/apps/alfa/src/main",
+    "app:bubbles:cli": "node dist/apps/alfa/src/cli",
+    "app:bubbles:cli:debug": "node --inspect-brk dist/apps/alfa/src/cli",
+    "app:bubbles:typeorm": "typeorm-ts-node-esm -d dist/apps/alfa/src/ormconfig.js",
+    "app:bubbles:typeorm:generate": "npm run app:alfa:typeorm -- migration:generate ./apps/alfa/src/migrations/migration",
+    "app:bubbles:typeorm:run": "npm run app:alfa:typeorm -- migration:run",
+    "app:bubbles:typeorm:revert": "npm run app:alfa:typeorm -- migration:revert",
+    "app:bubbles:fixtures": "fixtures-ts-node-esm load apps/alfa/fixtures --dataSource=dist/apps/alfa/src/ormconfig.js"
   },
   "dependencies": {
     "@nestjs/axios": "0.1.0",
@@ -127,8 +127,7 @@
   },
   "workspaces": [
     "packages/*",
-    "apps/alfa/client",
-    "apps/baikal/client",
+    "apps/bubbles/client",
     "apps/template/client"
   ]
 }
