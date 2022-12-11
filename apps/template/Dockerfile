@@ -1,4 +1,4 @@
-FROM node:14 as backend-build-stage
+FROM node:18 as backend-build-stage
 WORKDIR /app
 COPY ./ .
 ENV NODE_ENV=production
@@ -7,7 +7,7 @@ RUN npm install
 RUN npm i -g @nestjs/cli
 RUN npm run build
 
-FROM node:14 as frontend-build-stage
+FROM node:18 as frontend-build-stage
 
 ARG MY_REGISTRY_TOKEN
 
