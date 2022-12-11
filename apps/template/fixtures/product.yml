@@ -1,0 +1,13 @@
+entity: Product
+items:
+  product{1..100}:
+    code: '{{datatype.uuid}}'
+    name: '{{music.songName}}'
+    description: '{{lorem.text}}'
+    secret: '{{commerce.productDescription}}'
+    # link: '{{internet.url}}'
+    # image: '{{image.cats}}?random=($current)'
+    image: 'https://loremflickr.com/500/500/cats?random=($current)'
+    type: '{{helpers.arrayElement(["REAL", "AD"])}}'
+    price: <%= Math.floor(Math.random() * 101) %>
+    active: '{{helpers.arrayElement([true, false])}}'

@@ -1,0 +1,81 @@
+version: "3.8"
+services:
+  db:
+    container_name: "db"
+    image: postgres:14
+    volumes:
+      - database:/var/lib/postgresql/data
+    env_file:
+        - db.env
+    ports:
+      - "15432:5432"
+    networks:
+      - main
+
+  redis:
+    container_name: "redis"
+    image: "redis:alpine"
+    expose:
+      - 6379
+    networks:
+      - main
+
+  app-baikal:
+    container_name: "app-baikal"
+    build:
+      context: ./
+      dockerfile: apps/baikal/Dockerfile
+      args:
+        - GH_REGISTRY_TOKEN
+    # image: centergamedev/baikal-server:staging
+    profiles: ["baikal"]
+    ports:
+      - 3000:3000
+    links:
+      - "redis"
+      - "db"
+    env_file:
+      - apps/baikal/docker.env
+    restart:
+      unless-stopped
+    command: /bin/bash -c "npm run start:prod"
+    networks:
+      - main
+      - proxy
+    environment:
+      - VIRTUAL_HOST=staging-baikal-backend.center-game.com
+
+  app-alfa:
+    container_name: "app-alfa"
+    build:
+      context: ./
+      dockerfile: apps/alfa/Dockerfile
+      args:
+        - GH_REGISTRY_TOKEN
+    # image: centergamedev/alfa-server:staging
+    profiles: ["alfa"]
+    ports:
+      - 3000:3000
+    links:
+      - "redis"
+      - "db"
+    env_file:
+      - apps/alfa/docker.env
+    restart:
+      unless-stopped
+    command: /bin/bash -c "npm run app:alfa:prod"
+    networks:
+      - main
+      - proxy
+    environment:
+      - VIRTUAL_HOST=alpha-da-staging.center-game.com
+
+volumes:
+  database:
+
+networks:
+  main:
+    name: main
+    driver: bridge
+  proxy:
+    # external: true

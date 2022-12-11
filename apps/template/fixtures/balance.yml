@@ -1,0 +1,19 @@
+entity: Balance
+items:
+  # User earned some score
+  balance{1..1000}:
+    value: <%= Math.floor(Math.random() * 101) %>
+    # code: 'helpers.arrayElement(["100", "200"])'
+    user: '@users*'
+
+  # There was some mistake. Withdraw excess score!
+  balance{1001..1200}:
+    value: <%= Math.floor(Math.random() * 101) * -1 %>
+    # code: 'helpers.arrayElement(["100", "200"])'
+    user: '@users*'
+
+  # User purchased some staff
+  balance{1201..1500}:
+    value: <%= Math.floor(Math.random() * 11) * -1 %>
+    code: 200 
+    user: '@users*'

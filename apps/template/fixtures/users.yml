@@ -1,0 +1,16 @@
+entity: Users
+items:
+  users{1..50}:
+    active: true
+    firstName: '{{name.firstName}}'
+    middleName: '{{name.middleName}}'
+    lastName: '{{name.lastName}}'
+    email: '{{internet.email}}'
+    track: '@track*'
+  users{51..100}:
+    active: false
+    firstName: '{{name.firstName}}'
+    middleName: '{{name.middleName}}'
+    lastName: '{{name.lastName}}'
+    email: '{{internet.email}}'
+    track: '@track*'

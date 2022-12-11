@@ -1,0 +1,14 @@
+entity: Track
+items:
+  track1:
+    name: 'Туризм'
+  track2:
+    name: 'Предпринимательство'
+  track3:
+    name: 'Молодёжные сообщества'
+  track4:
+    name: 'IT сообщества'
+  track5:
+    name: 'Креативные индустрии'
+  track6:
+    name: 'Диалог культур'
