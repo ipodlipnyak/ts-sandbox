@@ -1,13 +1,13 @@
-name: alfa test
+name: bubbles test
 on:
   workflow_dispatch:
 jobs:
   call-workflow-passing-data:
     uses: ./.github/workflows/deploy-app.yml
     with:
-      app: alfa
+      app: bubbles
       # webDomain: ""
-      # dbDatabase: alfa
+      # dbDatabase: bubbles
       environment: test
       # debug: "true"
     secrets:

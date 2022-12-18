@@ -1,6 +1,6 @@
 <template>
   <v-app light>
-    <v-app-bar app>
+    <v-app-bar name="header" app>
       Header
     </v-app-bar>
 
@@ -8,7 +8,7 @@
       <slot />
     </v-main>
 
-    <v-footer app>
+    <v-footer name="footer" app>
       Footer
     </v-footer>
   </v-app>

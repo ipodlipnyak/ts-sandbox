@@ -1,4 +1,4 @@
-import { defineNuxtConfig } from 'nuxt';
+import { defineNuxtConfig } from 'nuxt/config';
 import vuetify from 'vite-plugin-vuetify';
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
@@ -13,8 +13,13 @@ export default defineNuxtConfig({
   proxy: {
     '/api': 'http://127.0.0.1:3000',
   },
-  css: ['vuetify/styles'], // vuetify ships precompiled css, no need to import sass
+  modules: [
+    async (options, nuxt) => {
+      nuxt.hooks.hook('vite:extendConfig', (config) => config.plugins.push(vuetify()));
+    },
+  ],
   /*
+  css: ['vuetify/styles'], // vuetify ships precompiled css, no need to import sass
   vite: {
     // curently this will lead to a type error, but hopefully will be fixed soon #justBetaThings
     ssr: {
