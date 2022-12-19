@@ -1,5 +1,5 @@
 <template>
-  <nuxt-child />
+  <NuxtPage />
 </template>
 
 <script lang="ts">
@@ -9,10 +9,7 @@ export default defineComponent({
   transition: 'fade-transition',
   scrollToTop: true,
   middleware: [
-    'auth',
-    (ctx) => {
-      ctx.store.dispatch('layout/resetToDefault');
-    },
+    // 'auth',
   ],
 })
 </script>
