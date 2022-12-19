@@ -7,7 +7,7 @@
       :intersection-data="usersList"
       intersection-key="email"
     />
-    <v-btn class="mt-4" color="green" @click="submit" dark block>Сохранить</v-btn class="mt-4">
+    <v-btn class="mt-4" color="green" @click="submit" dark block>Сохранить</v-btn>
 
     <v-snackbar v-model="snackbarShow" top :absolute="false" color="deep-purple accent-4">
       <span class="font-weight-bold">Успешно залито</span>
