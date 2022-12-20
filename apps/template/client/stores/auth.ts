@@ -6,6 +6,7 @@ export const useAuthStore = defineStore('auth', {
   state: () => ({
     // all these properties will have their type inferred automatically
     whoami: null,
+    errorMessage: '',
   }),
   actions: {
     fetchUserData() {
@@ -27,6 +28,7 @@ export const useAuthStore = defineStore('auth', {
   },
 
   getters: {
+    loggedIn: (state): boolean => !!state.whoami?.email,
     firstName: (state): string => state.whoami?.firstName || '',
     middleName: (state): string => state.whoami?.middleName || '',
     lastName: (state): string => state.whoami?.lastName || '',

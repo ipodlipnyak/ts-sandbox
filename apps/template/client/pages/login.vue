@@ -1,7 +1,7 @@
 <template>
   <v-container class="fill-height px-10 px-md-0">
     <v-row class="fill-heigth" justify="center" dense>
-      <alfa-card max-width="600" rounded="lg">
+      <v-card max-width="600" rounded="lg">
         <v-row class="my-16">
           <v-col class="text-center">
             <span class="text-h3">Вход в аккаунт</span>
@@ -10,23 +10,23 @@
         <v-form ref="form" class="pa-2" @submit.prevent="submit" v-model="valid">
           <v-row>
             <v-col cols="12">
-              <alfa-text-field :rules="[rules.required, rules.email]" label="Логин" v-model="email" />
+              <v-text-field :rules="[rules.required, rules.email]" label="Username" v-model="email" />
               <!--
               <v-text-field :rules="[rules.required, rules.email]" label="Логин" v-model="email" />
               -->
             </v-col>
             <v-col cols="12">
-              <alfa-text-field type="password" label="Пароль" v-model="password" :rules="[rules.required]" />
+              <v-text-field type="password" label="Password" v-model="password" :rules="[rules.required]" />
             </v-col>
             <v-col cols="12" class="mt-10">
-              <alfa-btn :disabled="!valid" type="submit" color="blue" block depressed x-large>
+              <v-btn :disabled="!valid" type="submit" color="blue" block depressed x-large>
                 <span class="white--text">Войти</span>
-              </alfa-btn>
+              </v-btn>
             </v-col>
 
           </v-row>
         </v-form>
-      </alfa-card>
+      </v-card>
     </v-row>
 
     <v-snackbar :timeout="-1" :value="!!errorMessage" absolute color="error" top>
@@ -45,8 +45,11 @@
     watch,
     nextTick,
     onMounted,
+    getCurrentInstance,
   } from 'vue';
-  import {useAuthStore} from '@/stores/auth';
+  import {useAuthStore} from '../../client/stores';
+  import {storeToRefs} from 'pinia';
+  import {useRouter} from 'vue-router';
 
   export default defineComponent({
     transition: 'scroll-x-transition',
@@ -55,7 +58,10 @@
       'auth',
     ],
     setup(props, ctx) {
+      const router = useRouter();
       const authStore = useAuthStore();
+      const {login} = authStore;
+      const {errorMessage, loggedIn} = storeToRefs(authStore);
 
       const form = ref(null);
       const password = ref('')
@@ -81,33 +87,21 @@
 
       const showPassword = ref(false);
 
-      const {loginPending, errorMessage} = useState('auth', [
-        'loginPending',
-        'errorMessage',
-      ]);
-      const {loggedIn} = useGetters('auth', [
-        'loggedIn',
-      ]);
-      const {login} = useActions('auth', ['login'])
       const submit = async () => {
         validate();
         if (valid) {
-          login({
-            password: password.value,
-            login: email.value,
-          });
+          login(email.value, password.value);
         }
       };
-
       watch(loggedIn, () => {
         try {
-          if (root?.$router?.push && isMounted) {
-            root.$router.replace({name: 'index'})
+          if (router?.push && isMounted) {
+            router.replace({name: 'index'})
           }
         } catch (e) {
           //
         }
-      })
+      });
 
       return {
         valid,
