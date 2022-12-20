@@ -41,11 +41,7 @@
     transition: 'scroll-x-transition',
     // layout: 'landing',
     middleware(ctx) {
-      if (ctx.store.getters['auth/loggedIn']) {
-        ctx.redirect('/catalog');
-      } else {
-        ctx.store.commit('layout/SET_FOOTER_ABSOLUTE', false);
-      }
+      //
     },
     setup() {
       const display = useDisplay();

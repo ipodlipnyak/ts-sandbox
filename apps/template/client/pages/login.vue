@@ -16,8 +16,7 @@
               -->
             </v-col>
             <v-col cols="12">
-              <alfa-text-field type="password" label="Пароль" v-model="password"
-                :rules="[rules.required]" />
+              <alfa-text-field type="password" label="Пароль" v-model="password" :rules="[rules.required]" />
             </v-col>
             <v-col cols="12" class="mt-10">
               <alfa-btn :disabled="!valid" type="submit" color="blue" block depressed x-large>
@@ -46,23 +45,19 @@
     watch,
     nextTick,
     onMounted,
-    getCurrentInstance,
-  } from 'vue'
-  import {useState, useActions, useGetters} from '@/plugins/vuex-helpers'
+  } from 'vue';
+  import {useAuthStore} from '@/stores/auth';
 
   export default defineComponent({
     transition: 'scroll-x-transition',
-    layout: 'landing',
+    // layout: 'landing',
     middleware: [
       'auth',
-      (ctx) => {
-        ctx.store.commit('layout/SET_FOOTER_ABSOLUTE', true);
-      }
     ],
     setup(props, ctx) {
+      const authStore = useAuthStore();
+
       const form = ref(null);
-      const instance = getCurrentInstance()
-      const root = instance?.proxy
       const password = ref('')
       const email = ref('')
       const isMounted = ref(false)

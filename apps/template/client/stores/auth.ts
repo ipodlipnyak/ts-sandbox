@@ -1,27 +1,39 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
+// import { AxiosError } from 'axios';
 
 export const useAuthStore = defineStore('auth', {
   // arrow function recommended for full type inference
   state: () => ({
     // all these properties will have their type inferred automatically
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    email: '',
+    whoami: null,
   }),
   actions: {
     fetchUserData() {
-      this.firstName = 'test';
-      this.middleName = 'blah';
-      this.lastName = 'test';
-      this.email = 'test@test.test';
+      this.whoami = {
+        firstName: 'test',
+        middleName: 'blah',
+        lastName: 'test',
+        email: 'test@test.test',
+      };
+    },
+
+    login(username: string, password: string) {
+      this.fetchUserData();
+      console.log(username + password);
+    },
+    logout() {
+      this.$reset();
     },
   },
 
   getters: {
-    fullName: (state) => {
-      const fullName = [state?.firstName, state?.middleName, state?.lastName].join(' ').trim();
-      return fullName || state.email || '';
+    firstName: (state): string => state.whoami?.firstName || '',
+    middleName: (state): string => state.whoami?.middleName || '',
+    lastName: (state): string => state.whoami?.lastName || '',
+    email: (state) => state.whoami?.whoami || '',
+    fullName(): string {
+      const fullName = [this.firstName, this.middleName, this.lastName].join(' ').trim();
+      return fullName || this.email || '';
     },
   },
 });
