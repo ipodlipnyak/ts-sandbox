@@ -50,14 +50,23 @@
   import {useAuthStore} from '../../client/stores';
   import {storeToRefs} from 'pinia';
   import {useRouter} from 'vue-router';
+  // import {definePageMeta} from 'nuxt/dist/pages/runtime/composables';
 
   export default defineComponent({
     transition: 'scroll-x-transition',
     // layout: 'landing',
+    /*
     middleware: [
       'auth',
     ],
+    */
+
     setup(props, ctx) {
+      definePageMeta({
+        // ... or multiple strings
+        middleware: ['auth'],
+      });
+
       const router = useRouter();
       const authStore = useAuthStore();
       const {login} = authStore;
