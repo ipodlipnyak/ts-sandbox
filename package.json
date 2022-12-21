@@ -8,7 +8,7 @@
   "scripts": {
     "fixtures": "fixtures-ts-node-esm load ./apps/template/fixtures --dataSource=dist/apps/template/ormconfig.js",
     "typeorm": "typeorm-ts-node-esm -d dist/apps/template/ormconfig.js",
-    "typeorm:migration:generate": "npm run typeorm -- migration:generate ./src/migrations/migration",
+    "typeorm:migration:generate": "npm run typeorm -- migration:generate ./apps/template/src/migrations/migration",
     "typeorm:migration:run": "npm run typeorm -- migration:run",
     "typeorm:migration:revert": "npm run typeorm -- migration:revert",
     "prebuild": "rimraf dist",
@@ -71,7 +71,6 @@
     "nest-commander": "^3.1.0",
     "pg": "^8.7.3",
     "redis": "^4.1.0",
-    "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.2.0",
     "sinon": "^14.0.0",

@@ -7,10 +7,13 @@ import { UserOutputDto } from "../../dto/UserOutputDto";
 export class UsersResolver {
     // constructor (private readonly pokemonService: PokemonService) {}
 
+    @Query(returns => UserOutputDto)
+    async user (@Args('id') id: Number): Promise<Users> {
+        return await Users.findOne({ where: {id: Number(id)} });
+    }
     @Query(returns => [ UserOutputDto ])
     async users () {
-        return [];
-        // return await Users.find();
+        return await Users.find();
     }
     /*
     @Mutation(() => UserOutputDto)

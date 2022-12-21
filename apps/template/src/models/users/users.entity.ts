@@ -27,7 +27,7 @@ export class NewUserDataError extends Error {
 
 @Entity()
 export class Users extends BaseEntity {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn('uuid')
   id: number;
 
   @Column({

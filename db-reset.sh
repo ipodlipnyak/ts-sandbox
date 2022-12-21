@@ -1,8 +1,8 @@
 #!/bin/sh
-yarn app:alfa:build
-yarn app:alfa:cli db-reset
-yarn app:alfa:fixtures
-yarn app:alfa:cli dev-set-passwords test
+yarn app:bubbles:build
+yarn app:bubbles:cli db-reset
+yarn app:bubbles:fixtures
+yarn app:bubbles:cli dev-set-passwords test
 
 # npm run build
 # # dropdb bl
