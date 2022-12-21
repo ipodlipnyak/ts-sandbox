@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { Module, Logger, CacheModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -12,6 +13,7 @@ import { controllers } from './controllers';
 import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
 import { commands } from './commands';
+import { resolvers } from './models';
 
 @Module({
   imports: [
@@ -46,7 +48,7 @@ import { commands } from './commands';
     }),
   ],
   controllers,
-  providers: [...services, ...commands, Logger],
+  providers: [...services, ...commands, ...resolvers, Logger],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
