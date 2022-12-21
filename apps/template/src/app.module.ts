@@ -14,6 +14,7 @@ import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
 import { commands } from './commands';
 import { resolvers } from './models';
+// import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 @Module({
   imports: [
@@ -29,6 +30,14 @@ import { resolvers } from './models';
         store: redisStore,
       }),
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: true,
+      debug: true,
+      playground: true,
+      // plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client/dist'),
     }),
@@ -38,13 +47,6 @@ import { resolvers } from './models';
       useFactory: async (configService: ConfigService) => ({
         ...configService.get('db'),
       }),
-    }),
-    GraphQLModule.forRoot<ApolloDriverConfig>({
-      driver: ApolloDriver,
-      // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      autoSchemaFile: true,
-      debug: true,
-      playground: true,
     }),
   ],
   controllers,
