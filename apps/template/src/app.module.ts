@@ -6,6 +6,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { load } from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { controllers } from './controllers';
 import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
@@ -34,6 +36,13 @@ import { commands } from './commands';
       useFactory: async (configService: ConfigService) => ({
         ...configService.get('db'),
       }),
+    }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: true,
+      debug: true,
+      playground: true,
     }),
   ],
   controllers,

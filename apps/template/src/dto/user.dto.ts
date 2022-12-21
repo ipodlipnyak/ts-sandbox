@@ -4,6 +4,33 @@ import { RestListResponseDto, RestResponseDto } from './rest-response.dto';
 import { BalanceDto } from './balance.dto';
 import { TrackItemDto } from './track.dto';
 import { Transform } from 'class-transformer';
+import { Field, ObjectType, InputType, ID} from 'type-graphql';
+
+@ObjectType()
+export class UserOutputDto {
+  @Field(type => ID)
+  id?: string;
+  @Field()
+  firstName: string;
+  @Field()
+  middleName: string;
+  @Field()
+  lastName: string;
+  @Field()
+  email: string;
+}
+
+@InputType()
+export class UserInputDto {
+  @Field()
+  firstName: string;
+  @Field()
+  middleName: string;
+  @Field()
+  lastName: string;
+  @Field()
+  email: string;
+}
 
 export class UserPublicDto {
   @ApiProperty({ example: 'John', description: 'Имя' })
