@@ -49,12 +49,12 @@ Run `npm run build` before cli execution. It should be compiled firstly.
 
 ```bask
 # show commands list
-$ yarn app:alfa:cli -- -h
-$ npm run app:alfa:cli -- -h
+$ yarn app:bubbles:cli -- -h
+$ npm run app:bubbles:cli -- -h
 
 # run a command
-$ yarn app:alfa:cli some-command-name
-$ npm run app:alfa:cli some-command-name
+$ yarn app:bubbles:cli some-command-name
+$ npm run app:bubbles:cli some-command-name
 ```
 
 ## Installation
@@ -62,7 +62,7 @@ $ npm run app:alfa:cli some-command-name
 It is a monorepo. So it is composed out of several applications with shared libraries. All of them separated in workspaces. So it is possible to specify which workspace should be installed.
 
 ```bash
-$ yarn workspace alfa install
+$ yarn workspace bubbles install
 ```
 
 ## DB Migrations
@@ -93,13 +93,13 @@ $ yarn workspace afla fixtures
 
 ```bash
 # development in watch mode
-$ yarn app:alfa:dev
+$ yarn app:bubbles:dev
 
 # build 
-$ yarn app:alfa:build
+$ yarn app:bubbles:build
 
 # run prod 
-$ yarn app:alfa:prod
+$ yarn app:bubbles:prod
 ```
 
 ## Test
