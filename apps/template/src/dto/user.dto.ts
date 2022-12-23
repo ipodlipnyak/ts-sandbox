@@ -4,7 +4,21 @@ import { RestListResponseDto, RestResponseDto } from './rest-response.dto';
 import { BalanceDto } from './balance.dto';
 import { TrackItemDto } from './track.dto';
 import { Transform } from 'class-transformer';
-import { Field, InputType} from '@nestjs/graphql';
+import { Field, InputType, ObjectType, ID} from '@nestjs/graphql';
+
+@ObjectType()
+export class UserOutputDto {
+  @Field(type => ID)
+  id: string;
+  @Field()
+  firstName: string;
+  @Field()
+  middleName: string;
+  @Field()
+  lastName: string;
+  @Field()
+  email: string;
+}
 
 @InputType()
 export class UserInputDto {
