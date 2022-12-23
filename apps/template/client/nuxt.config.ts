@@ -10,6 +10,7 @@ export default defineNuxtConfig({
       '/api': 'http://127.0.0.1:3000/api',
     }
   },
+  /*
   vite: {
     server: {
       proxy: {
@@ -24,7 +25,6 @@ export default defineNuxtConfig({
       // timing: false
     },
   },
-  /*
   proxy: {
     '/api': 'http://127.0.0.1:3000',
   },
