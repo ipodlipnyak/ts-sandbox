@@ -9,18 +9,16 @@ export const useAuthStore = defineStore('auth', {
     errorMessage: '',
   }),
   actions: {
-    fetchUserData() {
-      this.whoami = {
-        firstName: 'test',
-        middleName: 'blah',
-        lastName: 'test',
-        email: 'test@test.test',
-      };
+    async fetchUserData() {
+      const {data, pending, error, refresh} = await useFetch('/api/auth/');
+      if (data.value?.status === 'success') {
+        this.whoami = data.value.payload;
+      }
     },
 
     async login(login: string, password: string) {
-      this.fetchUserData();
       await useFetch('/api/auth/login', {method: 'post', body: {login, password}});
+      await this.fetchUserData();
     },
     async logout() {
       await useFetch('/api/auth/logout', {method: 'post'});
