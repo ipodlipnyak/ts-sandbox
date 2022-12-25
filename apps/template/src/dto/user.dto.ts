@@ -6,11 +6,14 @@ import { TrackItemDto } from './track.dto';
 import { Transform } from 'class-transformer';
 import { Field, InputType, ObjectType, ID, Float, Extensions} from '@nestjs/graphql';
 import {UserRole} from '../models/users/users.entity';
+import {checkRoleMiddleware} from './../middleware/gql-check-role-middleware';
 
+/*
 @ObjectType()
 export class UserOutputDto {
   @Field(type => ID)
   id: string;
+  @Field({ middleware: [checkRoleMiddleware] })
   @Extensions({ role: UserRole.ADMIN })
   role: string;
   @Field()
@@ -22,9 +25,12 @@ export class UserOutputDto {
   @Field()
   email: string;
 }
+*/
 
 @InputType()
 export class UserInputDto {
+  @Field()
+  role: string;
   @Field()
   firstName: string;
   @Field()
