@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class migration1671956578392 implements MigrationInterface {
-    name = 'migration1671956578392'
+export class migration1671956793453 implements MigrationInterface {
+    name = 'migration1671956793453'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."product_type_enum" AS ENUM('REAL', 'AD')`);

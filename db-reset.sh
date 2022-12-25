@@ -4,6 +4,8 @@
 # yarn app:bubbles:fixtures
 # yarn app:bubbles:cli dev-set-passwords test
 
+rm -rf ./dist
+rm ./apps/template/src/migrations/*
 dropdb my
 createdb my -O my
 yarn build:server
