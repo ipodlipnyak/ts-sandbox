@@ -13,8 +13,8 @@ export class UserService {
     private readonly ratingService: RatingService,
   ) { }
 
-  get userId(): number {
-    return Number(this.req.session?.whoami?.id) || undefined;
+  get userId(): string {
+    return this.req.session?.whoami?.id || undefined;
   }
 
   get isAdmin(): boolean {

@@ -15,6 +15,8 @@ import { Purchase } from './../purchase';
 import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
+import { number } from 'joi';
+import { Enum } from '@apollo/protobufjs';
 
 export class UserExistError extends Error {
   name: 'USER_EXIST';
@@ -24,11 +26,22 @@ export const USER_EMAIL_EXIST_EXCEPTION = new UserExistError('User with this ema
 export class NewUserDataError extends Error {
   name: 'NEW_USER_DATA_ERROR';
 }
+export enum UserRole {
+  ADMIN = 100,
+  USER = 200,
+}
 
 @Entity()
 export class Users extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
+
+  @Column({
+    type: 'integer',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   @Column({
     type: 'boolean',

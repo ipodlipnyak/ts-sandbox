@@ -4,12 +4,15 @@ import { RestListResponseDto, RestResponseDto } from './rest-response.dto';
 import { BalanceDto } from './balance.dto';
 import { TrackItemDto } from './track.dto';
 import { Transform } from 'class-transformer';
-import { Field, InputType, ObjectType, ID} from '@nestjs/graphql';
+import { Field, InputType, ObjectType, ID, Float, Extensions} from '@nestjs/graphql';
+import {UserRole} from '../models/users/users.entity';
 
 @ObjectType()
 export class UserOutputDto {
   @Field(type => ID)
   id: string;
+  @Extensions({ role: UserRole.ADMIN })
+  role: string;
   @Field()
   firstName: string;
   @Field()
@@ -45,7 +48,7 @@ export class UserPublicDto {
 
 export class UserCachedDto extends UserPublicDto {
   @ApiProperty({ example: 123, description: 'Идентификатор пользователя' })
-  id: number;
+  id: string;
 }
 
 export class UserDto extends UserCachedDto {

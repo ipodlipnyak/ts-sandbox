@@ -12,8 +12,8 @@ export class UsersResolver {
     // constructor (private readonly pokemonService: PokemonService) {}
 
     @Query(returns => UserOutputDto)
-    async user (@Args('id') id: Number): Promise<Users> {
-        return await Users.findOne({ where: {id: Number(id)} });
+    async user (@Args('id') id: string): Promise<Users> {
+        return await Users.findOne({ where: {id} });
     }
     @Query(returns => [ UserOutputDto ])
     async users () {

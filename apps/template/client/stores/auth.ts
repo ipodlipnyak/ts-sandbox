@@ -1,6 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 // import { AxiosError } from 'axios';
-// import {useFetch} from 'nuxt/dist/app/composables/fetch';
 export const useAuthStore = defineStore('auth', {
   // arrow function recommended for full type inference
   state: () => ({
