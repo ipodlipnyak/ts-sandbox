@@ -27,8 +27,8 @@ export class NewUserDataError extends Error {
   name: 'NEW_USER_DATA_ERROR';
 }
 export enum UserRole {
-  ADMIN = 100,
-  USER = 200,
+  USER = 100,
+  ADMIN = 200,
 }
 
 @Entity()

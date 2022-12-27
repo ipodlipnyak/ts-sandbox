@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
 import { Users } from './users.entity'
-import { UserOutputDto } from "../../dto/UserOutputDto";
+import { UserOutputDto, UserInputDto } from "../../dto";
 import {
   UseGuards,
 } from '@nestjs/common';
