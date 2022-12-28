@@ -14,6 +14,8 @@ import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
 import { commands } from './commands';
 import { resolvers } from './models';
+import {Context} from 'graphql-ws';
+import { consoleSandbox } from '@sentry/utils';
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 @Module({
@@ -32,6 +34,23 @@ import { resolvers } from './models';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
+      // subscriptions: {
+      //   'graphql-ws': true
+      // },
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (context: Context<any>) => {
+            const { connectionParams, extra } = context;
+            // user validation will remain the same as in the example above
+            // when using with graphql-ws, additional context value should be stored in the extra field
+            console.log('FUUUUUUUUUUUUUUUUUUUUUUUUUUCK');
+            // extra.user = { user: {} };
+          },
+        },
+      },
+      context: ({ extra }) => {
+        // you can now access your additional context value through the extra field
+      },
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       autoSchemaFile: true,
       debug: true,
