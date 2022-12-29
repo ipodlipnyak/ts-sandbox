@@ -7,12 +7,16 @@ import { Transform } from 'class-transformer';
 import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/graphql';
 import { UserRole } from '../models/users/users.entity';
 import { gqlCheckRoleMiddleware } from './../middleware/gql-check-role-middleware';
+import {registerEnumType} from '@nestjs/graphql';
+
+registerEnumType(UserRole, {
+  name: 'UserRole', 
+});
 
 @ObjectType()
 export class UserOutputDto {
   @Field(type => ID)
   id: string;
-  // @Field()
   @Field({ middleware: [gqlCheckRoleMiddleware] })
   @Extensions({ role: UserRole.ADMIN })
   role: string;
@@ -28,8 +32,8 @@ export class UserOutputDto {
 
 @InputType()
 export class UserInputDto {
-  @Field()
-  role: string;
+  @Field((type) => UserRole)
+  role: UserRole;
   @Field()
   firstName: string;
   @Field()

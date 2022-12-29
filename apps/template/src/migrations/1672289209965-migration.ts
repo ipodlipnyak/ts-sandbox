@@ -1,7 +1,7 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 
-export class migration1671956793453 implements MigrationInterface {
-    name = 'migration1671956793453'
+export class migration1672289209965 implements MigrationInterface {
+    name = 'migration1672289209965'
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.query(`CREATE TYPE "public"."product_type_enum" AS ENUM('REAL', 'AD')`);
@@ -10,7 +10,7 @@ export class migration1671956793453 implements MigrationInterface {
         await queryRunner.query(`CREATE TYPE "public"."balance_code_enum" AS ENUM('100', '200', '201')`);
         await queryRunner.query(`CREATE TABLE "balance" ("id" SERIAL NOT NULL, "value" integer NOT NULL DEFAULT '0', "code" "public"."balance_code_enum" NOT NULL DEFAULT '100', "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "userId" uuid, CONSTRAINT "PK_079dddd31a81672e8143a649ca0" PRIMARY KEY ("id"))`);
         await queryRunner.query(`CREATE TABLE "track" ("id" SERIAL NOT NULL, "name" character varying, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), CONSTRAINT "PK_0631b9bcf521f8fab3a15f2c37e" PRIMARY KEY ("id"))`);
-        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "role" integer NOT NULL DEFAULT '200', "active" boolean NOT NULL DEFAULT false, "firstName" character varying, "middleName" character varying, "lastName" character varying, "email" character varying, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "password" character varying, "trackId" integer, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
+        await queryRunner.query(`CREATE TABLE "users" ("id" uuid NOT NULL DEFAULT uuid_generate_v4(), "role" integer NOT NULL DEFAULT '100', "active" boolean NOT NULL DEFAULT false, "firstName" character varying, "middleName" character varying, "lastName" character varying, "email" character varying, "created" TIMESTAMP NOT NULL DEFAULT now(), "updated" TIMESTAMP NOT NULL DEFAULT now(), "password" character varying, "trackId" integer, CONSTRAINT "UQ_97672ac88f789774dd47f7c8be3" UNIQUE ("email"), CONSTRAINT "PK_a3ffb1c0c8416b9fc6f907b7433" PRIMARY KEY ("id"))`);
         await queryRunner.query(`ALTER TABLE "purchase" ADD CONSTRAINT "FK_33520b6c46e1b3971c0a649d38b" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "purchase" ADD CONSTRAINT "FK_9af3a556aa0f166dd771a1e6c46" FOREIGN KEY ("productId") REFERENCES "product"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);
         await queryRunner.query(`ALTER TABLE "purchase" ADD CONSTRAINT "FK_006cffa5dd266047263ca4a0eef" FOREIGN KEY ("balanceId") REFERENCES "balance"("id") ON DELETE CASCADE ON UPDATE NO ACTION`);

@@ -15,8 +15,6 @@ import { Purchase } from './../purchase';
 import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
-import { number } from 'joi';
-import { Enum } from '@apollo/protobufjs';
 
 export class UserExistError extends Error {
   name: 'USER_EXIST';

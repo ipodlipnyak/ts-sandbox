@@ -32,17 +32,20 @@ export class UsersResolver {
     }
     @Mutation(() => UserOutputDto)
     async createUser (@Args('data') data: UserInputDto): Promise<Users> {
-        const newUser = new Users();
-        newUser.firstName = data.firstName;
-        newUser.middleName = data.middleName;
-        newUser.lastName = data.lastName;
-        newUser.email = data.email;
+        const newUserData: DeepPartial<Users> = {...data};
+        // const newUser = new Users();
+        // newUser.firstName = data.firstName;
+        // newUser.middleName = data.middleName;
+        // newUser.lastName = data.lastName;
+        // newUser.email = data.email;
         // newUser.role = data.role || UserRole.USER;
+        const newUser = Users.create(newUserData);
 
         await newUser.save();
+        newUser.reload();
 
         pubSub.publish('userAdded', { userAdded: newUser });
 
-        return newUser;
+        return newUser as Users;
     }
 }
