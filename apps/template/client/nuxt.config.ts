@@ -8,6 +8,7 @@ export default defineNuxtConfig({
   nitro: {
     devProxy: {
       '/api': 'http://127.0.0.1:3000/api',
+      '/graphql': 'http://127.0.0.1:3000/graphql',
     }
   },
   /*
@@ -34,10 +35,18 @@ export default defineNuxtConfig({
   */
   modules: [
     '@pinia/nuxt',
+    '@nuxtjs/apollo',
     async (options, nuxt) => {
       nuxt.hooks.hook('vite:extendConfig', (config) => config.plugins.push(vuetify()));
     },
   ],
+  apollo: {
+    clients: {
+      default: {
+        httpEndpoint: '/graphql'
+      }
+    },
+  },
   /*
   css: ['vuetify/styles'], // vuetify ships precompiled css, no need to import sass
   vite: {
