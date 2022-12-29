@@ -22,7 +22,12 @@ export class UsersResolver {
     }
 
     @Query(returns => [UserOutputDto])
-    async users() {
+    async users(@Args('role') role?: UserRole) {
+        if (role) {
+            return await Users.findBy({
+                role,
+            });
+        }
         return await Users.find();
     }
 
