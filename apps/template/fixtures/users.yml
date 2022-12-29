@@ -6,7 +6,7 @@ items:
     firstName: '{{name.firstName}}'
     middleName: '{{name.middleName}}'
     lastName: '{{name.lastName}}'
-    email: 'test@test.test'
+    email: 'test@test.com'
     track: '@track*'
   users{2..51}:
     active: true
