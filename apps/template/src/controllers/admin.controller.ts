@@ -143,7 +143,7 @@ export class AdminController {
     };
 
     const user = await Users.findOne({
-      where: { id: Number(id) },
+      where: { id },
       relations: ['balance'],
     });
     if (!user) {

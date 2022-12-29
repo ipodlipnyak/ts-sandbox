@@ -28,7 +28,7 @@ export class AuthController {
   constructor(
     private readonly userService: UserService,
     private readonly ratingService: RatingService,
-  ) {}
+  ) { }
 
   @Post('signup')
   @ApiOperation({ summary: 'Регистрация' })
@@ -92,7 +92,6 @@ export class AuthController {
 
     if (user) {
       result.status = ResponseStatusEnum.SUCCESS;
-      session.is_user = true;
       const whoami = { ...user };
       delete whoami.password;
       session.whoami = whoami;
@@ -124,6 +123,7 @@ export class AuthController {
       where: { email },
       select: [
         'id',
+        'role',
         'active',
         'password',
         'email',
@@ -145,7 +145,6 @@ export class AuthController {
     }
 
     result.status = ResponseStatusEnum.SUCCESS;
-    session.is_user = true;
     const whoami = { ...user };
     delete whoami.password;
     delete whoami.active;

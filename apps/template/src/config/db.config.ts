@@ -15,9 +15,9 @@ export const options: DataSourceOptions = {
 
   host: env.DB_HOST,
   port: parseInt(env.DB_PORT) || 5432,
-  username: env.DB_USER || 'bl',
-  password: env.DB_PASSWORD || 'bl',
-  database: env.DB_DATABASE || 'bl',
+  username: env.DB_USER || 'my',
+  password: env.DB_PASSWORD || 'my',
+  database: env.DB_DATABASE || 'my',
 
   // entities: ['src/**/*.entity.ts'],
   entities,
@@ -28,7 +28,7 @@ export const options: DataSourceOptions = {
 
 export const optionsTest: DataSourceOptions = {
   ...options,
-  database: env.DB_DATABASE_TEST || 'bl_test',
+  database: env.DB_DATABASE_TEST || 'my_test',
 };
 
 export const dataSource = new DataSource(options);

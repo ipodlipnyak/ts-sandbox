@@ -1,6 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 // import { AxiosError } from 'axios';
-
 export const useAuthStore = defineStore('auth', {
   // arrow function recommended for full type inference
   state: () => ({
@@ -9,20 +8,19 @@ export const useAuthStore = defineStore('auth', {
     errorMessage: '',
   }),
   actions: {
-    fetchUserData() {
-      this.whoami = {
-        firstName: 'test',
-        middleName: 'blah',
-        lastName: 'test',
-        email: 'test@test.test',
-      };
+    async fetchUserData() {
+      const {data, pending, error, refresh} = await useFetch('/api/auth/');
+      if (data.value?.status === 'success') {
+        this.whoami = data.value.payload;
+      }
     },
 
-    login(username: string, password: string) {
-      this.fetchUserData();
-      console.log(username + password);
+    async login(login: string, password: string) {
+      await useFetch('/api/auth/login', {method: 'post', body: {login, password}});
+      await this.fetchUserData();
     },
-    logout() {
+    async logout() {
+      await useFetch('/api/auth/logout', {method: 'post'});
       this.$reset();
     },
   },

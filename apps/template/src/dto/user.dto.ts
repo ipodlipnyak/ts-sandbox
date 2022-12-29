@@ -4,6 +4,45 @@ import { RestListResponseDto, RestResponseDto } from './rest-response.dto';
 import { BalanceDto } from './balance.dto';
 import { TrackItemDto } from './track.dto';
 import { Transform } from 'class-transformer';
+import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/graphql';
+import { UserRole } from '../models/users/users.entity';
+import { gqlCheckRoleMiddleware } from './../middleware/gql-check-role-middleware';
+import {registerEnumType} from '@nestjs/graphql';
+
+registerEnumType(UserRole, {
+  name: 'UserRole', 
+});
+
+@ObjectType()
+export class UserOutputDto {
+  @Field(type => ID)
+  id: string;
+  @Field({ middleware: [gqlCheckRoleMiddleware] })
+  @Extensions({ role: UserRole.ADMIN })
+  role: string;
+  @Field()
+  firstName: string;
+  @Field()
+  middleName: string;
+  @Field()
+  lastName: string;
+  @Field()
+  email: string;
+}
+
+@InputType()
+export class UserInputDto {
+  @Field((type) => UserRole)
+  role: UserRole;
+  @Field()
+  firstName: string;
+  @Field()
+  middleName: string;
+  @Field()
+  lastName: string;
+  @Field()
+  email: string;
+}
 
 export class UserPublicDto {
   @ApiProperty({ example: 'John', description: 'Имя' })
@@ -18,7 +57,7 @@ export class UserPublicDto {
 
 export class UserCachedDto extends UserPublicDto {
   @ApiProperty({ example: 123, description: 'Идентификатор пользователя' })
-  id: number;
+  id: string;
 }
 
 export class UserDto extends UserCachedDto {

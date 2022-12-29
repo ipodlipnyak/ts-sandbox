@@ -151,7 +151,7 @@ export class Balance extends BaseEntity {
   /**
    * Create new balance entity and try to buy a cart content
    */
-  static async buy(cartDto: CartDto, userId: number) {
+  static async buy(cartDto: CartDto, userId: string) {
     const user = await Users.findOne({
       where: { id: userId },
       relations: ['balance', 'purchases'],

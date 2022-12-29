@@ -1,3 +1,4 @@
+// import "reflect-metadata";
 import { Module, Logger, CacheModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -6,10 +7,16 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { load } from './config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import * as redisStore from 'cache-manager-redis-store';
+import { GraphQLModule } from '@nestjs/graphql';
+import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { controllers } from './controllers';
 import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
 import { commands } from './commands';
+import { resolvers } from './models';
+import {Context} from 'graphql-ws';
+import { consoleSandbox } from '@sentry/utils';
+// import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 @Module({
   imports: [
@@ -25,6 +32,31 @@ import { commands } from './commands';
         store: redisStore,
       }),
     }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      driver: ApolloDriver,
+      // subscriptions: {
+      //   'graphql-ws': true
+      // },
+      subscriptions: {
+        'graphql-ws': {
+          onConnect: (context: Context<any>) => {
+            const { connectionParams, extra } = context;
+            // user validation will remain the same as in the example above
+            // when using with graphql-ws, additional context value should be stored in the extra field
+            console.log('FUUUUUUUUUUUUUUUUUUUUUUUUUUCK');
+            // extra.user = { user: {} };
+          },
+        },
+      },
+      context: ({ extra }) => {
+        // you can now access your additional context value through the extra field
+      },
+      // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+      autoSchemaFile: true,
+      debug: true,
+      playground: true,
+      // plugins: [ApolloServerPluginLandingPageLocalDefault()],
+    }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '../..', 'client/dist'),
     }),
@@ -37,7 +69,7 @@ import { commands } from './commands';
     }),
   ],
   controllers,
-  providers: [...services, ...commands, Logger],
+  providers: [...services, ...commands, ...resolvers, Logger],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

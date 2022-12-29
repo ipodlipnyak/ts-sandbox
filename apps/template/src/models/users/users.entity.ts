@@ -24,11 +24,22 @@ export const USER_EMAIL_EXIST_EXCEPTION = new UserExistError('User with this ema
 export class NewUserDataError extends Error {
   name: 'NEW_USER_DATA_ERROR';
 }
+export enum UserRole {
+  USER = 100,
+  ADMIN = 200,
+}
 
 @Entity()
 export class Users extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
+  @Column({
+    type: 'integer',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   @Column({
     type: 'boolean',
