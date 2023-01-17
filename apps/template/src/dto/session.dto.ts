@@ -8,16 +8,16 @@ export class SessionDto {
   access_token?: string;
   refresh_token?: string;
   whoami?: WhoAmIDto;
-  is_admin?: boolean;
-  is_user?: boolean;
 }
 
 export class WhoAmIDto {
   @ApiProperty({
-    example: 42,
+    example: '652d04a6-aee8-4a6c-b116-ace3b6667b5a',
     description: 'Идентификатор пользователя',
   })
-  id: number;
+  id: string;
+  @ApiProperty({ example: 100, description: 'Role' })
+  role: number;
   @ApiProperty({ example: 'Иван', description: 'Имя' })
   firstName: string;
   @ApiProperty({ example: 'Сидоров', description: 'Фамилия' })

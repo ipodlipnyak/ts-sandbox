@@ -1,4 +1,4 @@
-import { Users } from './users';
+import { Users, UsersResolver } from './users';
 import { Balance, TransactionCodeEnum } from './balance';
 import { Purchase } from './purchase';
 import { Product, ProductTypeEnum } from './product';
@@ -17,6 +17,10 @@ export const entities = {
   Product,
   Track,
 };
+
+export const resolvers = [
+  UsersResolver,
+];
 
 export const enums = {
   TransactionCodeEnum,
