@@ -11,11 +11,11 @@ jobs:
       environment: test
       # debug: "true"
     secrets:
-      sshHost: ${{ secrets.BUBBLES_STAGE_SSH_HOST }}
-      sshKey: ${{ secrets.BUBBLES_STAGE_SSH_KEY }}
-      sshUser: ${{ secrets.BUBBLES_STAGE_SSH_USER }}
+      sshHost: ${{ secrets.MY_STAGE_SSH_HOST }}
+      sshKey: ${{ secrets.MY_STAGE_SSH_KEY }}
+      sshUser: ${{ secrets.MY_STAGE_SSH_USER }}
       GH_REGISTRY_TOKEN: ${{ secrets.GH_REGISTRY_TOKEN }}
       DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
       DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
       VAULT_URL: ${{ secrets.VAULT_URL }}
-      VAULT_TOKEN: ${{ secrets.BUBBLES_STAGE_VAULT_TOKEN }}
+      VAULT_TOKEN: ${{ secrets.MY_STAGE_VAULT_TOKEN }}
