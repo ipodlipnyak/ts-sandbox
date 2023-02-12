@@ -21,7 +21,8 @@ export class ProductsUploadDto {
   secret: string;
   @ApiProperty({ example: 'https://loremflickr.com/640/480/cats', description: 'Картинка' })
   image: string;
-  @ApiProperty({ example: ProductTypeEnum.REAL, description: 'Тип' })
+  // @ApiProperty({ example: ProductTypeEnum.REAL, description: 'Тип' })
+  @ApiProperty()
   type: ProductTypeEnum;
   @ApiProperty({ example: 42, description: 'Цена' })
   price: string | number;

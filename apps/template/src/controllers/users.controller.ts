@@ -45,7 +45,7 @@ export class UsersController {
     };
 
     let user = await Users.findOne({
-      where: { id: Number(id) },
+      where: { id },
     });
 
     if (!user) {

@@ -11,13 +11,15 @@
   },
   "devDependencies": {
     "nuxt": "^3.0.0",
+    "@nuxtjs/apollo": "^5.0.0-alpha.5",
     "vite": "^3.0.9",
     "vite-plugin-vuetify": "^1.0.0-alpha.16"
   },
   "dependencies": {
-    "sass": "^1.54.9",
     "@mdi/font": "7.0.96",
+    "@pinia/nuxt": "^0.4.6",
     "roboto-fontface": "*",
+    "sass": "^1.54.9",
     "vue": "^3.2.38",
     "vuetify": "^3.0.0",
     "webfontloader": "^1.0.0"

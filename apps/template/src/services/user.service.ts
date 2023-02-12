@@ -1,5 +1,5 @@
 import { Injectable, Scope, Inject } from '@nestjs/common';
-import { Users } from './../models';
+import { Users, UserRole, UsersResolver } from './../models';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RatingService } from './rating.service';
@@ -13,12 +13,12 @@ export class UserService {
     private readonly ratingService: RatingService,
   ) { }
 
-  get userId(): number {
-    return Number(this.req.session?.whoami?.id) || undefined;
+  get userId(): string {
+    return this.req.session?.whoami?.id || undefined;
   }
 
   get isAdmin(): boolean {
-    return this.req?.session?.is_admin;
+    return this.req?.session?.whoami?.role > UserRole.ADMIN;
   }
 
   /**

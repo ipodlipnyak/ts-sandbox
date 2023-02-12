@@ -44,10 +44,10 @@ async function bootstrap() {
   /** Swagger */
   if (DEBUG) {
     const docConfig = new DocumentBuilder()
-      .setTitle('Форум байкал')
-      .setDescription('Описание API форума байкал')
+      .setTitle('Template app')
+      .setDescription('Simple api')
       .setVersion('1.0')
-      .addTag('baikal')
+      .addTag('template')
       .addCookieAuth('connect.sid', undefined, 'user')
       .addCookieAuth('connect.sid', undefined, 'admin')
       .addServer('/api')

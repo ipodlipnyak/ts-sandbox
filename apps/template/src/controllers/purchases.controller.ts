@@ -41,10 +41,9 @@ export class PurchasesController {
       payload: undefined,
     };
 
-    const id = Number(userId);
     const user = await Users.findOne({
       where: {
-        id,
+        id: userId,
       },
       relations: ['purchases'],
     });

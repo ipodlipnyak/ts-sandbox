@@ -1,8 +1,19 @@
 #!/bin/sh
-yarn app:alfa:build
-yarn app:alfa:cli db-reset
-yarn app:alfa:fixtures
-yarn app:alfa:cli dev-set-passwords test
+# yarn app:bubbles:build
+# yarn app:bubbles:cli db-reset
+# yarn app:bubbles:fixtures
+# yarn app:bubbles:cli dev-set-passwords test
+
+rm -rf ./dist
+rm ./apps/template/src/migrations/*
+dropdb my
+createdb my -O my
+yarn build:server
+yarn typeorm:migration:generate
+yarn typeorm:migration:run
+yarn cli db-reset
+yarn fixtures
+yarn cli dev-set-passwords test
 
 # npm run build
 # # dropdb bl

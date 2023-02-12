@@ -2,6 +2,8 @@
   <v-app light>
     <v-app-bar name="header" app>
       Header
+      <v-spacer />
+      <v-btn v-if="loggedIn" @click.stop="logout" color="primary">Logout</v-btn>
     </v-app-bar>
 
     <v-main>
@@ -16,9 +18,20 @@
 
 <script lang="ts">
   import {defineComponent, ref, computed, getCurrentInstance, watch} from 'vue';
+  import {storeToRefs} from 'pinia';
+  import {useAuthStore} from '../../client/stores';
 
   export default defineComponent({
-    //
+    setup(props, ctx) {
+      const autStore = useAuthStore();
+      const {logout} = autStore;
+      const {loggedIn} = storeToRefs(autStore);
+
+      return {
+        loggedIn,
+        logout,
+      };
+    },
   })
 </script>
 
