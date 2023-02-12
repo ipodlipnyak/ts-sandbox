@@ -25,7 +25,7 @@ WORKDIR /app
 
 COPY --from=backend-build-stage /app/package* ./
 COPY --from=backend-build-stage /app/node_modules ./node_modules/
-COPY --from=backend-build-stage /app/fixtures ./fixtures/
+COPY --from=backend-build-stage /app/apps/template/fixtures ./apps/template/fixtures/
 COPY --from=backend-build-stage /app/dist ./dist/
 
 COPY --from=backend-build-stage /app/apps/template/client/.output/public ./dist/apps/template/client/
