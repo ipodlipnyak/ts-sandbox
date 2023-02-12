@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   db:
-    container_name: "db"
+    # container_name: "db"
     image: postgres:14
     volumes:
       - database:/var/lib/postgresql/data
@@ -13,7 +13,7 @@ services:
       - main
 
   redis:
-    container_name: "redis"
+    # container_name: "redis"
     image: "redis:alpine"
     expose:
       - 6379
@@ -38,7 +38,7 @@ services:
       - apps/template/docker.env
     restart:
       unless-stopped
-    command: /bin/bash -c "npm run app:prod"
+    command: /bin/bash -c "npm run start:prod"
     networks:
       - main
       - proxy
