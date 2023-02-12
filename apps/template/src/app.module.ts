@@ -58,7 +58,8 @@ import { consoleSandbox } from '@sentry/utils';
       // plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../..', 'client/dist'),
+      // rootPath: join(__dirname, '../..', 'client/dist'),
+      rootPath: join(__dirname, '../..', 'apps/template/client'),
     }),
     HttpModule,
     TypeOrmModule.forRootAsync({

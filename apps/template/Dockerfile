@@ -17,15 +17,18 @@ RUN npm run build
 # RUN yarn install 
 # RUN npm run generate
 
-# FROM node:18 as prod
-# WORKDIR /app
-# #COPY --from=frontend-build-stage /app/dist ./client/dist/
-# COPY --from=backend-build-stage /app/dist ./client/dist/
-# 
-# COPY --from=backend-build-stage /app/package* ./
-# COPY --from=backend-build-stage /app/node_modules ./node_modules/
-# COPY --from=backend-build-stage /app/fixtures ./fixtures/
-# COPY --from=backend-build-stage /app/dist ./dist/
+FROM node:18 as prod
+WORKDIR /app
+# COPY package.json .
+# ENV NODE_ENV=production
+# RUN yarn install
+
+COPY --from=backend-build-stage /app/package* ./
+COPY --from=backend-build-stage /app/node_modules ./node_modules/
+COPY --from=backend-build-stage /app/fixtures ./fixtures/
+COPY --from=backend-build-stage /app/dist ./dist/
+
+COPY --from=backend-build-stage /app/apps/template/client/.output/public ./dist/apps/template/client/
 
 # WORKDIR /app
 
