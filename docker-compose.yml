@@ -20,55 +20,30 @@ services:
     networks:
       - main
 
-  app-baikal:
-    container_name: "app-baikal"
+  app-bubbles:
+    container_name: "app-bubbles"
     build:
       context: ./
-      dockerfile: apps/baikal/Dockerfile
+      dockerfile: apps/bubbles/Dockerfile
       args:
         - GH_REGISTRY_TOKEN
-    # image: centergamedev/baikal-server:staging
-    profiles: ["baikal"]
+    # image: my/bubbles-server:staging
+    profiles: ["bubbles"]
     ports:
       - 3000:3000
     links:
       - "redis"
       - "db"
     env_file:
-      - apps/baikal/docker.env
+      - apps/bubbles/docker.env
     restart:
       unless-stopped
-    command: /bin/bash -c "npm run start:prod"
+    command: /bin/bash -c "npm run app:bubbles:prod"
     networks:
       - main
       - proxy
-    environment:
-      - VIRTUAL_HOST=staging-baikal-backend.center-game.com
-
-  app-alfa:
-    container_name: "app-alfa"
-    build:
-      context: ./
-      dockerfile: apps/alfa/Dockerfile
-      args:
-        - GH_REGISTRY_TOKEN
-    # image: centergamedev/alfa-server:staging
-    profiles: ["alfa"]
-    ports:
-      - 3000:3000
-    links:
-      - "redis"
-      - "db"
-    env_file:
-      - apps/alfa/docker.env
-    restart:
-      unless-stopped
-    command: /bin/bash -c "npm run app:alfa:prod"
-    networks:
-      - main
-      - proxy
-    environment:
-      - VIRTUAL_HOST=alpha-da-staging.center-game.com
+   # environment:
+   #   - VIRTUAL_HOST=test.com
 
 volumes:
   database:
