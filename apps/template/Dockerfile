@@ -13,7 +13,7 @@ ARG MY_REGISTRY_TOKEN
 
 RUN echo "//npm.pkg.github.com/:_authToken=${MY_REGISTRY_TOKEN}" > ~/.npmrc
 WORKDIR /app
-COPY ./client/ .
+COPY ./apps/template/client/ .
 RUN npm install 
 RUN npm run generate
 

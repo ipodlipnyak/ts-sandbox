@@ -24,7 +24,7 @@ services:
     container_name: "app-template"
     build:
       context: ./
-      dockerfile: apps/bubbles/Dockerfile
+      dockerfile: apps/template/Dockerfile
       args:
         - GH_REGISTRY_TOKEN
     # image: my/template-server:staging
