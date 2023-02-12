@@ -10,8 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@nuxtjs/apollo": "^5.0.0-alpha.5",
     "nuxt": "^3.0.0",
+    "@nuxtjs/apollo": "^5.0.0-alpha.5",
     "vite": "^3.0.9",
     "vite-plugin-vuetify": "^1.0.0-alpha.16"
   },

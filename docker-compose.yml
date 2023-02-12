@@ -1,7 +1,7 @@
 version: "3.8"
 services:
   db:
-    container_name: "db"
+    # container_name: "db"
     image: postgres:14
     volumes:
       - database:/var/lib/postgresql/data
@@ -13,62 +13,62 @@ services:
       - main
 
   redis:
-    container_name: "redis"
+    # container_name: "redis"
     image: "redis:alpine"
     expose:
       - 6379
     networks:
       - main
 
-  app-baikal:
-    container_name: "app-baikal"
+  app-template:
+    container_name: "app-template"
     build:
       context: ./
-      dockerfile: apps/baikal/Dockerfile
+      dockerfile: apps/template/Dockerfile
       args:
         - GH_REGISTRY_TOKEN
-    # image: centergamedev/baikal-server:staging
-    profiles: ["baikal"]
+    # image: my/template-server:staging
+    profiles: ["template"]
     ports:
       - 3000:3000
     links:
       - "redis"
       - "db"
     env_file:
-      - apps/baikal/docker.env
+      - apps/template/docker.env
     restart:
       unless-stopped
     command: /bin/bash -c "npm run start:prod"
     networks:
       - main
       - proxy
-    environment:
-      - VIRTUAL_HOST=staging-baikal-backend.center-game.com
+   # environment:
+   #   - VIRTUAL_HOST=test.com
 
-  app-alfa:
-    container_name: "app-alfa"
+  app-bubbles:
+    container_name: "app-bubbles"
     build:
       context: ./
-      dockerfile: apps/alfa/Dockerfile
+      dockerfile: apps/bubbles/Dockerfile
       args:
         - GH_REGISTRY_TOKEN
-    # image: centergamedev/alfa-server:staging
-    profiles: ["alfa"]
+    # image: my/bubbles-server:staging
+    profiles: ["bubbles"]
     ports:
       - 3000:3000
     links:
       - "redis"
       - "db"
     env_file:
-      - apps/alfa/docker.env
+      - apps/bubbles/docker.env
     restart:
       unless-stopped
-    command: /bin/bash -c "npm run app:alfa:prod"
+    command: /bin/bash -c "npm run app:bubbles:prod"
     networks:
       - main
       - proxy
-    environment:
-      - VIRTUAL_HOST=alpha-da-staging.center-game.com
+   # environment:
+   #   - VIRTUAL_HOST=test.com
 
 volumes:
   database:
