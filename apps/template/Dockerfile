@@ -3,8 +3,8 @@ WORKDIR /app
 COPY ./ .
 ENV NODE_ENV=production
 COPY package.json .
-RUN npm install
 RUN npm i -g @nestjs/cli
+RUN yarn install
 RUN npm run build
 
 FROM node:18 as frontend-build-stage
@@ -14,7 +14,7 @@ ARG MY_REGISTRY_TOKEN
 RUN echo "//npm.pkg.github.com/:_authToken=${MY_REGISTRY_TOKEN}" > ~/.npmrc
 WORKDIR /app
 COPY ./apps/template/client/ .
-RUN npm install 
+RUN yarn install 
 RUN npm run generate
 
 FROM node:14 as prod
