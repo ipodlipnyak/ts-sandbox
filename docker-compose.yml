@@ -20,6 +20,31 @@ services:
     networks:
       - main
 
+  app-template:
+    container_name: "app-template"
+    build:
+      context: ./
+      dockerfile: apps/bubbles/Dockerfile
+      args:
+        - GH_REGISTRY_TOKEN
+    # image: my/template-server:staging
+    profiles: ["template"]
+    ports:
+      - 3000:3000
+    links:
+      - "redis"
+      - "db"
+    env_file:
+      - apps/template/docker.env
+    restart:
+      unless-stopped
+    command: /bin/bash -c "npm run app:prod"
+    networks:
+      - main
+      - proxy
+   # environment:
+   #   - VIRTUAL_HOST=test.com
+
   app-bubbles:
     container_name: "app-bubbles"
     build:
