@@ -1,6 +1,6 @@
 ## Creds for test
 
-[admin](https://staging-baikal-backend.center-game.com/admin/): `test`
+[admin](https://#): `test`
 
 ## DB
 
@@ -11,7 +11,7 @@ erDiagram
 
 ## CI/CD
 
-[Admin panel](https://staging-baikal-backend.center-game.com/admin/) password are stored inside github secret
+[Admin panel](https://#): password are stored inside github secret
 
 ```bash
 # Environments and secrets
