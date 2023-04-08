@@ -43,7 +43,7 @@ import { consoleSandbox } from '@sentry/utils';
             const { connectionParams, extra } = context;
             // user validation will remain the same as in the example above
             // when using with graphql-ws, additional context value should be stored in the extra field
-            console.log('FUUUUUUUUUUUUUUUUUUUUUUUUUUCK');
+            // console.log('FUUUUUUUUUUUUUUUUUUUUUUUUUUCK');
             // extra.user = { user: {} };
           },
         },
