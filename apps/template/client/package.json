@@ -50,6 +50,7 @@
     "typeorm-fixtures-cli": "^3.0.0",
     "typescript": "^4.3.5",
     "vue": "^3.2.38",
+    "vue3-google-login": "^2.0.15",
     "vuetify": "^3.0.0",
     "webfontloader": "^1.0.0"
   }

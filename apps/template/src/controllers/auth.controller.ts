@@ -18,6 +18,7 @@ import {
   ScoreReponseDto,
   ScoreDto,
   NewUserDto,
+  OAuth2ResponseDto,
 } from '../dto';
 import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
 import { AuthGuard } from './../guards';
@@ -29,6 +30,21 @@ export class AuthController {
     private readonly userService: UserService,
     private readonly ratingService: RatingService,
   ) { }
+
+  @Get('google')
+  async oauthGoogle(
+    @Body() googleResponse: OAuth2ResponseDto,
+    @Session() session: Record<string, any>,
+  ): Promise<RestResponseDto> {
+    const result = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+    console.log(googleResponse);
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
 
   @Post('signup')
   @ApiOperation({ summary: 'Регистрация' })
