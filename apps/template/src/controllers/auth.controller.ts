@@ -40,8 +40,8 @@ export class AuthController {
    * @param googleResponse 
    * @param session 
    */
-  @Post('google')
-  async googleVerifyCreds(
+  @Post('google/jwt')
+  async googleJWT(
     @Body() googleResponse: OAuth2ResponseDto,
     @Session() session: Record<string, any>,
   ): Promise<RestResponseDto> {
