@@ -50,14 +50,14 @@ export class AuthController {
       payload: undefined,
     };
 
-    const client = new OAuth2Client(this.configService.get('sessions.googleClientID'))
+    const client = new OAuth2Client(this.configService.get('google.clientID'));
     const credential = googleResponse.credential;
     const ticket = await client.verifyIdToken({
       idToken: credential,
     });
     const payload = ticket.getPayload();
     result.payload = payload;
-
+    session.google_user_info = payload;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
