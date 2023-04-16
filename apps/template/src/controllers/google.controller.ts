@@ -14,8 +14,8 @@ import { ApiOperation, ApiResponse, ApiSecurity, ApiBadRequestResponse, ApiInter
 import {
   ResponseStatusEnum,
   RestResponseDto,
-  OAuth2ResponseDto,
   GoogleInitReponseDto,
+JWTInputDto,
 } from '../dto';
 import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
 import { AuthGuard } from './../guards';
@@ -68,14 +68,14 @@ export class GoogleController {
   /**
    * Validate the JWT credential sent from client-side
    * 
-   * @param googleResponse 
+   * @param input 
    * @param session 
    */
   @ApiOperation({ summary: 'Validate the JWT credential sent from client-side' })
   @ApiResponse({ status: 200, type: RestResponseDto})
   @Post('jwt')
   async jwt(
-    @Body() googleResponse: OAuth2ResponseDto,
+    @Body() input: JWTInputDto,
     @Session() session: Record<string, any>,
   ): Promise<RestResponseDto> {
     const result = {
@@ -83,8 +83,8 @@ export class GoogleController {
       payload: undefined,
     };
 
-    const client = new OAuth2Client(this.configService.get('google.clientID'));
-    const credential = googleResponse.credential;
+    const client = this.googleService.ClientInstance; 
+    const credential = input.credential;
     const ticket = await client.verifyIdToken({
       idToken: credential,
     });

@@ -19,7 +19,6 @@ import {
   ScoreReponseDto,
   ScoreDto,
   NewUserDto,
-  OAuth2ResponseDto,
 } from '../dto';
 import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
 import { AuthGuard } from './../guards';
@@ -33,35 +32,6 @@ export class AuthController {
     private readonly userService: UserService,
     private readonly ratingService: RatingService,
   ) { }
-
-  /**
-   * Validate the JWT credential sent from client-side
-   * 
-   * @param googleResponse 
-   * @param session 
-   */
-  @Post('google/jwt')
-  async googleJWT(
-    @Body() googleResponse: OAuth2ResponseDto,
-    @Session() session: Record<string, any>,
-  ): Promise<RestResponseDto> {
-    const result = {
-      status: ResponseStatusEnum.ERROR,
-      payload: undefined,
-    };
-
-    const client = new OAuth2Client(this.configService.get('google.clientID'));
-    const credential = googleResponse.credential;
-    const ticket = await client.verifyIdToken({
-      idToken: credential,
-    });
-    const payload = ticket.getPayload();
-    result.payload = payload;
-    session.google_user_info = payload;
-
-    result.status = ResponseStatusEnum.SUCCESS;
-    return result;
-  }
 
   @Post('signup')
   @ApiOperation({ summary: 'Регистрация' })
@@ -223,7 +193,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get()
-  @ApiOperation({ summary: 'Кто я такой' })
+  @ApiOperation({ summary: 'Who am I' })
   @ApiResponse({ status: 200, type: WhoAmIResponseDto })
   @ApiSecurity('user')
   @ApiSecurity('admin')

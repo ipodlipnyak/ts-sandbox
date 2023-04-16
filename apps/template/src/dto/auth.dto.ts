@@ -4,13 +4,6 @@ import { RestResponseDto } from './rest-response.dto';
 import { MyRatingItemDto } from './rating.dto';
 import { Transform } from 'class-transformer';
 
-export class OAuth2ResponseDto {
-  @IsString()
-  @ApiProperty({ example: '1haWwuY29tIi...GTdHbV2', description: 'Very long token' })
-  @Transform(({ value }) => value.trim())
-  readonly credential: string;
-}
-
 export class LoginDto {
   @IsString()
   @ApiProperty({ example: 'some@email.com', description: 'Email используется как логин' })
