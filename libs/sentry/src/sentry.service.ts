@@ -18,7 +18,7 @@ import * as Sentry from '@sentry/node';
 
 @Injectable({ scope: Scope.REQUEST })
 export class SentryService extends ConsoleLogger implements OnApplicationShutdown {
-  appName = '@centergame/nestjs-sentry: ';
+  appName = '@my/nestjs-sentry: ';
 
   private static serviceInstance: SentryService;
 

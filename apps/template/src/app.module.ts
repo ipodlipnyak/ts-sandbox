@@ -14,8 +14,10 @@ import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
 import { commands } from './commands';
 import { resolvers } from './models';
-import {Context} from 'graphql-ws';
+import { Context } from 'graphql-ws';
 import { consoleSandbox } from '@sentry/utils';
+import { GoogleModule } from '@my/google';
+// import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry'; 
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 @Module({
@@ -31,6 +33,10 @@ import { consoleSandbox } from '@sentry/utils';
         isGlobal: true,
         store: redisStore,
       }),
+    }),
+    GoogleModule.forRootAsync({                                                                      
+      inject: [ConfigService],                                                                       
+      useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),      
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

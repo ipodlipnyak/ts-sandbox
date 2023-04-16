@@ -132,7 +132,9 @@
       "<rootDir>/libs/"
     ],
     "moduleNameMapper": {
-      "^@cg/sentry(|/.*)$": "<rootDir>/libs/sentry/src/$1"
+      "^@my/sentry(|/.*)$": "<rootDir>/libs/sentry/src/$1",
+      "^@my/google(|/.*)$": "<rootDir>/libs/google/src/$1",
+      "^@my/users(|/.*)$": "<rootDir>/libs/users/src/$1"
     }
   },
   "workspaces": [

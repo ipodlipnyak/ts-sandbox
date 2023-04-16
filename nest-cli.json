@@ -9,15 +9,6 @@
     "tsConfigPath": "apps/template/tsconfig.app.json"
   },
   "projects": {
-    "template": {
-      "type": "application",
-      "root": "apps/template",
-      "entryFile": "main",
-      "sourceRoot": "apps/template/src",
-      "compilerOptions": {
-        "tsConfigPath": "apps/template/tsconfig.app.json"
-      }
-    },
     "sentry": {
       "type": "library",
       "root": "libs/sentry",
@@ -25,6 +16,33 @@
       "sourceRoot": "libs/sentry/src",
       "compilerOptions": {
         "tsConfigPath": "libs/sentry/tsconfig.lib.json"
+      }
+    },
+    "google": {
+      "type": "library",
+      "root": "libs/google",
+      "entryFile": "index",
+      "sourceRoot": "libs/google/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/google/tsconfig.lib.json"
+      }
+    },
+    "users": {
+      "type": "library",
+      "root": "libs/users",
+      "entryFile": "index",
+      "sourceRoot": "libs/users/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/users/tsconfig.lib.json"
+      }
+    },
+    "template": {
+      "type": "application",
+      "root": "apps/template",
+      "entryFile": "main",
+      "sourceRoot": "apps/template/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/template/tsconfig.app.json"
       }
     },
     "bubbles": {

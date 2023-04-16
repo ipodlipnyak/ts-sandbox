@@ -20,11 +20,23 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@cg/sentry": [
+      "@my/sentry": [
         "libs/sentry/src"
       ],
-      "@cg/sentry/*": [
+      "@my/sentry/*": [
         "libs/sentry/src/*"
+      ],
+      "@my/google": [
+        "libs/google/src"
+      ],
+      "@my/google/*": [
+        "libs/google/src/*"
+      ],
+      "@my/users": [
+        "libs/users/src"
+      ],
+      "@my/users/*": [
+        "libs/users/src/*"
       ]
     }
   }
