@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import {
   Controller,
   Get,
@@ -23,16 +24,24 @@ import {
 import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
 import { AuthGuard } from './../guards';
 import { UserService, RatingService } from './../services';
+import { OAuth2Client } from 'google-auth-library';
 
 @Controller('auth')
 export class AuthController {
   constructor(
+    private configService: ConfigService,
     private readonly userService: UserService,
     private readonly ratingService: RatingService,
   ) { }
 
-  @Get('google')
-  async oauthGoogle(
+  /**
+   * Validate the JWT credential sent from client-side
+   * 
+   * @param googleResponse 
+   * @param session 
+   */
+  @Post('google')
+  async googleVerifyCreds(
     @Body() googleResponse: OAuth2ResponseDto,
     @Session() session: Record<string, any>,
   ): Promise<RestResponseDto> {
@@ -40,7 +49,15 @@ export class AuthController {
       status: ResponseStatusEnum.ERROR,
       payload: undefined,
     };
-    console.log(googleResponse);
+
+    const client = new OAuth2Client(this.configService.get('sessions.googleClientID'))
+    const credential = googleResponse.credential;
+    const ticket = await client.verifyIdToken({
+      idToken: credential,
+    });
+    const payload = ticket.getPayload();
+    result.payload = payload;
+
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;

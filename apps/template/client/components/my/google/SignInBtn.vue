@@ -1,7 +1,5 @@
 <template>
-    <GoogleLogin :callback="callback">
-        <v-btn>Login Using Google</v-btn>
-    </GoogleLogin>
+    <GoogleLogin :callback="callback" />
 </template>
 
 <script lang="ts">
