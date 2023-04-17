@@ -19,12 +19,15 @@ import {
 } from '../dto';
 import { AuthGuard } from './../guards';
 import { GoogleService } from '@my/google';
+import { UsersService } from '@my/users';
+import { UserService } from '../services';
 
 @Controller('google')
 export class GoogleController {
   constructor(
     private googleService: GoogleService,
     private configService: ConfigService,
+    private userService: UserService,
   ) { }
 
   @ApiOperation({ summary: 'Google client info required to initiate connection' })
@@ -67,6 +70,15 @@ export class GoogleController {
    */
   @ApiOperation({ summary: 'Validate the JWT credential sent from client-side' })
   @ApiResponse({ status: 200, type: RestResponseDto })
+  @ApiBadRequestResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'This email is not authorised to login',
+        },
+      ],
+    },
+  })
   @Post('jwt')
   async jwt(
     @Body() input: JWTInputDto,
@@ -84,6 +96,13 @@ export class GoogleController {
     });
     const payload = ticket.getPayload();
     session.google_user_info = payload;
+
+    const isLoggedIn = await this.userService.loginByEmail(payload.email);
+    debugger;
+
+    if (!isLoggedIn) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
