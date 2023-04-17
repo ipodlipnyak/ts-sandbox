@@ -15,12 +15,9 @@ import {
   ResponseStatusEnum,
   RestResponseDto,
   GoogleInitReponseDto,
-JWTInputDto,
+  JWTInputDto,
 } from '../dto';
-import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
 import { AuthGuard } from './../guards';
-import { UserService, RatingService } from './../services';
-import { OAuth2Client } from 'google-auth-library';
 import { GoogleService } from '@my/google';
 
 @Controller('google')
@@ -28,8 +25,6 @@ export class GoogleController {
   constructor(
     private googleService: GoogleService,
     private configService: ConfigService,
-    private readonly userService: UserService,
-    private readonly ratingService: RatingService,
   ) { }
 
   @ApiOperation({ summary: 'Google client info required to initiate connection' })
@@ -51,8 +46,8 @@ export class GoogleController {
     };
 
     console.log(this.configService.get('google'));
-    const clientId = this.googleService.ClientId; 
-    
+    const clientId = this.googleService.ClientId;
+
     if (!clientId) {
       throw new HttpException('Missing client Id', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -72,7 +67,7 @@ export class GoogleController {
    * @param session 
    */
   @ApiOperation({ summary: 'Validate the JWT credential sent from client-side' })
-  @ApiResponse({ status: 200, type: RestResponseDto})
+  @ApiResponse({ status: 200, type: RestResponseDto })
   @Post('jwt')
   async jwt(
     @Body() input: JWTInputDto,
@@ -83,7 +78,7 @@ export class GoogleController {
       payload: undefined,
     };
 
-    const client = this.googleService.ClientInstance; 
+    const client = this.googleService.ClientInstance;
     const credential = input.credential;
     const ticket = await client.verifyIdToken({
       idToken: credential,
