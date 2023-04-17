@@ -98,7 +98,6 @@ export class GoogleController {
     session.google_user_info = payload;
 
     const isLoggedIn = await this.userService.loginByEmail(payload.email);
-    debugger;
 
     if (!isLoggedIn) {
       throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
