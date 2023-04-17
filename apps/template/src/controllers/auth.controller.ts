@@ -125,16 +125,7 @@ export class AuthController {
     const user = await Users.findOne({
       where: { email },
       select: [
-        'id',
-        'role',
-        'active',
         'password',
-        'email',
-        'middleName',
-        'firstName',
-        'lastName',
-        'created',
-        'updated',
       ],
     });
     if (!user || !user.active) {
@@ -147,11 +138,10 @@ export class AuthController {
       throw new HttpException('Incorrect or missing credentials', HttpStatus.FORBIDDEN);
     }
 
-    result.status = ResponseStatusEnum.SUCCESS;
-    const whoami = { ...user };
-    delete whoami.password;
-    delete whoami.active;
-    session.whoami = whoami;
+    const isLoggedIn = await this.userService.loginByEmail(email);
+    if (isLoggedIn) {
+      result.status = ResponseStatusEnum.SUCCESS;
+    }
 
     return result;
   }

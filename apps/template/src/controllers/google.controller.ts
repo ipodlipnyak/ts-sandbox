@@ -45,7 +45,6 @@ export class GoogleController {
       payload: undefined,
     };
 
-    console.log(this.configService.get('google'));
     const clientId = this.googleService.ClientId;
 
     if (!clientId) {
@@ -84,7 +83,6 @@ export class GoogleController {
       idToken: credential,
     });
     const payload = ticket.getPayload();
-    result.payload = payload;
     session.google_user_info = payload;
 
     result.status = ResponseStatusEnum.SUCCESS;

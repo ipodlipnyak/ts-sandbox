@@ -1,33 +1,25 @@
 <template>
-    <GoogleLogin :callback="callback" prompt />
+    <GoogleLogin v-if="clientId" :callback="callback" prompt :clientId="clientId" />
 </template>
 
 <script lang="ts">
 import { defineComponent, computed, getCurrentInstance } from 'vue';
-import { useDisplay, useLayout } from 'vuetify';
-import { useAuthStore } from '@/stores/auth';
-import { useUsersStore } from '@/stores/users';
+import { useGoogleStore } from '~/stores';
 
 export default defineComponent({
     setup(props, ctx) {
-        const message = ref('This is a message')
-        const messageComputed = computed(() => {
-            return 'test'
-        })
-        const display = useDisplay();
-        const layout = useLayout();
-        const authStore = useAuthStore();
-        const usersStore = useUsersStore();
+        const googleStore = useGoogleStore();
+        const { clientId, verifyJwt } = googleStore;
         const callback = (response: any) => {
-           console.log(response);
+            const credential = response?.credential;
+            if (credential) {
+                verifyJwt(credential); 
+            }
         };
 
         return {
+            clientId,
             callback,
-            message,
-            messageComputed,
-            display,
-            layout,
         }
     },
 })

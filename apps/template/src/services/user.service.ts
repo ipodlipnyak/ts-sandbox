@@ -22,6 +22,37 @@ export class UserService {
   }
 
   /**
+   * To authorise a user whom we found by email we will create a session with his own public data
+   * 
+   * @param email email to find a user
+   * @returns false if user not found, true if session created succesfully
+   */
+  async loginByEmail(email: string): Promise<boolean> {
+    const user = await Users.findOne({
+      where: { email },
+      select: [
+        'id',
+        'role',
+        'active',
+        'email',
+        'middleName',
+        'firstName',
+        'lastName',
+        'created',
+        'updated',
+      ],
+    });
+    if (!user || !user.active) {
+      return false;  
+    }
+
+    const whoami = { ...user };
+    delete whoami.active;
+    this.req.session.whoami = whoami;
+    return true;
+  }
+
+  /**
    * Get current user's ratings values
    */
   async getRating(): Promise<MyRatingItemDto[]> {
