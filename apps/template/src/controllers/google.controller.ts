@@ -68,7 +68,7 @@ export class GoogleController {
    * @param input 
    * @param session 
    */
-  @ApiOperation({ summary: 'Validate the JWT credential sent from client-side' })
+  @ApiOperation({ summary: 'Validate the JWT credential sent from client-side and login' })
   @ApiResponse({ status: 200, type: RestResponseDto })
   @ApiBadRequestResponse({
     schema: {

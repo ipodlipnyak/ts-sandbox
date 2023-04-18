@@ -6,10 +6,21 @@
 import { defineComponent } from 'vue'
 
 export default defineComponent({
-  transition: 'fade-transition',
-  scrollToTop: true,
-  middleware: [
-    // 'auth',
-  ],
+  setup() {
+    definePageMeta({
+      layout: 'my',
+      scrollToTop: true,
+      pageTransition: {
+        name: 'fade-transition',
+      },
+      layoutTransition: {
+        name: 'fade-transition',
+      },
+      middleware: [
+        'auth',
+      ],
+    });
+    return {};
+  }
 })
 </script>

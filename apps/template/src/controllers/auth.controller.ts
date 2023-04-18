@@ -130,11 +130,12 @@ export class AuthController {
         'active',
       ],
     });
+
     /**
      * Can not login by this strategy without password.
      * Probably this user was using google authentication.
      * He should go and set a password in his profile settings.
-     * Also should not show an inactive user... probably
+     * Also should not show an inactive user... probably.
      *  */ 
     if (!user || !user.active || !user.password) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
