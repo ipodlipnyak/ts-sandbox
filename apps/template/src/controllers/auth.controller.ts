@@ -135,6 +135,14 @@ export class AuthController {
     }
 
     const password = loginDto?.password || '';
+    /**
+     * Can not login by this strategy without password.
+     * Probably this user was using google authentication.
+     * He should go and set a password in his profile settings.
+     *  */ 
+    if (!password) {
+      throw new HttpException('Empty password', HttpStatus.BAD_REQUEST);
+    }
     const verified = await user.passwordVerify(password);
     if (!verified) {
       throw new HttpException('Incorrect or missing credentials', HttpStatus.FORBIDDEN);
