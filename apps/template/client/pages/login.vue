@@ -1,7 +1,7 @@
 <template>
   <v-container class="fill-height px-10 px-md-0">
     <v-row class="fill-heigth" justify="center" dense>
-      <v-card max-width="600" rounded="lg">
+      <v-card max-width="600" rounded="lg" class="pa-4">
         <v-row class="my-16">
           <v-col class="text-center">
             <span class="text-h3">Вход в аккаунт</span>
@@ -19,7 +19,7 @@
               <v-text-field type="password" label="Password" v-model="password" :rules="[rules.required]" />
             </v-col>
             <v-col cols="12" class="mt-10">
-              <v-btn :disabled="!valid" type="submit" color="blue" block depressed x-large>
+              <v-btn :disabled="!valid" type="submit" color="blue" block depressed size="x-large">
                 <span class="white--text">Войти</span>
               </v-btn>
             </v-col>

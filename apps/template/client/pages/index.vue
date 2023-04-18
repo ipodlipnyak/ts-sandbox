@@ -14,7 +14,7 @@
           <v-card-actions>
             <v-row>
               <v-col>
-                <v-btn :large="display.smAndDown" :x-large="display.mdAndUp" depressed to="/login" nuxt class="px-8" dark
+                <v-btn :size="display.smAndDown ? 'large' : 'x-large'" depressed to="/login" nuxt class="px-8" dark
                   color="green" block>
                   Войти
                 </v-btn>
@@ -68,7 +68,8 @@ export default defineComponent({
     const layout = useLayout();
 
     const heightComputed = computed(() => {
-      let result = `calc(100vh - ${display?.footer?.value || 104}px)`;
+      // let result = `calc(100vh - ${display?.footer?.value || 104}px)`;
+      let result = `calc(100vh)`
       const screenHeight = display.height.value || 0;
       if (screenHeight < 630) {
         result = '400';
