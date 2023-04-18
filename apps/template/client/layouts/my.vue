@@ -41,22 +41,42 @@
       ></v-sheet>
 
       <v-list>
-        <v-list-item
+<!--         <v-list-item
           v-for="n in 5"
           :key="n"
           :title="`Item ${ n }`"
           link
         >
-        </v-list-item>
+        </v-list-item> -->
+        <v-list-item
+          title="Dashboard"
+          prepend-icon="mdi-view-dashboard"
+          exact
+          to="/my/"
+        />
+        <v-list-item
+          title="Settings"
+          prepend-icon="mdi-cog"
+          to="/my/settings"
+        />
+        <v-list-item
+          title="Events"
+          prepend-icon="mdi-calendar"
+          to="/my/events"
+        />
         
         <v-list-item
           title="Logout"
           @click.stop="logout"
+          prepend-icon="mdi-logout"
+          color="secondary"
+          variant="elevated"
+          :active="true"
         />
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar>
+    <v-app-bar class="pr-4">
       <v-spacer></v-spacer>
 
       <v-responsive max-width="156">
@@ -74,6 +94,7 @@
       <slot />
     </v-main>
 
+    <!--
     <v-navigation-drawer location="right">
       <v-list>
         <v-list-item
@@ -85,6 +106,7 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
+    -->
 
     <v-footer
       app
