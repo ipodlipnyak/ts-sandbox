@@ -1,5 +1,5 @@
 <template>
-    <v-theme-provider theme="light" class="pa-10">
+    <v-theme-provider theme="light">
         <v-sheet color="transparent">
             <v-row no-gutters justify="center">
                 <GoogleLogin v-if="clientId" :callback="callback" :prompt="false" :clientId="clientId" />

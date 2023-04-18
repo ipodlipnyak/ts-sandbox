@@ -102,15 +102,15 @@
           login(email.value, password.value);
         }
       };
-      watch(loggedIn, () => {
-        try {
-          if (router?.push && isMounted) {
-            router.replace({name: 'index'})
-          }
-        } catch (e) {
-          //
-        }
-      });
+      // watch(loggedIn, () => {
+      //   try {
+      //     if (router?.push && isMounted) {
+      //       router.replace({name: 'index'})
+      //     }
+      //   } catch (e) {
+      //     //
+      //   }
+      // });
 
       return {
         valid,

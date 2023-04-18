@@ -21,12 +21,12 @@
               </v-col>
               <v-col>
                 <!--
-              <v-btn :large="display.smAndDown" :x-large="display.mdAndUp" depressed
-                to="/signup" nuxt class="px-8" color="orange" dark block>
-                Зарегистрироваться
-              </v-btn>
-              -->
-              <my-google-sign-in-btn />
+                <v-btn :large="display.smAndDown" :x-large="display.mdAndUp" depressed
+                  to="/signup" nuxt class="px-8" color="orange" dark block>
+                  Зарегистрироваться
+                </v-btn>
+                -->
+                <my-google-sign-in-btn />
               </v-col>
             </v-row>
           </v-card-actions>
@@ -66,7 +66,6 @@ export default defineComponent({
     });
     const display = useDisplay();
     const layout = useLayout();
-    console.log(layout.getLayoutItem('header'));
 
     const heightComputed = computed(() => {
       let result = `calc(100vh - ${display?.footer?.value || 104}px)`;

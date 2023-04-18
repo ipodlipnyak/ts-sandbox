@@ -20,6 +20,8 @@ export const useGoogleStore = defineStore('google', {
 
             if (data.value?.status === 'success') {
                 await authStore.fetchUserData();
+                const router = useRouter();
+                router.replace({ name: 'my' })
                 // this.data = data.value.payload;
             }
         },

@@ -9,20 +9,23 @@ export const useAuthStore = defineStore('auth', {
   }),
   actions: {
     async fetchUserData() {
-      const {data, pending, error, refresh} = await useFetch('/api/auth/');
+      const { data, pending, error, refresh } = await useFetch('/api/auth/');
       if (data.value?.status === 'success') {
         this.whoami = data.value.payload;
       }
     },
 
     async login(login: string, password: string) {
-      await useFetch('/api/auth/login', {method: 'post', body: {login, password}});
+      await useFetch('/api/auth/login', { method: 'post', body: { login, password } });
       await this.fetchUserData();
+      const router = useRouter();
+      router.replace({ name: 'my' })
     },
     async logout() {
-      await useFetch('/api/auth/logout', {method: 'post'});
-      navigateTo('/');
+      await useFetch('/api/auth/logout', { method: 'post' });
       this.$reset();
+      const router = useRouter();
+      router.replace({ name: 'index' })
     },
   },
 
