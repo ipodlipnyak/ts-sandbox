@@ -125,7 +125,9 @@ export class AuthController {
     const user = await Users.findOne({
       where: { email },
       select: [
+        'id',
         'password',
+        'active',
       ],
     });
     if (!user || !user.active) {
