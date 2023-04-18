@@ -1,5 +1,11 @@
 <template>
-    <GoogleLogin v-if="clientId" :callback="callback" prompt :clientId="clientId" />
+    <v-theme-provider theme="light" class="pa-10">
+        <v-sheet color="transparent">
+            <v-row no-gutters justify="center">
+                <GoogleLogin v-if="clientId" :callback="callback" :prompt="false" :clientId="clientId" />
+            </v-row>
+        </v-sheet>
+    </v-theme-provider>
 </template>
 
 <script lang="ts">
@@ -13,7 +19,7 @@ export default defineComponent({
         const callback = (response: any) => {
             const credential = response?.credential;
             if (credential) {
-                verifyJwt(credential); 
+                verifyJwt(credential);
             }
         };
 

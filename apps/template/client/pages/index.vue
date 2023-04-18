@@ -26,7 +26,7 @@
                 Зарегистрироваться
               </v-btn>
               -->
-                <my-google-sign-in-btn />
+              <my-google-sign-in-btn />
               </v-col>
             </v-row>
           </v-card-actions>

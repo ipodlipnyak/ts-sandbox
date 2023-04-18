@@ -8,11 +8,11 @@
       <v-icon>mdi-circle</v-icon>
 
       <v-icon>mdi-triangle</v-icon>
+
     </v-system-bar>
 
     <v-navigation-drawer
       absolute
-      color="grey-lighten-3"
       rail
     >
       <v-avatar
@@ -36,7 +36,6 @@
       width="244"
     >
       <v-sheet
-        color="grey-lighten-5"
         height="128"
         width="100%"
       ></v-sheet>
@@ -49,15 +48,15 @@
           link
         >
         </v-list-item>
+        
+        <v-list-item
+          title="Logout"
+          @click.stop="logout"
+        />
       </v-list>
     </v-navigation-drawer>
 
-    <v-app-bar
-      class="px-3"
-      color="grey-lighten-4"
-      flat
-      height="72"
-    >
+    <v-app-bar>
       <v-spacer></v-spacer>
 
       <v-responsive max-width="156">
