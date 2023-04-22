@@ -49,15 +49,15 @@
         >
         </v-list-item> -->
         <v-list-item
-          title="Bot"
-          prepend-icon="mdi-robot-happy"
-          to="/my/bot"
-        />
-        <v-list-item
           title="Dashboard"
           prepend-icon="mdi-view-dashboard"
           exact
           to="/my/"
+        />
+        <v-list-item
+          title="Bot"
+          prepend-icon="mdi-robot-happy"
+          to="/my/bot"
         />
         <v-list-item
           title="Settings"

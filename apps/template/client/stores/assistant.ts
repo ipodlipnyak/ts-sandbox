@@ -6,22 +6,46 @@ interface LLMResponse {
     response: string
 }
 
+enum LogItemType {
+    input = 'input',
+    output = 'output',
+}
+
+interface LogItem {
+    timestamp: number
+    text: string
+    type: LogItemType 
+}
+
 export const useAssistantStore = defineStore('assistant', {
     state: () => ({
         input: '',
         lastResponse: null as LLMResponse | null,
-        inputLog: [] as string[],
-        outputLog: [] as string[],
+        log: [] as LogItem[],
         pending: false,
     }),
     actions: {
+        addToLog(text: string, type: LogItemType) {
+            if (!text) {
+                return
+            }
+
+            const timestamp = Date.now();
+            this.log = [...this.log, {
+                text,
+                timestamp,
+                type,
+            }]
+        },
+
         async query() {
             this.pending = true;
             const { data, pending, error, refresh } = await useFetch('/api/llm/query', { method: 'post', body: { text: this.input } });
             if (data.value?.status === 'success') {
+                const ts = Date.now();
                 this.lastResponse = data.value.payload;
-                this.inputLog = [...this.inputLog, this.input];
-                this.outputLog = [...this.outputLog, this.lastResponse.response]; 
+                this.addToLog(this.input, LogItemType.input)
+                this.addToLog(this.lastResponse?.response || '', LogItemType.output)
                 this.input = '';
             }
             this.pending = false;
