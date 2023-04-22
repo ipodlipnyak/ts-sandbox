@@ -1,4 +1,3 @@
-
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useAuthStore } from './auth';
 import { stat } from 'fs';
@@ -30,10 +29,7 @@ export const useAssistantStore = defineStore('assistant', {
     },
 
     getters: {
-        pending: (state): boolean => state.pending,
-        inputLog: (state): string[] => state.inputLog || [],
-        outputLog: (state): string[] => state.outputLog || [],
-        lastResponse: (state): string => state.lastResponse?.response || '',
+        lastResponseText: (state): string => state.lastResponse?.response || '',
     },
 });
 
