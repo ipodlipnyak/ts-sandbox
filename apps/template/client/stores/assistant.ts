@@ -1,38 +1,42 @@
 
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useAuthStore } from './auth';
+import { stat } from 'fs';
+
+interface LLMResponse {
+    response: string
+}
 
 export const useAssistantStore = defineStore('assistant', {
-    // arrow function recommended for full type inference
     state: () => ({
-        data: null as any,
+        input: '',
+        lastResponse: null as LLMResponse | null,
+        inputLog: [] as string[],
+        outputLog: [] as string[],
+        pending: false,
     }),
     actions: {
         async query() {
-            const { data, pending, error, refresh } = await useFetch('/api/google/');
+            this.pending = true;
+            const { data, pending, error, refresh } = await useFetch('/api/llm/query', { method: 'post', body: { text: this.input } });
             if (data.value?.status === 'success') {
-                this.data = data.value.payload;
+                this.lastResponse = data.value.payload;
+                this.inputLog = [...this.inputLog, this.input];
+                this.outputLog = [...this.outputLog, this.lastResponse.response]; 
+                this.input = '';
             }
-        },
-
-        async verifyJwt(credential: string) {
-            const authStore = useAuthStore();
-            const { data, pending, error, refresh } = await useFetch('/api/google/jwt', { method: 'post', body: { credential } });
-
-            if (data.value?.status === 'success') {
-                await authStore.fetchUserData();
-                const router = useRouter();
-                router.replace({ name: 'my' })
-                // this.data = data.value.payload;
-            }
+            this.pending = false;
         },
     },
 
     getters: {
-        clientId: (state): any[] => state.data?.clientId || [],
+        pending: (state): boolean => state.pending,
+        inputLog: (state): string[] => state.inputLog || [],
+        outputLog: (state): string[] => state.outputLog || [],
+        lastResponse: (state): string => state.lastResponse?.response || '',
     },
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useGoogleStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useAssistantStore, import.meta.hot));
 }
