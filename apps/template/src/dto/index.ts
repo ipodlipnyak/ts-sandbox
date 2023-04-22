@@ -10,3 +10,4 @@ export * from './user.dto';
 export * from './rating.dto';
 export * from './track.dto';
 export * from './google.dto';
+export * from './llm.dto';
