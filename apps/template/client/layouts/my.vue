@@ -55,6 +55,11 @@
           to="/my/"
         />
         <v-list-item
+          title="Bot"
+          prepend-icon="mdi-robot-happy"
+          to="/my/bot"
+        />
+        <v-list-item
           title="Settings"
           prepend-icon="mdi-cog"
           to="/my/settings"
@@ -108,7 +113,7 @@
     </v-navigation-drawer>
     -->
 
-    <v-footer
+    <!-- <v-footer
       app
       height="72"
     >
@@ -119,7 +124,7 @@
         hide-details
         variant="solo"
       ></v-text-field>
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 

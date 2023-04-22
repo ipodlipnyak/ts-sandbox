@@ -27,6 +27,15 @@
         "tsConfigPath": "libs/google/tsconfig.lib.json"
       }
     },
+    "llm": {
+      "type": "library",
+      "root": "libs/llm",
+      "entryFile": "index",
+      "sourceRoot": "libs/llm/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/llm/tsconfig.lib.json"
+      }
+    },
     "users": {
       "type": "library",
       "root": "libs/users",

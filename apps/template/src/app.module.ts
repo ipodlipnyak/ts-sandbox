@@ -17,6 +17,7 @@ import { resolvers } from './models';
 import { Context } from 'graphql-ws';
 import { consoleSandbox } from '@sentry/utils';
 import { GoogleModule } from '@my/google';
+import { LLMModule } from '@my/llm';
 // import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry'; 
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
@@ -37,6 +38,10 @@ import { GoogleModule } from '@my/google';
     GoogleModule.forRootAsync({                                                                      
       inject: [ConfigService],                                                                       
       useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),      
+    }),
+    LLMModule.forRootAsync({                                                                      
+      inject: [ConfigService],                                                                       
+      useFactory: async (configService: ConfigService) => ({ ...configService.get('llm') }),      
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,

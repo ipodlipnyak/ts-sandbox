@@ -32,6 +32,12 @@
       "@my/google/*": [
         "libs/google/src/*"
       ],
+      "@my/llm": [
+        "libs/llm/src"
+      ],
+      "@my/llm/*": [
+        "libs/llm/src/*"
+      ],
       "@my/users": [
         "libs/users/src"
       ],

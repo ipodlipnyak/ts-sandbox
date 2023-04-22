@@ -5,6 +5,7 @@ import cache from './cache.config';
 import sessions from './sessions.config';
 import web from './web.config';
 import google from './google.config';
+import llm from './llm.config';
 
 export default {
   db,
@@ -12,6 +13,7 @@ export default {
   cache,
   web,
   google,
+  llm,
 };
 
-export const load = [db, sessions, cache, web, google];
+export const load = [db, sessions, cache, web, google, llm];
