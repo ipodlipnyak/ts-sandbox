@@ -56,6 +56,21 @@ export const useAssistantStore = defineStore('assistant', {
         history: (state): LogItem[] => state.log.sort((a,b) => {
             return a.timestamp - b.timestamp;
         }), 
+        historyFormatted (state): any[] {
+            const newItemsList: any[] = [
+                { type: 'subheader', title: 'Today' },
+            ];
+            this.history.forEach((logItem: LogItem, index) => {
+                newItemsList.push({
+                    title: logItem.type,
+                    subtitle: logItem.text,
+                });
+                if (this.history.length < index + 1) {
+                    newItemsList.push({ type: 'divider', inset: true });
+                }
+            });
+            return newItemsList;
+        },
     },
 });
 
