@@ -22,13 +22,13 @@ export class LLMService {
         const path = `${this.opts.apiUrl}?text=${input.text}`;
         console.log(path);
         const { data } = await firstValueFrom(
-            this.httpService.get<GPTApiResponseDTO>(path).pipe(
+            this.httpService.get<any>(path).pipe(
                 // catchError((error: any) => {
                 //     this.logger.error(error.response.data);
                 //     throw error;
                 // }),
             ),
         );
-        return data;
+        return data.payload;
     }
 }

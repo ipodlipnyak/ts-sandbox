@@ -40,11 +40,10 @@ export const useAssistantStore = defineStore('assistant', {
 
         async query() {
             this.pending = true;
+            this.addToLog(this.input, LogItemType.input)
             const { data, pending, error, refresh } = await useFetch('/api/llm/query', { method: 'post', body: { text: this.input } });
             if (data.value?.status === 'success') {
-                const ts = Date.now();
                 this.lastResponse = data.value.payload;
-                this.addToLog(this.input, LogItemType.input)
                 this.addToLog(this.lastResponse?.response || '', LogItemType.output)
                 this.input = '';
             }
@@ -54,6 +53,9 @@ export const useAssistantStore = defineStore('assistant', {
 
     getters: {
         lastResponseText: (state): string => state.lastResponse?.response || '',
+        history: (state): LogItem[] => state.log.sort((a,b) => {
+            return a.timestamp - b.timestamp;
+        }), 
     },
 });
 

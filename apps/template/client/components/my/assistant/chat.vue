@@ -9,8 +9,18 @@
         </v-container>
 
         <v-footer app height="72">
-            <v-text-field bg-color="grey-lighten-1" class="rounded-pill overflow-hidden" density="compact" hide-details
-                variant="solo"></v-text-field>
+            <v-text-field
+                v-model="assistantStore.input"
+                bg-color="grey-lighten-1"
+                class="rounded-pill overflow-hidden"
+                density="compact"
+                hide-details
+                variant="solo"
+                clearable
+                append-icon="mdi-send"
+                @click:append="query"
+                @keyup.enter="query"
+            />
         </v-footer>
     </div>
 </template>
@@ -25,15 +35,9 @@ import { useAssistantStore } from '~/stores/assistant';
 export default defineComponent({
     setup(props, ctx) {
         const assistantStore = useAssistantStore();
-        const { pending, lastResponseText, input, log } = assistantStore;
-        // const items = log.map((logItem) => {
-        //     return {
-        //         title: logItem.type,
-        //         subtitle: logItem.text,
-        //     }
-        // })
+        const { pending, lastResponseText, input, history, query } = assistantStore;
         const items = ref([]);
-        watch(log, async (newValue, oldValue) => {
+        watch(history, async (newValue, oldValue) => {
             const newItemsList: any[] = [
                 { type: 'subheader', title: 'Today' },
             ];
@@ -47,6 +51,9 @@ export default defineComponent({
         })
 
         return {
+            query,
+            assistantStore,
+            input,
             items
         }
     },
