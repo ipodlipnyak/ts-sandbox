@@ -16,20 +16,16 @@ export class LLMService {
 
     constructor(
         private readonly httpService: HttpService,
-        @Inject('MY_LLM_OPTIONS') readonly opts?: LLMConfig,
-    ) {
-        if (!(opts && opts.apiUrl)) {
-            // console.log('options not found. Did you use LLMModule.forRoot?');
-            return;
-        }
-        this.apiUrl = opts.apiUrl;
-    }
+        @Inject('MY_LLM_OPTIONS') readonly opts: LLMConfig,
+    ) {}
     async query(input: GPTApiRequestDTO): Promise<GPTApiResponseDTO> {
+        const path = `${this.opts.apiUrl}?text=${input.text}`;
+        console.log(path);
         const { data } = await firstValueFrom(
-            this.httpService.post<GPTApiResponseDTO>(this.apiUrl, input).pipe(
+            this.httpService.get<GPTApiResponseDTO>(path).pipe(
                 // catchError((error: any) => {
                 //     this.logger.error(error.response.data);
-                //     throw 'An error happened!';
+                //     throw error;
                 // }),
             ),
         );

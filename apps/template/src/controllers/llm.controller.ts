@@ -21,7 +21,7 @@ import { AuthGuard } from './../guards';
 import { UsersService } from '@my/users';
 import { UserService } from '../services';
 import { LLMService } from '@my/llm';
-import { GPTApiRequestDTO } from '@my/llm/llm.dto';
+import { GPTApiRequestDTO } from '@my/llm';
 
 @Controller('llm')
 export class LLMController {

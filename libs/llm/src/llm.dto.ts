@@ -1,13 +1,19 @@
+import { ApiProperty } from "@nestjs/swagger"
+
 export class LLMConfig {
-    apiUrl: string
+  apiUrl: string
 }
 
 export class GPTApiRequestDTO {
-  query: string
+  @ApiProperty({
+    example: "What is this context about?",
+    description: 'LLM request',
+  })
+  text: string
 }
 
-class GPTApiDocHash {}
-class GPTApiNodeInfo {}
+class GPTApiDocHash { }
+class GPTApiNodeInfo { }
 class GPTApiSourceNodeDTO {
   doc_hash: GPTApiDocHash
   node_info: GPTApiNodeInfo
