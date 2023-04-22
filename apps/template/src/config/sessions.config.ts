@@ -9,5 +9,7 @@ export default registerAs('sessions', () => {
     redisRetryAttempts: env.REDIS_RETRY_ATTEMPTS,
     redisRetryDelay: env.REDIS_RETRY_DELAY,
     redisUrl: env.REDIS_URL || 'redis://localhost:6379',
+    googleClientSecret: env.GOOGLE_CLIENT_SECRET || '',
+    googleClientID: env.GOOGLE_CLIENT_ID || '',
   };
 });

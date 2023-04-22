@@ -14,8 +14,10 @@ import { services } from './services';
 import { HttpLoggerMiddleware } from './middleware';
 import { commands } from './commands';
 import { resolvers } from './models';
-import {Context} from 'graphql-ws';
+import { Context } from 'graphql-ws';
 import { consoleSandbox } from '@sentry/utils';
+import { GoogleModule } from '@my/google';
+// import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry'; 
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 @Module({
@@ -32,6 +34,10 @@ import { consoleSandbox } from '@sentry/utils';
         store: redisStore,
       }),
     }),
+    GoogleModule.forRootAsync({                                                                      
+      inject: [ConfigService],                                                                       
+      useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),      
+    }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       // subscriptions: {
@@ -43,7 +49,6 @@ import { consoleSandbox } from '@sentry/utils';
             const { connectionParams, extra } = context;
             // user validation will remain the same as in the example above
             // when using with graphql-ws, additional context value should be stored in the extra field
-            // console.log('FUUUUUUUUUUUUUUUUUUUUUUUUUUCK');
             // extra.user = { user: {} };
           },
         },

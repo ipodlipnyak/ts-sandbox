@@ -1,3 +1,4 @@
+import { ConfigService } from '@nestjs/config';
 import {
   Controller,
   Get,
@@ -22,10 +23,12 @@ import {
 import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
 import { AuthGuard } from './../guards';
 import { UserService, RatingService } from './../services';
+import { OAuth2Client } from 'google-auth-library';
 
 @Controller('auth')
 export class AuthController {
   constructor(
+    private configService: ConfigService,
     private readonly userService: UserService,
     private readonly ratingService: RatingService,
   ) { }
@@ -123,18 +126,18 @@ export class AuthController {
       where: { email },
       select: [
         'id',
-        'role',
-        'active',
         'password',
-        'email',
-        'middleName',
-        'firstName',
-        'lastName',
-        'created',
-        'updated',
+        'active',
       ],
     });
-    if (!user || !user.active) {
+
+    /**
+     * Can not login by this strategy without password.
+     * Probably this user was using google authentication.
+     * He should go and set a password in his profile settings.
+     * Also should not show an inactive user... probably.
+     *  */ 
+    if (!user || !user.active || !user.password) {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
@@ -144,11 +147,10 @@ export class AuthController {
       throw new HttpException('Incorrect or missing credentials', HttpStatus.FORBIDDEN);
     }
 
-    result.status = ResponseStatusEnum.SUCCESS;
-    const whoami = { ...user };
-    delete whoami.password;
-    delete whoami.active;
-    session.whoami = whoami;
+    const isLoggedIn = await this.userService.loginByEmail(email);
+    if (isLoggedIn) {
+      result.status = ResponseStatusEnum.SUCCESS;
+    }
 
     return result;
   }
@@ -190,7 +192,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get()
-  @ApiOperation({ summary: 'Кто я такой' })
+  @ApiOperation({ summary: 'Who am I' })
   @ApiResponse({ status: 200, type: WhoAmIResponseDto })
   @ApiSecurity('user')
   @ApiSecurity('admin')

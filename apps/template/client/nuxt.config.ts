@@ -34,6 +34,8 @@ export default defineNuxtConfig({
   },
   */
   modules: [
+    /** @see https://nuxt.com/modules/robots */
+    ['@nuxtjs/robots', { /* module options */ }],
     '@pinia/nuxt',
     '@nuxtjs/apollo',
     async (options, nuxt) => {

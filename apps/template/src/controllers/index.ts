@@ -6,6 +6,7 @@ export * from './purchases.controller';
 export * from './track.controller';
 export * from './rating.controller';
 export * from './users.controller';
+export * from './google.controller';
 
 import { AppController } from './app.controller';
 import { AdminController } from './admin.controller';
@@ -15,6 +16,7 @@ import { PurchasesController } from './purchases.controller';
 import { TrackController } from './track.controller';
 import { RatingController } from './rating.controller';
 import { UsersController } from './users.controller';
+import { GoogleController } from './google.controller';
 
 export const controllers = [
   AppController,
@@ -25,4 +27,5 @@ export const controllers = [
   TrackController,
   RatingController,
   UsersController,
+  GoogleController,
 ];

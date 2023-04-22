@@ -1,18 +1,18 @@
 <template>
   <v-app light>
-    <v-app-bar name="header" app>
+    <!-- <v-app-bar name="header" app>
       Header
       <v-spacer />
       <v-btn v-if="loggedIn" @click.stop="logout" color="primary">Logout</v-btn>
-    </v-app-bar>
+    </v-app-bar> -->
 
     <v-main>
       <slot />
     </v-main>
 
-    <v-footer name="footer" app>
+    <!-- <v-footer name="footer" app>
       Footer
-    </v-footer>
+    </v-footer> -->
   </v-app>
 </template>
 
