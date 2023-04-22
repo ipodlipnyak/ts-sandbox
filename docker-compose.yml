@@ -41,8 +41,7 @@ services:
     command: /bin/bash -c "npm run start:prod"
     networks:
       - main
-      - proxy
-      #- traefik-hub
+      - traefik-hub
    # environment:
    #   - VIRTUAL_HOST=test.com
 
@@ -67,7 +66,6 @@ services:
     command: /bin/bash -c "npm run app:bubbles:prod"
     networks:
       - main
-      - proxy
    # environment:
    #   - VIRTUAL_HOST=test.com
 
@@ -78,5 +76,5 @@ networks:
   main:
     name: main
     driver: bridge
-  proxy:
-    # external: true
+  traefik-hub:
+    external: true
