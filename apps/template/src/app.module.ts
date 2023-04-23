@@ -18,7 +18,7 @@ import { Context } from 'graphql-ws';
 import { consoleSandbox } from '@sentry/utils';
 import { GoogleModule } from '@my/google';
 import { LLMModule } from '@my/llm';
-// import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry'; 
+// import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry';
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
 @Module({
@@ -35,13 +35,13 @@ import { LLMModule } from '@my/llm';
         store: redisStore,
       }),
     }),
-    GoogleModule.forRootAsync({                                                                      
-      inject: [ConfigService],                                                                       
-      useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),      
+    GoogleModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),
     }),
-    LLMModule.forRootAsync({                                                                      
-      inject: [ConfigService],                                                                       
-      useFactory: async (configService: ConfigService) => ({ ...configService.get('llm') }),      
+    LLMModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({ ...configService.get('llm') }),
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
@@ -69,7 +69,8 @@ import { LLMModule } from '@my/llm';
     }),
     ServeStaticModule.forRoot({
       // rootPath: join(__dirname, '../..', 'client/dist'),
-      rootPath: join(__dirname, '../..', 'apps/template/client'),
+      // rootPath: join(__dirname, '../..', 'apps/template/client'),
+      rootPath: join(__dirname, '../', 'client'),
     }),
     HttpModule,
     TypeOrmModule.forRootAsync({
