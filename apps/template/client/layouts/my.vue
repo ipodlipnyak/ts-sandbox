@@ -1,5 +1,5 @@
 <template>
-  <v-app id="inspire">
+  <v-app key="layoutMy">
     <v-system-bar>
       <v-spacer></v-spacer>
 
@@ -73,6 +73,7 @@
 
     <v-app-bar class="pr-4">
       <v-app-bar-nav-icon
+        v-if="mobile"
         @click.stop="showNavBar = !showNavBar"
       />
       <v-spacer></v-spacer>
