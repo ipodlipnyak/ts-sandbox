@@ -1,9 +1,14 @@
 <template>
-  <v-card class="ma-4 pa-4">
-      <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
-        :rules="[rules.required, rules.min]" :type="show1 ? 'text' : 'password'" name="input-10-1"
-        label="Normal with hint text" hint="At least 8 characters" counter @click:append="show1 = !show1"></v-text-field>
-  </v-card>
+  <v-container>
+    <v-card class="pa-2">
+      <v-form>
+        <v-text-field v-model="password" :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'"
+          :rules="[rules.required, rules.min]" :type="show1 ? 'text' : 'password'" name="input-10-1"
+          label="new pass" hint="At least 8 characters" counter
+          @click:append="show1 = !show1"></v-text-field>
+      </v-form>
+    </v-card>
+  </v-container>
 </template>
 
 <script lang="ts">
