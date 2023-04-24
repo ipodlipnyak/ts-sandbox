@@ -11,7 +11,13 @@ export default defineComponent({
       layout: 'my',
       scrollToTop: true,
       pageTransition: {
+        // name: 'scroll-x-transition',
         name: 'fade-transition',
+        mode: 'out-in'
+        // duration: {
+        //   enter: 1000,
+        //   leave: 0,
+        // },
       },
       layoutTransition: {
         name: 'fade-transition',

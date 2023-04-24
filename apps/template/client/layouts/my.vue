@@ -34,8 +34,8 @@
 
     <v-navigation-drawer
       width="244"
-      v-model="showNavBar"
-      temporary
+      :model-value="mobile ? showNavBar : true"
+      @update:model-value="showNavBar = $event"
     >
       <v-sheet
         v-if="!mobile"
