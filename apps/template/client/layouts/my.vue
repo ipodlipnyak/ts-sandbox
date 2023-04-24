@@ -34,8 +34,11 @@
 
     <v-navigation-drawer
       width="244"
+      v-model="showNavBar"
+      temporary
     >
       <v-sheet
+        v-if="!mobile"
         height="128"
         width="100%"
       ></v-sheet>
@@ -49,25 +52,12 @@
         >
         </v-list-item> -->
         <v-list-item
-          title="Dashboard"
-          prepend-icon="mdi-view-dashboard"
+          v-for="item in navTree"
+          :key="item.title"
+          :to="item.path"
+          :title="item.title"
+          :prepend-icon="item.icon"
           exact
-          to="/my/"
-        />
-        <v-list-item
-          title="Bot"
-          prepend-icon="mdi-robot-happy"
-          to="/my/bot"
-        />
-        <v-list-item
-          title="Settings"
-          prepend-icon="mdi-cog"
-          to="/my/settings"
-        />
-        <v-list-item
-          title="Events"
-          prepend-icon="mdi-calendar"
-          to="/my/events"
         />
         
         <v-list-item
@@ -82,6 +72,9 @@
     </v-navigation-drawer>
 
     <v-app-bar class="pr-4">
+      <v-app-bar-nav-icon
+        @click.stop="showNavBar = !showNavBar"
+      />
       <v-spacer></v-spacer>
 
       <v-responsive max-width="156">
@@ -132,14 +125,44 @@
   import {defineComponent, ref, computed, getCurrentInstance, watch} from 'vue';
   import {storeToRefs} from 'pinia';
   import {useAuthStore} from '../../client/stores';
+  import { useDisplay } from 'vuetify';
 
   export default defineComponent({
     setup(props, ctx) {
+      const { width, mobile } = useDisplay()
+
       const autStore = useAuthStore();
       const {logout} = autStore;
       const {loggedIn} = storeToRefs(autStore);
+      const navTree = [
+        {
+          title: 'Dashboard',
+          path: '/my',
+          icon: 'mdi-view-dashboard'
+        },
+        {
+          title: 'Bot',
+          path: '/my/bot',
+          icon: 'mdi-robot-happy'
+        },
+        {
+          title: 'Settings',
+          path: '/my/settings',
+          icon: 'mdi-cog'
+        },
+        {
+          title: 'Events',
+          path: '/my/events',
+          icon: 'mdi-calendar'
+        },
+      ];
+
+      const showNavBar = ref(false);
 
       return {
+        mobile,
+        showNavBar,
+        navTree,
         loggedIn,
         logout,
       };
