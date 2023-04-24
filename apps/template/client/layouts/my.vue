@@ -76,10 +76,12 @@
         v-if="mobile"
         @click.stop="showNavBar = !showNavBar"
       />
+
       <v-spacer></v-spacer>
 
       <v-responsive max-width="156">
         <v-text-field
+          type="search"
           bg-color="grey-lighten-2"
           class="rounded-pill overflow-hidden"
           density="compact"

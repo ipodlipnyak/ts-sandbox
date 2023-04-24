@@ -20,9 +20,8 @@ export class LLMService {
     ) {}
     async query(input: GPTApiRequestDTO): Promise<GPTApiResponseDTO> {
         const path = `${this.opts.apiUrl}?text=${input.text}`;
-        console.log(path);
         const { data } = await firstValueFrom(
-            this.httpService.get<any>(path).pipe(
+            this.httpService.get<any>(encodeURI(path)).pipe(
                 // catchError((error: any) => {
                 //     this.logger.error(error.response.data);
                 //     throw error;

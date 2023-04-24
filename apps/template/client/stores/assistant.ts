@@ -54,7 +54,7 @@ export const useAssistantStore = defineStore('assistant', {
     getters: {
         lastResponseText: (state): string => state.lastResponse?.response || '',
         history: (state): LogItem[] => state.log.sort((a,b) => {
-            return a.timestamp - b.timestamp;
+            return b.timestamp - a.timestamp;
         }), 
         historyFormatted (state): any[] {
             const newItemsList: any[] = [
