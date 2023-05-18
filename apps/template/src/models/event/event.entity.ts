@@ -31,6 +31,12 @@ export class Event extends BaseEntity {
     })
     description: string;
 
+    @Column({
+        type: 'daterange',
+        nullable: true,
+    })
+    daterange: Date;
+
     @CreateDateColumn()
     created: Date;
 
