@@ -11,7 +11,6 @@
         </div>
       </div>
     </v-timeline-item>
-
     <v-timeline-item dot-color="teal-lighten-3" size="small">
       <div class="d-flex">
         <strong class="me-4">3-4pm</strong>

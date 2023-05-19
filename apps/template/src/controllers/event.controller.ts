@@ -33,6 +33,7 @@ export class EventController {
   ) { }
 
   @UseGuards(AuthGuard)
+  @ApiSecurity('user')
   @ApiOperation({ summary: 'Get list of events' })
   @ApiResponse({ status: 200, type: RestListResponseDto })
   @ApiInternalServerErrorResponse({
@@ -54,11 +55,12 @@ export class EventController {
       limit: 0
     };
 
-    const list = await this.eventService.getAll();
+    // const list = await this.eventService.getAll();
+    const list = await this.googleService.getCalendar();
 
     result.payload = list;
-    result.total = list.length;
-    result.limit = list.length;
+    // result.total = list.length;
+    // result.limit = list.length;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
