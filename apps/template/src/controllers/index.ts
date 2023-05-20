@@ -8,7 +8,7 @@ export * from './rating.controller';
 export * from './users.controller';
 export * from './google.controller';
 export * from './llm.controller';
-export * from './event.controller';
+export * from './calendar.controller';
 
 import { AppController } from './app.controller';
 import { AdminController } from './admin.controller';
@@ -20,7 +20,7 @@ import { RatingController } from './rating.controller';
 import { UsersController } from './users.controller';
 import { GoogleController } from './google.controller';
 import { LLMController } from './llm.controller';
-import { EventController } from './event.controller';
+import { CalendarController } from './calendar.controller';
 
 export const controllers = [
   AppController,
@@ -33,5 +33,5 @@ export const controllers = [
   UsersController,
   GoogleController,
   LLMController,
-  EventController,
+  CalendarController,
 ];

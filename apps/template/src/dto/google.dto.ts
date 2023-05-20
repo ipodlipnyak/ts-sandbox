@@ -59,3 +59,33 @@ export class GoogleUserInfoDto {
   @ApiProperty({ example: 'abc161803398874def' })
   jti: string;
 }
+
+export class GoogleDateDto {
+  @ApiProperty({ example: '2015-05-28T09:00:00-07:00' })
+  dateTime: string;
+  @ApiProperty({ example: 'America/Los_Angeles' })
+  timeZone: string;
+}
+
+export class GoogleAttendeesDto {
+  @ApiProperty({ example: 'lpage@example.com' })
+  email: string;
+}
+
+/**
+ * @see https://developers.google.com/calendar/api/v3/reference/events/insert#examples
+ */
+export class GoogleCalendarEventDto {
+  @ApiProperty({ example: 'Google I/O 2015' })
+  summary: string;
+  @ApiProperty({ example: '800 Howard St., San Francisco, CA 94103' })
+  location: string;
+  @ApiProperty({ example: 'A chance to hear more about Google\'s developer products.' })
+  description: string;
+  @ApiProperty({ type: GoogleDateDto, isArray: false, description: 'The (inclusive) start time of the event. For a recurring event, this is the start time of the first instance' })
+  start: GoogleDateDto;
+  @ApiProperty({ type: GoogleDateDto, isArray: false, description: 'The (exclusive) end time of the event. For a recurring event, this is the end time of the first instance.' })
+  end: GoogleDateDto;
+  @ApiProperty({ type: GoogleAttendeesDto, isArray: true, description: 'The attendees of the event' })
+  attendees: GoogleAttendeesDto[];
+}

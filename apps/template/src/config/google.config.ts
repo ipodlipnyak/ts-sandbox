@@ -12,5 +12,6 @@ export default registerAs('google', () => {
      * @see https://github.com/googleapis/google-api-nodejs-client#service-account-credentials
      */
     applicationCredentials: env.GOOGLE_APPLICATION_CREDENTIALS || '',
+    mainCalendarId: env.GOOGLE_MAIN_CALENDAR_ID || 'primary',
   };
 });

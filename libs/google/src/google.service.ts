@@ -28,7 +28,7 @@ export class GoogleService {
         this.auth = new google.auth.GoogleAuth({
             keyFile: opts.applicationCredentials,
             scopes: SCOPES,
-        })
+        });
     }
 
     get ClientInstance() {
@@ -54,11 +54,12 @@ export class GoogleService {
 
     /**
      * Accept an invitation and insert calendar to service account calendars list.
-     * This methods helps to subscribe service account to existing calendars from another accounts.
+     * This method helps to subscribe service account to existing calendars from another accounts.
      * 
      * @param id calendar id with invitation
      * 
      * @see https://developers.google.com/calendar/api/v3/reference/calendarList/insert#python
+     * @see https://stackoverflow.com/questions/26064095/inserting-google-calendar-entries-with-service-account
      */
     async addCalendar(id: string) {
         const response = await this.calendarV3.calendarList.insert({
@@ -69,17 +70,8 @@ export class GoogleService {
         return response.data;
     }
 
-    /**
-     * @see https://stackoverflow.com/questions/26064095/inserting-google-calendar-entries-with-service-account
-     */
-    async getCalendar(): Promise<any[]> {
-        let response = undefined;
-        try {
-            response = await this.calendarV3.calendarList.list();
-        } catch(error) {
-            console.log(error);
-            //
-        }
-        return [response.data];
+    async getCalendarList() {
+        const response = await this.calendarV3.calendarList.list();
+        return response.data.items;
     }
 }
