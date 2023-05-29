@@ -5,7 +5,7 @@ import { RestResponseDto } from './rest-response.dto';
 
 export class GoogleInitDto {
   @ApiProperty({
-    example: 'https://accounts.google.com1234567890-abc123def456.apps.googleusercontent.com', 
+    example: 'https://accounts.google.com1234567890-abc123def456.apps.googleusercontent.com',
     description: 'Google web client Id',
   })
   clientId: string;
@@ -74,6 +74,7 @@ export class GoogleAttendeesDto {
 
 /**
  * @see https://developers.google.com/calendar/api/v3/reference/events/insert#examples
+ * @see https://developers.google.com/calendar/api/v3/reference/events#resource-representations
  */
 export class GoogleCalendarEventDto {
   @ApiProperty({ example: 'Google I/O 2015' })
@@ -88,4 +89,32 @@ export class GoogleCalendarEventDto {
   end: GoogleDateDto;
   @ApiProperty({ type: GoogleAttendeesDto, isArray: true, description: 'The attendees of the event' })
   attendees: GoogleAttendeesDto[];
+}
+
+/**
+ * @see https://developers.google.com/calendar/api/v3/reference/calendars#resource
+ */
+export class GoogleCalendarDto {
+  @ApiProperty({ example: 'calendarSummary', description: 'Title of the calendar' })
+  summary: string;
+  @ApiProperty({
+    example: 'America/Los_Angeles',
+    description: 'The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.',
+    required: false,
+  })
+  timeZone?: string;
+}
+
+export class GoogleCalendarAclScopeDto {
+  @ApiProperty({ example: 'user', description: 'The type of the scope' })
+  type: string;
+  @ApiProperty({ example: 'someuser@gmail.com', description: 'The email address of a user or group, or the name of a domain, depending on the scope type' })
+  value: string;
+}
+
+export class GoogleCalendarAclDto {
+  @ApiProperty({ example: 'owner', description: 'The role assigned to the scope' })
+  role: string;
+  @ApiProperty({ type: GoogleCalendarAclScopeDto, isArray: false, description: 'Acl scope' })
+  scope: GoogleCalendarAclScopeDto;
 }

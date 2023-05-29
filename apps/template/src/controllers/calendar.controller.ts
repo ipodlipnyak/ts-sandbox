@@ -3,9 +3,11 @@ import {
   Controller,
   Get,
   Post,
+  Delete,
   Session,
   UseGuards,
   Body,
+  Param,
   // Query,
   HttpStatus,
   HttpException,
@@ -18,6 +20,8 @@ import {
   JWTInputDto,
   RestListResponseDto,
   GoogleCalendarEventDto,
+  GoogleCalendarAclDto,
+GoogleCalendarDto,
 } from '../dto';
 import { AuthGuard, AdminGuard } from './../guards';
 import { GoogleService } from '@my/google';
@@ -69,6 +73,53 @@ export class CalendarController {
 
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
+  @ApiOperation({ summary: 'Get primary calendar' })
+  @ApiResponse({ status: 200, type: RestResponseDto })
+  @Get('primary')
+  async getPrimaryCalendar(): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+
+    const response = await this.googleService.calendarV3.calendars.get({
+      calendarId: 'primary',
+    });
+
+    result.payload = response.data;
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiSecurity('admin')
+  @ApiOperation({ summary: 'Create new calendar' })
+  @ApiResponse({ status: 200, type: RestListResponseDto })
+  @Post('')
+  async insertCalendar(
+    @Body() input: GoogleCalendarDto
+  ): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+
+    const response = await this.googleService.calendarV3.calendars.insert({
+      requestBody: {
+        summary: input.summary,
+        timeZone: input?.timeZone || undefined,
+      }
+    });
+
+    result.payload = response.statusText;
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
   @ApiOperation({ summary: 'Get list of events' })
   @ApiResponse({ status: 200, type: RestListResponseDto })
   @ApiInternalServerErrorResponse({
@@ -101,6 +152,7 @@ export class CalendarController {
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
   }
+
 
   /**
    * @see https://developers.google.com/calendar/api/v3/reference/events/insert#node.js
@@ -141,6 +193,140 @@ export class CalendarController {
         attendees: event.attendees || [],
       }
     })
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiSecurity('admin')
+  @ApiOperation({ summary: 'Details about specific calendar' })
+  @ApiResponse({ status: 200, type: RestListResponseDto })
+  @ApiInternalServerErrorResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'Not found',
+        },
+      ],
+    },
+  })
+  @Get(':id')
+  async getCalendar(@Param('id') id: string): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined, 
+    };
+    const response = await this.googleService.calendarV3.calendarList.get({
+      calendarId: id,
+    });
+
+    result.payload = response.data;
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiSecurity('admin')
+  @ApiOperation({ summary: 'Get Access Controll List (ACL) for a specific calendar' })
+  @ApiResponse({ status: 200, type: RestListResponseDto })
+  @ApiInternalServerErrorResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'Not found',
+        },
+      ],
+    },
+  })
+  @Get(':id/acl')
+  async getAcl(@Param('id') id: string): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined, 
+    };
+    const response = await this.googleService.calendarV3.acl.list({
+      calendarId: id,
+    });
+
+    result.payload = response.data;
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  /**
+   * @see https://developers.google.com/calendar/api/v3/reference/acl/insert#request-body
+   * @param id calendar id 
+   */
+  @UseGuards(AdminGuard)
+  @ApiSecurity('admin')
+  @ApiOperation({ summary: 'Add new rule in Access Controll List (ACL) for a specific calendar' })
+  @ApiResponse({ status: 200, type: RestListResponseDto })
+  @ApiInternalServerErrorResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'Not found',
+        },
+      ],
+    },
+  })
+  @Post(':id/acl')
+  async addAclRule(
+    @Param('id') id: string,
+    @Body() acl: GoogleCalendarAclDto,
+  ): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined, 
+    };
+    const response = await this.googleService.calendarV3.acl.insert({
+      calendarId: id,
+      requestBody: {
+        role: acl?.role || 'reader', // writer, owner, freeBusyReader, none
+        scope: {
+          type: acl?.scope?.type || 'user',
+          value: acl?.scope?.value || 'default',
+        }
+      }
+    });
+
+    result.payload = response.data;
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiSecurity('admin')
+  @ApiOperation({ summary: 'Remove rule from Access Controll List (ACL) for a specific calendar' })
+  @ApiResponse({ status: 200, type: RestListResponseDto })
+  @ApiInternalServerErrorResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'Not found',
+        },
+      ],
+    },
+  })
+  @Delete(':id/acl/:ruleId')
+  async removeAclRule(
+    @Param('id') id: string,
+    @Param('ruleId') ruleId: string,
+  ): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined, 
+    };
+    const response = await this.googleService.calendarV3.acl.delete({
+      calendarId: id,
+      ruleId: ruleId,
+    });
+
+    result.payload = response.data;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
