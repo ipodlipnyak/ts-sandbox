@@ -101,7 +101,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           # images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          images: ${{ inputs.app }}#${{ env.IMAGE_NAME }}
+          images: ${{ inputs.app }}:${{ env.IMAGE_NAME }}
 
         # Setting up Docker Buildx with docker-container driver is required
         # at the moment to be able to use a subdirectory with Git context
