@@ -14,26 +14,26 @@ on:
 #        required: true
 #        type: string
 #        default: ""
-    secrets:
-      sshHost:
-        description: "Host to deploy to"
-        required: true
-      sshUser:
-        description: "SSH username"
-        required: true
-      sshKey:
-        description: "SSH private key"
-        required: true
-      GH_REGISTRY_TOKEN:
-        required: true
-      DOCKER_HUB_USERNAME:
-        required: true
-      DOCKER_HUB_PASSWORD:
-        required: true
-      VAULT_URL:
-        required: true
-      VAULT_TOKEN:
-        required: true
+#    secrets:
+#      sshHost:
+#        description: "Host to deploy to"
+#        required: true
+#      sshUser:
+#        description: "SSH username"
+#        required: true
+#      sshKey:
+#        description: "SSH private key"
+#        required: true
+#      GH_REGISTRY_TOKEN:
+#        required: true
+#      DOCKER_HUB_USERNAME:
+#        required: true
+#      DOCKER_HUB_PASSWORD:
+#        required: true
+#      VAULT_URL:
+#        required: true
+#      VAULT_TOKEN:
+#        required: true
 
 jobs:
   test:
