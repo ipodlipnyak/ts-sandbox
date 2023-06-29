@@ -1,11 +1,11 @@
-name: bubbles test
+name: template test
 on:
   workflow_dispatch:
 jobs:
   call-workflow-passing-data:
     uses: ./.github/workflows/deploy-app.yml
     with:
-      app: bubbles
+      app: template 
       # webDomain: ""
       # dbDatabase: bubbles
       environment: test
