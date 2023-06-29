@@ -79,142 +79,171 @@ jobs:
     name: Build and push image
     needs: test
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
     steps:
       - name: Check Out Repo
         uses: actions/checkout@v3
-        with:
-          submodules: recursive
-          token: ${{ secrets.GH_REGISTRY_TOKEN }}
+        # with:
+        #   submodules: recursive
+        #   token: ${{ secrets.GH_REGISTRY_TOKEN }}
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v1
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_PASSWORD }}
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+
+        # Setting up Docker Buildx with docker-container driver is required
+        # at the moment to be able to use a subdirectory with Git context
       - name: Set up Docker Buildx
-        id: buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v2
 
-      - name: Build and push
-        id: docker_build
-        uses: docker/build-push-action@v2
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
         with:
           context: .
           file: ./apps/${{ inputs.app }}/Dockerfile
-          build-args: |
-            GH_REGISTRY_TOKEN=${{ secrets.GH_REGISTRY_TOKEN }}
           push: true
-          tags: centergamedev/${{ inputs.app }}-server:${{ inputs.environment }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+      # - name: Login to Docker Hub
+      #   uses: docker/login-action@v1
+      #   with:
+      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
+      #     password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-    - name: Checkout repo
-      uses: actions/checkout@v3
+      # - name: Set up Docker Buildx
+      #   id: buildx
+      #   uses: docker/setup-buildx-action@v1
 
-#    - name: Get secrets from hachicorp kv vault
-#      uses: ergrassa/vault-secrets-to-files@v1.0
-#      with:
-#        url: '${{ secrets.VAULT_URL }}'
-#        token: '${{ secrets.VAULT_TOKEN }}'
-#        engine: 'virtualshop-staging'
-#        path: './'
-#        debug: 'no'
+      # - name: Build and push
+      #   id: docker_build
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     context: .
+      #     file: ./apps/${{ inputs.app }}/Dockerfile
+      #     build-args: |
+      #       GH_REGISTRY_TOKEN=${{ secrets.GH_REGISTRY_TOKEN }}
+      #     push: true
+      #     tags: centergamedev/${{ inputs.app }}-server:${{ inputs.environment }}
 
-    - name: 'Create env files'
-      env:
-        APP: "${{ inputs.app }}"
-      run: |
-        mkdir -p apps/$APP
-        ls -a
-        mv $APP.db.env db.env
-        mv $APP.docker.env apps/$APP/docker.env
-
-    - name: 'Create env files'
-      env:
-        APP: "${{ inputs.app }}"
-        DEBUG: "${{ inputs.debug }}"
-        DB_DATABASE: "${{ inputs.dbDatabase }}"
-        DB_USER: "${{ secrets.dbUser }}"
-        DB_PASSWORD: "${{ secrets.dbPassword }}"
-        SECRET_KEY: "${{ secrets.APP_SECRET_KEY }}"
-        ADMIN_PASSWORD: "${{ secrets.adminPassword }}"
-        REDIS_URL: "${{ secrets.REDIS_URL }}"
-        WEB_DOMAIN: "${{ inputs.webDomain }}"
-      run: |
-        rm -f db.env
-        rm -f docker.env
-
-        # set envs for pgsql container
-        touch db.env
-        echo POSTGRES_DB="bl"  >> db.env
-        echo POSTGRES_USER=$DB_USER >> db.env
-        echo POSTGRES_PASSWORD=$DB_PASSWORD >> db.env
-
-        # set env for web-app container
-        mkdir -p apps/$APP
-        cd apps/$APP
-        touch docker.env
-        echo ADMIN_PASSWORD=$ADMIN_PASSWORD >> docker.env
-        echo SECRET_KEY=$SECRET_KEY >> docker.env
-        echo REDIS_URL=$REDIS_URL >> docker.env
-        echo WEB_DOMAIN=$WEB_DOMAIN >> docker.env
-        echo WEB_PROTOCOL="https" >> docker.env
-        echo DB_TYPE="postgres" >> docker.env
-        echo DB_HOST="db" >> docker.env
-        echo DB_USER=$DB_USER >> docker.env
-        echo DB_PASSWORD=$DB_PASSWORD >> docker.env
-        echo DB_DATABASE=$DB_DATABASE >> docker.env
-
-        if [$DEBUG = "true"]; then
-          echo DEBUG=$DEBUG >> docker.env
-        fi
-
-        cd ../..
-
-    - name: copy file via ssh key
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.sshHost }}
-        username: ${{ secrets.sshUser }}
-        key: ${{ secrets.sshKey }}
-        source: "docker-compose.*.yml, *.env, apps/**/*.env"
-        target: "~/deploy"
-
-    - name: executing remote ssh commands using password
-      uses: appleboy/ssh-action@master
-      env:
-        ENVIRONMENT: ${{ inputs.environment  }}
-        APP: ${{ inputs.app  }}
-      with:
-        host: ${{ secrets.sshHost }}
-        username: ${{ secrets.sshUser }}
-        key: ${{ secrets.sshKey }}
-        envs:
-          ENVIRONMENT,APP
-        script: |
-          cd ~/deploy
-          mkdir -p apps/bubbles
-          touch apps/bubbles/docker.env
-
-          mkdir -p apps/$APP
-          # ls -a
-          # cat docker.env
-          # cat db.env
-
-          mv docker.env ./apps/$APP/
-          docker-compose --profile $APP -f ~/deploy/docker-compose.$ENVIRONMENT.yml pull
-          docker-compose -f ~/deploy/docker-compose.$ENVIRONMENT.yml --profile $APP up  --force-recreate -d
-
-          if [ $ENVIRONMENT = "prod" ]; then
-            docker exec app-$APP npm run app:$APP:typeorm:migration:run
-            docker exec app-$APP npm run app:$APP:cli prod-init
-          else
-            docker exec app-$APP npm run app:$APP:cli db-reset
-            docker exec app-$APP npm run app:$APP:fixtures
-            docker exec app-$APP npm run app:$APP:cli dev-set-passwords test
-          fi
-          # docker-compose --profile $APP logs
+#   deploy:
+#     name: Deploy
+#     runs-on: ubuntu-latest
+#     needs: build
+#     steps:
+#     - name: Checkout repo
+#       uses: actions/checkout@v3
+# 
+# #    - name: Get secrets from hachicorp kv vault
+# #      uses: ergrassa/vault-secrets-to-files@v1.0
+# #      with:
+# #        url: '${{ secrets.VAULT_URL }}'
+# #        token: '${{ secrets.VAULT_TOKEN }}'
+# #        engine: 'virtualshop-staging'
+# #        path: './'
+# #        debug: 'no'
+# 
+#     - name: 'Create env files'
+#       env:
+#         APP: "${{ inputs.app }}"
+#       run: |
+#         mkdir -p apps/$APP
+#         ls -a
+#         mv $APP.db.env db.env
+#         mv $APP.docker.env apps/$APP/docker.env
+# 
+#     - name: 'Create env files'
+#       env:
+#         APP: "${{ inputs.app }}"
+#         DEBUG: "${{ inputs.debug }}"
+#         DB_DATABASE: "${{ inputs.dbDatabase }}"
+#         DB_USER: "${{ secrets.dbUser }}"
+#         DB_PASSWORD: "${{ secrets.dbPassword }}"
+#         SECRET_KEY: "${{ secrets.APP_SECRET_KEY }}"
+#         ADMIN_PASSWORD: "${{ secrets.adminPassword }}"
+#         REDIS_URL: "${{ secrets.REDIS_URL }}"
+#         WEB_DOMAIN: "${{ inputs.webDomain }}"
+#       run: |
+#         rm -f db.env
+#         rm -f docker.env
+# 
+#         # set envs for pgsql container
+#         touch db.env
+#         echo POSTGRES_DB="bl"  >> db.env
+#         echo POSTGRES_USER=$DB_USER >> db.env
+#         echo POSTGRES_PASSWORD=$DB_PASSWORD >> db.env
+# 
+#         # set env for web-app container
+#         mkdir -p apps/$APP
+#         cd apps/$APP
+#         touch docker.env
+#         echo ADMIN_PASSWORD=$ADMIN_PASSWORD >> docker.env
+#         echo SECRET_KEY=$SECRET_KEY >> docker.env
+#         echo REDIS_URL=$REDIS_URL >> docker.env
+#         echo WEB_DOMAIN=$WEB_DOMAIN >> docker.env
+#         echo WEB_PROTOCOL="https" >> docker.env
+#         echo DB_TYPE="postgres" >> docker.env
+#         echo DB_HOST="db" >> docker.env
+#         echo DB_USER=$DB_USER >> docker.env
+#         echo DB_PASSWORD=$DB_PASSWORD >> docker.env
+#         echo DB_DATABASE=$DB_DATABASE >> docker.env
+# 
+#         if [$DEBUG = "true"]; then
+#           echo DEBUG=$DEBUG >> docker.env
+#         fi
+# 
+#         cd ../..
+# 
+#     - name: copy file via ssh key
+#       uses: appleboy/scp-action@master
+#       with:
+#         host: ${{ secrets.sshHost }}
+#         username: ${{ secrets.sshUser }}
+#         key: ${{ secrets.sshKey }}
+#         source: "docker-compose.*.yml, *.env, apps/**/*.env"
+#         target: "~/deploy"
+# 
+#     - name: executing remote ssh commands using password
+#       uses: appleboy/ssh-action@master
+#       env:
+#         ENVIRONMENT: ${{ inputs.environment  }}
+#         APP: ${{ inputs.app  }}
+#       with:
+#         host: ${{ secrets.sshHost }}
+#         username: ${{ secrets.sshUser }}
+#         key: ${{ secrets.sshKey }}
+#         envs:
+#           ENVIRONMENT,APP
+#         script: |
+#           cd ~/deploy
+#           mkdir -p apps/bubbles
+#           touch apps/bubbles/docker.env
+# 
+#           mkdir -p apps/$APP
+#           # ls -a
+#           # cat docker.env
+#           # cat db.env
+# 
+#           mv docker.env ./apps/$APP/
+#           docker-compose --profile $APP -f ~/deploy/docker-compose.$ENVIRONMENT.yml pull
+#           docker-compose -f ~/deploy/docker-compose.$ENVIRONMENT.yml --profile $APP up  --force-recreate -d
+# 
+#           if [ $ENVIRONMENT = "prod" ]; then
+#             docker exec app-$APP npm run app:$APP:typeorm:migration:run
+#             docker exec app-$APP npm run app:$APP:cli prod-init
+#           else
+#             docker exec app-$APP npm run app:$APP:cli db-reset
+#             docker exec app-$APP npm run app:$APP:fixtures
+#             docker exec app-$APP npm run app:$APP:cli dev-set-passwords test
+#           fi
+#           # docker-compose --profile $APP logs
