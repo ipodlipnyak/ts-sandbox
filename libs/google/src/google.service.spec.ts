@@ -6,10 +6,16 @@ describe('GoogleService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GoogleService],
+      providers: [
+        GoogleService,
+        {
+          provide: 'MY_GOOGLE_OPTIONS',
+          useValue: [],
+        },
+      ],
     }).compile();
 
-    service = module.get<GoogleService>(GoogleService);
+    service = await module.resolve<GoogleService>(GoogleService);
   });
 
   it('should be defined', () => {
