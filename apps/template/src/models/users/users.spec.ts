@@ -3,10 +3,7 @@ import { TransactionCodeEnum } from './../balance';
 import * as sinon from 'sinon';
 
 const TEST_CONNECTION = 'testConnection';
-describe('users', () => {
-  describe('balance', () => {
-    let mockBalanceList: any[];
-    mockBalanceList = [
+const BALANCE_SAMPLE = [
       {
         id: 1,
         value: 100,
@@ -23,14 +20,16 @@ describe('users', () => {
         code: TransactionCodeEnum.PURCHASE,
       },
     ];
+describe('users', () => {
+  describe('balance', () => {
+    let mockBalanceList: any[] = BALANCE_SAMPLE;
     class MockUser extends Users {
-      balance: any[] = mockBalanceList;
-      role: any = '';
+      balance: any[] = BALANCE_SAMPLE;
     }
-
     let mockUser: MockUser;
 
     beforeAll(() => {
+      mockBalanceList = BALANCE_SAMPLE;
       mockUser = new MockUser();
     });
 
