@@ -35,6 +35,10 @@ on:
 #      VAULT_TOKEN:
 #        required: true
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 jobs:
 #  test:
 #    runs-on: ${{ matrix.os }}
@@ -92,7 +96,7 @@ jobs:
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v2
         with:
-          registry: ghcr.io
+          registry: ${{ env.REGISTRY }} 
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
@@ -100,8 +104,8 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          # images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          images: ${{ inputs.app }}${{ env.IMAGE_NAME }}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          # images: ${{ inputs.app }}${{ env.IMAGE_NAME }}
 
         # Setting up Docker Buildx with docker-container driver is required
         # at the moment to be able to use a subdirectory with Git context
