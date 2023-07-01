@@ -37,47 +37,47 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository }}#${{ inputs.app }}
 
 jobs:
-#  test:
-#    runs-on: ${{ matrix.os }}
-#
-#    strategy:
-#      matrix:
-#        os: [ubuntu-latest]
-#        node: [16]
-#
-#    steps:
-#      - name: Checkout 🛎
-#        uses: actions/checkout@master
-#
-#      - name: Setup node env 🏗
-#        uses: actions/setup-node@v3
-#        with:
-#          node-version: ${{ matrix.node }}
-#          check-latest: true
-#
-#      - name: Get yarn cache directory path 📦
-#        id: yarn-cache-dir-path
-#        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-#
-#      - name: Cache node_modules 📦
-#        uses: actions/cache@v3
-#        with:
-#          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-#          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-#          restore-keys: |
-#            ${{ runner.os }}-yarn-
-#
-#      - name: Install dependencies 👨🏻‍💻
-#        run: yarn install --immutable --prefer-offline
-#
-#      - name: Run linter 👀
-#        run: yarn lint
-#
-#      - name: Run tests 🧪
-#        run: yarn test
+  test:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [16]
+
+    steps:
+      - name: Checkout 🛎
+        uses: actions/checkout@master
+
+      - name: Setup node env 🏗
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node }}
+          check-latest: true
+
+      - name: Get yarn cache directory path 📦
+        id: yarn-cache-dir-path
+        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
+
+      - name: Cache node_modules 📦
+        uses: actions/cache@v3
+        with:
+          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
+          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-yarn-
+
+      - name: Install dependencies 👨🏻‍💻
+        run: yarn install --immutable --prefer-offline
+
+      - name: Run linter 👀
+        run: yarn lint
+
+      - name: Run tests 🧪
+        run: yarn test
 
   build:
     name: Build and push image
@@ -105,7 +105,6 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          # images: ${{ inputs.app }}${{ env.IMAGE_NAME }}
 
         # Setting up Docker Buildx with docker-container driver is required
         # at the moment to be able to use a subdirectory with Git context
@@ -120,26 +119,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-      # - name: Login to Docker Hub
-      #   uses: docker/login-action@v1
-      #   with:
-      #     username: ${{ secrets.DOCKER_HUB_USERNAME }}
-      #     password: ${{ secrets.DOCKER_HUB_PASSWORD }}
-
-      # - name: Set up Docker Buildx
-      #   id: buildx
-      #   uses: docker/setup-buildx-action@v1
-
-      # - name: Build and push
-      #   id: docker_build
-      #   uses: docker/build-push-action@v2
-      #   with:
-      #     context: .
-      #     file: ./apps/${{ inputs.app }}/Dockerfile
       #     build-args: |
       #       GH_REGISTRY_TOKEN=${{ secrets.GH_REGISTRY_TOKEN }}
-      #     push: true
-      #     tags: centergamedev/${{ inputs.app }}-server:${{ inputs.environment }}
 
 #   deploy:
 #     name: Deploy
