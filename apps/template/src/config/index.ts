@@ -6,6 +6,7 @@ import sessions from './sessions.config';
 import web from './web.config';
 import google from './google.config';
 import llm from './llm.config';
+import minecraft from './minecraft.config';
 
 export default {
   db,
