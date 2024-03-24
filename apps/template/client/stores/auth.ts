@@ -1,4 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
+import type { RestResponseDto } from '../../src/dto';
 // import { AxiosError } from 'axios';
 export const useAuthStore = defineStore('auth', {
   // arrow function recommended for full type inference
@@ -10,8 +11,9 @@ export const useAuthStore = defineStore('auth', {
   actions: {
     async fetchUserData() {
       const { data, pending, error, refresh } = await useFetch('/api/auth/');
-      if (data.value?.status === 'success') {
-        this.whoami = data.value.payload;
+      const response = data.value as RestResponseDto;
+      if (response.status === 'success') {
+        this.whoami = response.payload;
       }
     },
 

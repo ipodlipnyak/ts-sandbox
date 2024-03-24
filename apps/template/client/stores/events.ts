@@ -25,6 +25,13 @@ export const useEventsStore = defineStore('events', {
     }),
     actions: {
         async fetchAll() {
+            /*
+            const data: RestListResponseDto = await $fetch('/api/calendar/event');
+            if (data?.status === 'success') {
+              this.events = data.payload || [];
+            }
+            */
+
             const { data, pending, error, refresh } = await useFetch('/api/calendar/event');
             const response = data.value as RestListResponseDto;
             if (response?.status === 'success') {

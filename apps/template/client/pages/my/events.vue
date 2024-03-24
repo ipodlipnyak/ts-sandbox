@@ -42,6 +42,7 @@ export default defineComponent({
     const authStore = useAuthStore();
     const usersStore = useUsersStore();
     const eventsStore = useEventsStore();
+    
     eventsStore.fetchAll();
 
     return {
