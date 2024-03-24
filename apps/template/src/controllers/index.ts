@@ -9,6 +9,7 @@ export * from './users.controller';
 export * from './google.controller';
 export * from './llm.controller';
 export * from './calendar.controller';
+export * from './minecraft.controller';
 
 import { AppController } from './app.controller';
 import { AdminController } from './admin.controller';
@@ -21,6 +22,7 @@ import { UsersController } from './users.controller';
 import { GoogleController } from './google.controller';
 import { LLMController } from './llm.controller';
 import { CalendarController } from './calendar.controller';
+import { MinecraftController } from './minecraft.controller';
 
 export const controllers = [
   AppController,
@@ -34,4 +36,5 @@ export const controllers = [
   GoogleController,
   LLMController,
   CalendarController,
+  MinecraftController,
 ];

@@ -30,6 +30,8 @@ export class MinecraftController {
     private userService: UserService,
   ) { }
 
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
   @ApiOperation({ summary: 'Google client info required to initiate connection' })
   @ApiResponse({ status: 200, type: MinecraftStatusReponseDto })
   @Get('')
