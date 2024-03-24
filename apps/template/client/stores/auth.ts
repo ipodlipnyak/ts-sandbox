@@ -12,7 +12,7 @@ export const useAuthStore = defineStore('auth', {
     async fetchUserData() {
       const { data, pending, error, refresh } = await useFetch('/api/auth/');
       const response = data.value as RestResponseDto;
-      if (response.status === 'success') {
+      if (response?.status === 'success') {
         this.whoami = response.payload;
       }
     },

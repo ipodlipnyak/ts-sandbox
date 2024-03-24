@@ -14,6 +14,7 @@ export default {
   web,
   google,
   llm,
+  minecraft,
 };
 
-export const load = [db, sessions, cache, web, google, llm];
+export const load = [db, sessions, cache, web, google, llm, minecraft];

@@ -74,4 +74,18 @@ export class GoogleService {
         const response = await this.calendarV3.calendarList.list();
         return response.data.items;
     }
+
+    /**
+     * Invoke Google Cloud Functions
+     *  
+     * @param url Cloud Functions uses your function's url as the `targetAudience` value
+     * @returns all that cloud function returns
+     * 
+     * @see https://cloud.google.com/functions/docs/securing/authenticating#functions-bearer-token-example-nodejs 
+     */
+    async invokeGCFunction(url: string) {
+        const client = await this.auth.getIdTokenClient(url);
+        const response = await client.request({url});
+        return response.data;
+    }
 }
