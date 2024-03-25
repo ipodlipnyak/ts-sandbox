@@ -11,6 +11,7 @@ import { google, Auth } from 'googleapis';
 
 const SCOPES = [
     'https://www.googleapis.com/auth/calendar',
+    // 'https://www.googleapis.com/auth/compute',
     // 'https://www.googleapis.com/auth/calendar.readonly',
 ];
 
@@ -84,6 +85,9 @@ export class GoogleService {
      * @see https://cloud.google.com/functions/docs/securing/authenticating#functions-bearer-token-example-nodejs 
      */
     async invokeGCFunction(url: string) {
+        const targetAudience = url;
+        console.info(`request ${url} with target audience ${targetAudience}`);
+        debugger
         const client = await this.auth.getIdTokenClient(url);
         const response = await client.request({url});
         return response.data;

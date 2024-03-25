@@ -15,7 +15,7 @@ import { Purchase } from './../purchase';
 import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
-import { EventUser } from './../event';
+// import { EventUser } from './../event';
 
 export class UserExistError extends Error {
   name: 'USER_EXIST';
@@ -86,12 +86,14 @@ export class Users extends BaseEntity {
   })
   track: Track;
 
+  /*
   @ManyToOne(() => EventUser, (event) => event.user, {
     onDelete: 'SET NULL',
     eager: false,
     nullable: true,
   })
   events: EventUser;
+  */
 
 
   /**

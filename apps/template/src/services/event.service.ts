@@ -1,3 +1,4 @@
+/*
 import { Injectable, Scope, Inject } from '@nestjs/common';
 import { Users, UserRole, UsersResolver, Event } from './../models';
 import { REQUEST } from '@nestjs/core';
@@ -12,3 +13,4 @@ export class EventsService {
     return result;
   }
 }
+*/

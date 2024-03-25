@@ -81,7 +81,7 @@ export class UserService {
     }
     const user = await Users.findOne({
       where: { id },
-      relations: ['balance', 'purchases'],
+      // relations: ['balance', 'purchases'],
     });
     return user;
   }

@@ -26,7 +26,7 @@ GoogleCalendarDto,
 import { AuthGuard, AdminGuard } from './../guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
-import { EventsService, UserService } from '../services';
+import { /* EventsService,*/ UserService } from '../services';
 
 @Controller('calendar')
 export class CalendarController {
@@ -34,7 +34,7 @@ export class CalendarController {
     private googleService: GoogleService,
     private configService: ConfigService,
     private userService: UserService,
-    private eventService: EventsService,
+    // private eventService: EventsService,
   ) { }
 
   @UseGuards(AdminGuard)
