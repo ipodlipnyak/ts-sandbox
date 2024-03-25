@@ -98,7 +98,6 @@ export class GoogleController {
     session.google_user_info = payload;
 
     const isLoggedIn = await this.userService.loginByEmail(payload.email);
-    debugger
     const user = await this.userService.getUser();
    
     // update user name
