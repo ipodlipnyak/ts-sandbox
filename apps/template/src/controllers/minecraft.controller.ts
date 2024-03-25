@@ -9,6 +9,7 @@ import {
   // Query,
   HttpStatus,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiSecurity, ApiBadRequestResponse, ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import {
@@ -24,6 +25,7 @@ import { UserService } from '../services';
 
 @Controller('minecraft')
 export class MinecraftController {
+  private readonly logger = new Logger(MinecraftController.name);
   constructor(
     private googleService: GoogleService,
     private configService: ConfigService,
@@ -36,17 +38,19 @@ export class MinecraftController {
   @ApiResponse({ status: 200, type: MinecraftStatusReponseDto })
   @Get('')
   async getSrvStatus(): Promise<MinecraftStatusReponseDto> {
-    const result = {
+    let result = {
       status: ResponseStatusEnum.ERROR,
       payload: undefined,
     };
 
-    const statusUrl = this.configService.get('minecraft.statusUrl');
-    const response = await this.googleService.invokeGCFunction(statusUrl);
+    try {
+      const statusUrl = this.configService.get('minecraft.statusUrl');
+      const response = await this.googleService.invokeGCFunction(statusUrl);
+      result = response as MinecraftStatusReponseDto;
+    } catch (error) {
+      this.logger.error(error);
+    }
 
-    result.payload = response;
-
-    result.status = ResponseStatusEnum.SUCCESS;
     return result;
   }
 

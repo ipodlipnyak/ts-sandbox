@@ -3,7 +3,7 @@ import { Users, UserRole, UsersResolver } from './../models';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RatingService } from './rating.service';
-import { MyRatingItemDto } from './../dto';
+import { MyRatingItemDto, SessionDto } from './../dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -84,5 +84,9 @@ export class UserService {
       relations: ['balance', 'purchases'],
     });
     return user;
+  }
+
+  async getSession(): Promise<SessionDto> {
+    return await this.req.session;
   }
 }

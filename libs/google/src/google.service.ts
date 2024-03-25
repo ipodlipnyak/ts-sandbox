@@ -11,14 +11,15 @@ import { google, Auth } from 'googleapis';
 
 const SCOPES = [
     'https://www.googleapis.com/auth/calendar',
-    // 'https://www.googleapis.com/auth/compute',
     // 'https://www.googleapis.com/auth/calendar.readonly',
+    // 'https://www.googleapis.com/auth/compute',
 ];
 
 @Injectable({ scope: Scope.REQUEST })
 export class GoogleService {
     private client: OAuth2Client;
     private auth: Auth.GoogleAuth;
+    private authNoScope: Auth.GoogleAuth;
 
     constructor(@Inject('MY_GOOGLE_OPTIONS') readonly opts?: any) {
         if (!(opts && opts.clientId)) {
@@ -29,6 +30,10 @@ export class GoogleService {
         this.auth = new google.auth.GoogleAuth({
             keyFile: opts.applicationCredentials,
             scopes: SCOPES,
+        });
+
+        this.authNoScope = new google.auth.GoogleAuth({
+            keyFile: opts.applicationCredentials,
         });
     }
 
@@ -85,10 +90,7 @@ export class GoogleService {
      * @see https://cloud.google.com/functions/docs/securing/authenticating#functions-bearer-token-example-nodejs 
      */
     async invokeGCFunction(url: string) {
-        const targetAudience = url;
-        console.info(`request ${url} with target audience ${targetAudience}`);
-        debugger
-        const client = await this.auth.getIdTokenClient(url);
+        const client = await this.authNoScope.getIdTokenClient(url);
         const response = await client.request({url});
         return response.data;
     }
