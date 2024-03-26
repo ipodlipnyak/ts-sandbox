@@ -11,9 +11,14 @@ export class MinecraftStatusDto {
   name: string;
   @ApiProperty({
     example: 'TERMINATED',
-    description: 'Sever status',
+    description: 'Server status. TERMINATED or RUNNING',
   })
   status: string;
+  @ApiProperty({
+    example: '123.123.213.321',
+    description: 'External ip to connect to. Empty when server terminated',
+  })
+  externalIp: string;
   @ApiProperty({
     example: '2024-03-17T10:16:12.040-07:00',
     description: 'Last time server start',
