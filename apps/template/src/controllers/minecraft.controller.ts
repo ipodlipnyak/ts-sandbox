@@ -38,7 +38,7 @@ export class MinecraftController {
   @ApiSecurity('user')
   @ApiOperation({ summary: 'Google client info required to initiate connection' })
   @ApiResponse({ status: 200, type: MinecraftStatusReponseDto })
-  @Post('')
+  @Get('')
   async getSrvStatus(
     @Session() session: Record<string, any>,
     @Ip() ip

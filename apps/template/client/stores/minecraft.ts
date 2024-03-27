@@ -11,7 +11,7 @@ export const useMinecraftStore = defineStore('minecraft', {
         async fetchStatus() {
             this.mcStatusPending = true;
 
-            const { data, pending, error, refresh } = await useFetch('/api/minecraft/');
+            const { data, pending, error, refresh } = await useFetch('/api/minecraft');
             const response = data.value as MinecraftStatusReponseDto;
             if (response?.status === 'success') {
                 this.mcStatus = response.payload;
