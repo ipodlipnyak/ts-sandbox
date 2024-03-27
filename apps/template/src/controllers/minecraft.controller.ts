@@ -36,7 +36,7 @@ export class MinecraftController {
 
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
-  @ApiOperation({ summary: 'Google client info required to initiate connection' })
+  @ApiOperation({ summary: 'Get server status' })
   @ApiResponse({ status: 200, type: MinecraftStatusReponseDto })
   @Get('')
   async getSrvStatus(
@@ -55,8 +55,71 @@ export class MinecraftController {
         ip
       };
 
-      const statusUrl = this.configService.get('minecraft.statusUrl');
-      const response = await this.googleService.invokeGCFunction(statusUrl, data);
+      const url = this.configService.get('minecraft.statusUrl');
+      const response = await this.googleService.invokeGCFunction(url, data);
+      result = response as MinecraftStatusReponseDto;
+    } catch (error) {
+      this.logger.error(error);
+    }
+
+    return result;
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
+  @ApiOperation({ summary: 'Start server' })
+  @ApiResponse({ status: 200, type: MinecraftStatusReponseDto })
+  @Post('start')
+  async startSrv(
+    @Session() session: Record<string, any>,
+    @Ip() ip
+  ): Promise<MinecraftStatusReponseDto> {
+    let result = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+
+    try {
+      const email = (await this.userService.getUser()).email;
+      const data: MinecraftPlayerDto = {
+        email,
+        ip
+      };
+
+      const url = this.configService.get('minecraft.startUrl');
+      debugger
+      const response = await this.googleService.invokeGCFunction(url, data);
+      result = response as MinecraftStatusReponseDto;
+    } catch (error) {
+      this.logger.error(error);
+    }
+
+    return result;
+  }
+
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
+  @ApiOperation({ summary: 'Stop server' })
+  @ApiResponse({ status: 200, type: MinecraftStatusReponseDto })
+  @Post('stop')
+  async stopSrv(
+    @Session() session: Record<string, any>,
+    @Ip() ip
+  ): Promise<MinecraftStatusReponseDto> {
+    let result = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+
+    try {
+      const email = (await this.userService.getUser()).email;
+      const data: MinecraftPlayerDto = {
+        email,
+        ip
+      };
+
+      const url = this.configService.get('minecraft.stopUrl');
+      const response = await this.googleService.invokeGCFunction(url, data);
       result = response as MinecraftStatusReponseDto;
     } catch (error) {
       this.logger.error(error);
