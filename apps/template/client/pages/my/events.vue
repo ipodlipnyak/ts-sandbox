@@ -1,48 +1,25 @@
 <template>
   <v-timeline side="end" align="start">
-    <v-timeline-item dot-color="pink" size="small">
-      <div class="d-flex">
-        <strong class="me-4">5pm</strong>
+    <v-timeline-item v-for="event in eventsStore.allEvents" :key="event.id" :dot-color="event.color" size="small">
+
+      <template v-slot:opposite>
+        <div
+          :class="`pt-1 headline font-weight-bold text-${event.color}`"
+          v-text="event.start"
+        ></div>
+      </template>
+
+      <v-card color="transparent" elevation="0" class="pa-4" :href="event.htmlLink" target="_blank">
         <div>
-          <strong>New Icon</strong>
-          <div class="text-caption">
-            Mobile App
+          <h2 :class="`mt-n1 headline font-weight-light mb-4 text-${event.color}`">
+            {{ event.summary }}
+          </h2>
+          <div>
+            {{ event.description }}
           </div>
         </div>
-      </div>
-    </v-timeline-item>
+      </v-card>
 
-    <v-timeline-item dot-color="teal-lighten-3" size="small">
-      <div class="d-flex">
-        <strong class="me-4">3-4pm</strong>
-        <div>
-          <strong>Design Stand Up</strong>
-          <div class="text-caption mb-2">
-            Hangouts
-          </div>
-        </div>
-      </div>
-    </v-timeline-item>
-
-    <v-timeline-item dot-color="pink" size="small">
-      <div class="d-flex">
-        <strong class="me-4">12pm</strong>
-        <div>
-          <strong>Lunch break</strong>
-        </div>
-      </div>
-    </v-timeline-item>
-
-    <v-timeline-item dot-color="teal-lighten-3" size="small">
-      <div class="d-flex">
-        <strong class="me-4">9-11am</strong>
-        <div>
-          <strong>Finish Home Screen</strong>
-          <div class="text-caption">
-            Web App
-          </div>
-        </div>
-      </div>
     </v-timeline-item>
   </v-timeline>
 </template>
@@ -52,6 +29,7 @@ import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
 import { useAuthStore } from '@/stores/auth';
 import { useUsersStore } from '@/stores/users';
+import { useEventsStore } from '@/stores/events';
 
 export default defineComponent({
   middleware(ctx) {
@@ -63,11 +41,15 @@ export default defineComponent({
     const layout = useLayout();
     const authStore = useAuthStore();
     const usersStore = useUsersStore();
+    const eventsStore = useEventsStore();
+    
+    eventsStore.fetchAll();
 
     return {
       display,
       authStore,
       usersStore,
+      eventsStore,
     };
   },
 })

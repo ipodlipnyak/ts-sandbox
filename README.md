@@ -6,7 +6,25 @@
 
 ```mermaid
 erDiagram
-    USER ||--|{ SESSION : "Authorisation over sessions"
+    USER {
+        email string
+        password string
+        role number
+    }
+    EVENT {
+        start dateFormat
+        end dateFormat
+    }
+    EVENT-USER {
+        eventId int
+        userId int
+    }
+    SESSION {
+        sid int
+    }
+    USER 1--0+ SESSION : "Authorisation over sessions"
+    USER 1--0+ EVENT-USER : "participate"
+    EVENT 1--1+ EVENT-USER : "participants"
 ```
 
 ## CI/CD

@@ -11,3 +11,4 @@ export * from './rating.dto';
 export * from './track.dto';
 export * from './google.dto';
 export * from './llm.dto';
+export * from './minecraft.dto';

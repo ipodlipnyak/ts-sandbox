@@ -36,12 +36,12 @@ services:
       - "db"
     env_file:
       - apps/template/docker.env
-    restart:
-      unless-stopped
+        # restart:
+        #   unless-stopped
     command: /bin/bash -c "npm run start:prod"
     networks:
       - main
-      - traefik-hub
+        #- traefik-hub
    # environment:
    #   - VIRTUAL_HOST=test.com
 
@@ -75,6 +75,6 @@ volumes:
 networks:
   main:
     name: main
-    driver: bridge
-  traefik-hub:
-    external: true
+ #   driver: bridge
+ #  traefik-hub:
+ #    external: true
