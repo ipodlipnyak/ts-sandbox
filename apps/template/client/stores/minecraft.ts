@@ -5,6 +5,7 @@ export const useMinecraftStore = defineStore('minecraft', {
     state: () => ({
         mcStatus: {} as MinecraftStatusDto,
         mcStatusPending: false,
+        mcOnOffPending: false,
     }),
 
     actions: {
@@ -19,13 +20,50 @@ export const useMinecraftStore = defineStore('minecraft', {
 
             this.mcStatusPending = false;
         },
+        async startServer() {
+            this.mcOnOffPending = true;
+
+            const { data, pending, error, refresh } = await useFetch('/api/minecraft/start', {
+                method: 'post',
+            });
+            const response = data.value as MinecraftStatusReponseDto;
+            if (response?.status === 'success') {
+                await this.fetchStatus();
+            }
+
+            this.mcOnOffPending = false;
+        },
+        async stopServer() {
+            this.mcOnOffPending = true;
+
+            const { data, pending, error, refresh } = await useFetch('/api/minecraft/stop', {
+                method: 'post',
+            });
+            const response = data.value as MinecraftStatusReponseDto;
+            if (response?.status === 'success') {
+                await this.fetchStatus();
+            }
+
+            this.mcOnOffPending = false;
+        },
+        async switchOnOffServer() {
+            if (this.isPending) {
+                return;
+            }
+
+            if (this.isOnlineGetter) {
+                await this.stopServer();
+            } else {
+                await this.startServer();
+            }
+        }
     },
 
     getters: {
         mcStatusGetter: (state): string => state.mcStatus.status || "UNKNOWN", 
         isOnlineGetter: (state): boolean => state.mcStatus.status === "RUNNING",
         mcIpGetter: (state): string => state.mcStatus.externalIp || "x.x.x.x",
-        isPending: (state): boolean => state.mcStatusPending,
+        isPending: (state): boolean => state.mcStatusPending || state.mcOnOffPending,
     },
 });
 

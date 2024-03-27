@@ -52,6 +52,11 @@
         color="green"
         inset
         hide-details
+        :loading="mcStore.isPending"
+        @update:model-value="mcStore.switchOnOffServer"
+        :indeterminate="switchIndeterminate"
+        :disabled="mcStore.isPending"
+        :model-value="switchValue"
       ></v-switch>
 
       <v-spacer></v-spacer>
@@ -84,9 +89,21 @@ export default defineComponent({
       navigator.clipboard.writeText(textToCopy);
     }
 
+    const switchValue = ref(false);
+    const switchIndeterminate = ref(true);
+    watch(
+      () => mcStore.mcStatus,
+      () => {
+        switchValue.value = mcStore.isOnlineGetter;
+        switchIndeterminate.value = false;
+      }
+    );
+
     return {
       copyToClipboard,
       mcStore,
+      switchValue,
+      switchIndeterminate,
     }
   },
 })
