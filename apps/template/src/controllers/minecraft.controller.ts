@@ -11,6 +11,7 @@ import {
   HttpException,
   Logger,
   Ip,
+  Req,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiSecurity, ApiBadRequestResponse, ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import {
@@ -34,6 +35,22 @@ export class MinecraftController {
     private userService: UserService,
   ) { }
 
+  /**
+   * Mapped ip is a mix of ipv6 and ipv4.
+   * I probably making a crime but i really need 
+   * to extract ipv4 from mapped ip.
+   * 
+   * @param mappedIp ::ffff:127.0.0.1
+   * @returns 127.0.0.1
+   * 
+   * @see https://stackoverflow.com/a/33790357/1168623
+   */
+  convertMappedIpToIPV4(mappedIp: string): string {
+    const re = /\d*\.\d*\.\d*\.\d*/g;
+    const ipV4 = re.exec(mappedIp)[0]
+    return ipV4;
+  }
+
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
   @ApiOperation({ summary: 'Get server status' })
@@ -52,7 +69,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip
+        ip: this.convertMappedIpToIPV4(ip)
       };
 
       const url = this.configService.get('minecraft.statusUrl');
@@ -72,7 +89,8 @@ export class MinecraftController {
   @Post('start')
   async startSrv(
     @Session() session: Record<string, any>,
-    @Ip() ip
+    @Ip() ip,
+    @Req() request,
   ): Promise<MinecraftStatusReponseDto> {
     let result = {
       status: ResponseStatusEnum.ERROR,
@@ -83,11 +101,10 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip
+        ip: this.convertMappedIpToIPV4(ip)
       };
 
       const url = this.configService.get('minecraft.startUrl');
-      debugger
       const response = await this.googleService.invokeGCFunction(url, data);
       result = response as MinecraftStatusReponseDto;
     } catch (error) {
@@ -115,7 +132,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip
+        ip: this.convertMappedIpToIPV4(ip)
       };
 
       const url = this.configService.get('minecraft.stopUrl');
