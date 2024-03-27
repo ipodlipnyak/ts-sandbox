@@ -89,9 +89,9 @@ export class GoogleService {
      * 
      * @see https://cloud.google.com/functions/docs/securing/authenticating#functions-bearer-token-example-nodejs 
      */
-    async invokeGCFunction(url: string) {
+    async invokeGCFunction(url: string, data?: any) {
         const client = await this.authNoScope.getIdTokenClient(url);
-        const response = await client.request({url});
+        const response = await client.request({method: "POST", url, data});
         return response.data;
     }
 }
