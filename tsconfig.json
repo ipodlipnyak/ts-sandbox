@@ -32,6 +32,12 @@
       "@my/google/*": [
         "libs/google/src/*"
       ],
+      "@my/cloudflare": [
+        "libs/cloudflare/src"
+      ],
+      "@my/cloudflare/*": [
+        "libs/cloudflare/src/*"
+      ],
       "@my/llm": [
         "libs/llm/src"
       ],

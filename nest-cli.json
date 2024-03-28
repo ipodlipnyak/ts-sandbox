@@ -18,6 +18,15 @@
         "tsConfigPath": "libs/sentry/tsconfig.lib.json"
       }
     },
+    "cloudflare": {
+      "type": "library",
+      "root": "libs/cloudflare",
+      "entryFile": "index",
+      "sourceRoot": "libs/cloudflare/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/cloudflare/tsconfig.lib.json"
+      }
+    },
     "google": {
       "type": "library",
       "root": "libs/google",

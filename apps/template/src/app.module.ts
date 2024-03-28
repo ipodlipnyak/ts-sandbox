@@ -17,6 +17,7 @@ import { resolvers } from './models';
 import { Context } from 'graphql-ws';
 import { consoleSandbox } from '@sentry/utils';
 import { GoogleModule } from '@my/google';
+import { CloudflareModule } from '@my/cloudflare';
 import { LLMModule } from '@my/llm';
 // import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry';
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
@@ -39,6 +40,7 @@ import { LLMModule } from '@my/llm';
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),
     }),
+    CloudflareModule,
     LLMModule.forRootAsync({
       inject: [ConfigService],
       useFactory: async (configService: ConfigService) => ({ ...configService.get('llm') }),

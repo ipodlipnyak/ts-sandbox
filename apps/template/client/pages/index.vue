@@ -13,12 +13,16 @@
 
           <v-card-actions>
             <v-row>
+
+              <!--
               <v-col>
                 <v-btn :size="display.smAndDown ? 'large' : 'x-large'" depressed to="/login" nuxt class="px-8" dark
                   color="green" block>
                   Войти
                 </v-btn>
               </v-col>
+              -->
+
               <v-col>
                 <!--
                 <v-btn :large="display.smAndDown" :x-large="display.mdAndUp" depressed

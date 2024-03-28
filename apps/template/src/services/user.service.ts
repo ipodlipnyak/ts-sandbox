@@ -3,7 +3,7 @@ import { Users, UserRole, UsersResolver } from './../models';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RatingService } from './rating.service';
-import { MyRatingItemDto, SessionDto } from './../dto';
+import { MyRatingItemDto, SessionDto, UserNameDto } from './../dto';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -50,6 +50,59 @@ export class UserService {
     delete whoami.active;
     this.req.session.whoami = whoami;
     return true;
+  }
+
+  /**
+   * Refresh session fields with user data
+   */
+  async refreshWhoami() {
+    const user = await this.getUser();
+
+    this.req.session.whoami = { 
+      ...this.req.session.whoami,
+      ...{
+        role: user.role,
+        email: user.email,
+        middleName: user.middleName,
+        lastName: user.lastName,
+        firstName: user.firstName,
+        updated: user.updated,
+      }
+    };
+
+  }
+
+  /**
+   * Update name fields for current user 
+   * @param name 
+   * @returns 
+   */
+  async updateName(name: UserNameDto): Promise<boolean> {
+    let result = false;
+
+    const user = await this.getUser();
+    let isDirty = false;
+
+    if (name?.firstName && name.firstName !== user.firstName) {
+      user.firstName = name.firstName;
+      isDirty = true;
+    }
+    if (name?.middleName && name.middleName !== user.middleName) {
+      user.middleName = name.middleName;
+      isDirty = true;
+    }
+    if (name?.lastName && name.lastName !== user.lastName) {
+      user.lastName = name.lastName;
+      isDirty = true;
+    }
+
+    if (isDirty) {
+      await user.save();
+      await this.refreshWhoami();
+      result = true;
+    }
+
+    return result;
   }
 
   /**
