@@ -10,7 +10,7 @@ import { gqlCheckRoleMiddleware } from './../middleware/gql-check-role-middlewar
 import {registerEnumType} from '@nestjs/graphql';
 
 registerEnumType(UserRole, {
-  name: 'UserRole', 
+  name: 'UserRole',
 });
 
 @ObjectType()
@@ -44,13 +44,16 @@ export class UserInputDto {
   email: string;
 }
 
-export class UserPublicDto {
+export class UserNameDto {
   @ApiProperty({ example: 'John', description: 'Имя' })
   firstName: string;
   @ApiProperty({ example: 'Mc', description: 'Отчество' })
   middleName: string;
   @ApiProperty({ example: 'Goofin', description: 'Фамилия' })
   lastName: string;
+}
+
+export class UserPublicDto extends UserNameDto {
   @ApiProperty({ description: 'Трэк' })
   track?: TrackItemDto;
 }
