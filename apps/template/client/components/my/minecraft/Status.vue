@@ -1,7 +1,7 @@
 <template>
   <v-card
     height="200"
-    width="400"
+    max-width="400"
     class="my-mc-status"
     image="https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png"
   >
