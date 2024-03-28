@@ -51,11 +51,17 @@ export const useMinecraftStore = defineStore('minecraft', {
                 return;
             }
 
+            if (!this.isPlayerHaveAccess) {
+                await this.startServer();
+                return;
+            }
+
             if (this.isOnlineGetter) {
                 await this.stopServer();
-            } else {
-                await this.startServer();
+                return;
             }
+            
+            await this.startServer();
         }
     },
 
@@ -64,6 +70,7 @@ export const useMinecraftStore = defineStore('minecraft', {
         isOnlineGetter: (state): boolean => state.mcStatus.status === "RUNNING",
         mcIpGetter: (state): string => state.mcStatus.externalIp || "x.x.x.x",
         isPending: (state): boolean => state.mcStatusPending || state.mcOnOffPending,
+        isPlayerHaveAccess: (state): boolean => state.mcStatus.isPlayerHaveAccess || false,
     },
 });
 

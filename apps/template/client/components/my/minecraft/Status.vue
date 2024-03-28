@@ -49,12 +49,12 @@
     <v-card-actions>
       <v-switch
         class="ml-2"
-        color="green"
+        :color="switchColor"
         inset
         hide-details
         :loading="mcStore.isPending"
         @update:model-value="mcStore.switchOnOffServer"
-        :indeterminate="switchIndeterminate"
+        :indeterminate="switchIndeterminateComputed"
         :disabled="mcStore.isPending"
         :model-value="switchValue"
       ></v-switch>
@@ -80,6 +80,7 @@
 import { defineComponent, computed, getCurrentInstance } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
 import { useMinecraftStore } from '@/stores/minecraft';
+import { resourceLimits } from 'worker_threads';
 
 export default defineComponent({
   setup(props, ctx) {
@@ -91,6 +92,22 @@ export default defineComponent({
 
     const switchValue = ref(false);
     const switchIndeterminate = ref(true);
+    const switchIndeterminateComputed = computed((): boolean => {
+      if (!mcStore.isPlayerHaveAccess) {
+        return true;
+      }
+
+      return switchIndeterminate.value;
+    });
+    
+    const switchColor = computed((): string => {
+      let color = 'green';
+      if (!mcStore.isPlayerHaveAccess) {
+        color = 'orange';
+      }
+      return color;
+    });
+    
     watch(
       () => mcStore.mcStatus,
       () => {
@@ -103,7 +120,8 @@ export default defineComponent({
       copyToClipboard,
       mcStore,
       switchValue,
-      switchIndeterminate,
+      switchIndeterminateComputed,
+      switchColor,
     }
   },
 })
