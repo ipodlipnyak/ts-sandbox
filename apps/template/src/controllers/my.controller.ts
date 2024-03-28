@@ -51,25 +51,7 @@ export class MyController {
     };
 
     try {
-      const user = await this.userService.getUser();
-      let isDirty = false;
-
-      if (name?.firstName && name.firstName !== user.firstName) {
-        user.firstName = name.firstName;
-        isDirty = true;
-      }
-      if (name?.middleName && name.middleName !== user.middleName) {
-        user.middleName = name.middleName;
-        isDirty = true;
-      }
-      if (name?.lastName && name.lastName !== user.lastName) {
-        user.lastName = name.lastName;
-        isDirty = true;
-      }
-
-      if (isDirty) {
-        user.save()
-      }
+      await this.userService.updateName(name);
       result.status = ResponseStatusEnum.SUCCESS;
     } catch(error) {
       this.logger.error(error);
