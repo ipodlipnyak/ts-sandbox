@@ -25,6 +25,7 @@ import { AuthGuard } from './../guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
 import { UserService } from '../services';
+import { CloudflareService } from '@my/cloudflare';
 
 @Controller('minecraft')
 export class MinecraftController {
@@ -33,23 +34,9 @@ export class MinecraftController {
     private googleService: GoogleService,
     private configService: ConfigService,
     private userService: UserService,
+    private cloudflareService: CloudflareService,
   ) { }
 
-  /**
-   * Mapped ip is a mix of ipv6 and ipv4.
-   * I probably making a crime but i really need 
-   * to extract ipv4 from mapped ip.
-   * 
-   * @param mappedIp ::ffff:127.0.0.1
-   * @returns 127.0.0.1
-   * 
-   * @see https://stackoverflow.com/a/33790357/1168623
-   */
-  convertMappedIpToIPV4(mappedIp: string): string {
-    const re = /\d*\.\d*\.\d*\.\d*/g;
-    const ipV4 = re.exec(mappedIp)[0]
-    return ipV4;
-  }
 
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
@@ -58,7 +45,6 @@ export class MinecraftController {
   @Get('')
   async getSrvStatus(
     @Session() session: Record<string, any>,
-    @Ip() ip
   ): Promise<MinecraftStatusReponseDto> {
     let result = {
       status: ResponseStatusEnum.ERROR,
@@ -69,7 +55,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip: this.convertMappedIpToIPV4(ip)
+        ip: this.cloudflareService.getVisitorIp(), 
       };
 
       const url = this.configService.get('minecraft.statusUrl');
@@ -101,7 +87,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip: this.convertMappedIpToIPV4(ip)
+        ip: this.cloudflareService.getVisitorIp(), 
       };
 
       const url = this.configService.get('minecraft.startUrl');
@@ -132,7 +118,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip: this.convertMappedIpToIPV4(ip)
+        ip: this.cloudflareService.getVisitorIp(), 
       };
 
       const url = this.configService.get('minecraft.stopUrl');
