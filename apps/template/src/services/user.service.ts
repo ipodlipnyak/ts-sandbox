@@ -139,6 +139,10 @@ export class UserService {
     return user;
   }
 
+  async getEmail(): Promise<string> {
+    return (await this.getSession()).whoami.email; 
+  }
+
   async getSession(): Promise<SessionDto> {
     return await this.req.session;
   }

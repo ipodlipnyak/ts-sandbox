@@ -61,7 +61,9 @@ export class CalendarController {
     };
 
     // const list = await this.eventService.getAll();
-    const list = await this.googleService.getCalendarList();
+    // const list = await this.googleService.getCalendarList();
+    const email = await this.userService.getEmail();
+    const list = await this.googleService.getUserCalendarsIDList(email);
 
     result.payload = list;
     // result.total = list.length;
@@ -141,11 +143,14 @@ export class CalendarController {
       limit: 0
     };
 
+    /*
     const response = await this.googleService.calendarV3.events.list({
-      calendarId: this.configService.get('google.mainCalendarId'),
+      calendarId: this.configService.get(GoogleService.MAIN_CALENDAR_ID),
     });
+    */
 
-    result.payload = response.data.items;
+    const email = await this.userService.getEmail();
+    result.payload = await this.googleService.getUserEventsList(email); 
     result.total = result.payload.length; 
     result.limit = result.payload.length;
 
@@ -183,7 +188,7 @@ export class CalendarController {
     };
 
     const response = await this.googleService.calendarV3.events.insert({
-      calendarId: this.configService.get('google.mainCalendarId'),
+      calendarId: this.configService.get(GoogleService.MAIN_CALENDAR_ID),
       requestBody: {
         start: event.start || undefined,
         end: event.end || undefined,
