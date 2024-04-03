@@ -9,17 +9,13 @@
         ></div>
       </template>
 
-      <v-card color="transparent" elevation="0" class="pa-4" :href="event.htmlLink" target="_blank">
-        <div>
-          <h2 :class="`mt-n1 headline font-weight-light mb-4 text-${event.color}`">
-            {{ event.summary }}
-          </h2>
-          <div>
-            {{ event.description }}
-          </div>
-        </div>
-      </v-card>
-
+      <my-event-card 
+        :description="event.description"
+        :html-link="event.htmlLink"
+        :location="event.location"
+        :color="event.color"
+        :summary="event.summary"
+      />
     </v-timeline-item>
   </v-timeline>
 </template>
