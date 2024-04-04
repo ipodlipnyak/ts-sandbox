@@ -62,7 +62,7 @@
             :title="item.title"
             :prepend-icon="item.icon"
             color="amber"
-            exact
+            :exact="false"
           />
 
           <v-divider class="mb-4"></v-divider>
