@@ -7,7 +7,7 @@ import {
     Scope,
 } from '@nestjs/common';
 import { OAuth2Client, OAuth2ClientOptions, GoogleAuth } from 'google-auth-library';
-import { google, Auth } from 'googleapis';
+import { google, Auth, calendar_v3 } from 'googleapis';
 
 const SCOPES = [
     'https://www.googleapis.com/auth/calendar',
@@ -124,6 +124,21 @@ export class GoogleService {
         return filterCalsIDList.map(el => el.calendarId);
     }
 
+    /**
+     * Get list of calendars user can access
+     * 
+     * @param email user's email
+     * @returns 
+     */
+    async getUserCalendarsList(email: string) {
+        const allCals = await this.getCalendarList();
+        const userCalsIdList = await this.getUserCalendarsIDList(email);
+        const userCals = allCals.filter((cal) => {
+            return userCalsIdList.find((id) => cal.id === id);
+        });
+        return userCals;
+    }
+
     async getUserEventsList(email: string) {
         let result = [];
 
@@ -140,7 +155,7 @@ export class GoogleService {
             })
         });
 
-        return result;
+        return result as calendar_v3.Schema$Event[];
     }
 
     /**

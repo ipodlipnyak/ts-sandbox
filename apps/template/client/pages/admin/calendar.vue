@@ -4,18 +4,15 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { useDisplay, useLayout } from 'vuetify';
+import { useEventsStore } from '@/stores/events';
 
 export default defineComponent({
-  middleware(ctx) {
-    return ctx.redirect('/admin/event');
-  },
-
   setup() {
-    const display = useDisplay();
+    const eventsStore = useEventsStore();
+    eventsStore.fetchAllCalendars();
 
     return {
-      display,
+      //
     };
   },
 })

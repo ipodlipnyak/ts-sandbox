@@ -63,7 +63,7 @@ export class CalendarController {
     // const list = await this.eventService.getAll();
     // const list = await this.googleService.getCalendarList();
     const email = await this.userService.getEmail();
-    const list = await this.googleService.getUserCalendarsIDList(email);
+    const list = await this.googleService.getUserCalendarsList(email);
 
     result.payload = list;
     // result.total = list.length;

@@ -50,13 +50,14 @@
           :title="`Item ${ n }`"
           link
         >
+          :key="item.title"
         </v-list-item> -->
         <v-list-item
           v-for="item in navTree"
-          :key="item.title"
           :to="item.path"
           :title="item.title"
           :prepend-icon="item.icon"
+          :color="item?.color"
           exact
         />
         
@@ -134,10 +135,10 @@
     setup(props, ctx) {
       const { width, mobile } = useDisplay()
 
-      const autStore = useAuthStore();
-      const {logout} = autStore;
-      const {loggedIn} = storeToRefs(autStore);
-      const navTree = [
+      const authStore = useAuthStore();
+      const {logout} = authStore;
+      const {loggedIn} = storeToRefs(authStore);
+      const myNavTree = [
         {
           title: 'Dashboard',
           path: '/my',
@@ -159,6 +160,35 @@
           icon: 'mdi-calendar'
         },
       ];
+
+      const adminNavTree = [
+        {
+          title: 'Calendars',
+          path: '/admin/calendar',
+          icon: 'mdi-calendar'
+        },
+      ];
+
+      const navTree = computed(() => {
+        let result = myNavTree.map((el) => {
+          return {
+            ...el,
+            color: 'green',
+          }
+        });
+        if (authStore.isAdmin) {
+          result = [
+            ...result,
+            ...adminNavTree.map((el) => {
+              return {
+                ...el,
+                color: 'amber',
+              }
+            }),
+          ];
+        }
+        return result;
+      });
 
       const showNavBar = ref(false);
 

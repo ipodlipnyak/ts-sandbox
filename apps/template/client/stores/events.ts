@@ -1,53 +1,50 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { RestListResponseDto } from '../../src/dto';
-
-type EventDto = {
-    id: string;
-    status: string;
-    htmlLink: string;
-    summary: string;
-    description: string;
-    location: string;
-    start: {
-        dateTime: string;
-        timeZone: string;
-    }
-    end: {
-        dateTime: string;
-        timeZone: string;
-    }
-}
+import { calendar_v3 } from 'googleapis';
 
 export const useEventsStore = defineStore('events', {
     // arrow function recommended for full type inference
     state: () => ({
-        events: [] as any[],
+        events: [] as calendar_v3.Schema$Event[],
+        eventsPending: false,
+        calendars: [] as calendar_v3.Schema$CalendarListEntry[],
+        calendarsPending: false,
     }),
+
     actions: {
         async fetchAll() {
-            /*
-            const data: RestListResponseDto = await $fetch('/api/calendar/event');
-            if (data?.status === 'success') {
-              this.events = data.payload || [];
-            }
-            */
+            this.eventsPending = true;
 
             const { data, pending, error, refresh } = await useFetch('/api/calendar/event');
             const response = data.value as RestListResponseDto;
             if (response?.status === 'success') {
               this.events = response.payload || [];
             }
+
+            this.eventsPending = false;
+        },
+
+        async fetchAllCalendars() {
+            this.calendarsPending = true;
+
+            const { data, pending, error, refresh } = await useFetch('/api/calendar/');
+            const response = data.value as RestListResponseDto;
+            if (response?.status === 'success') {
+              this.calendars = response.payload || [];
+            }
+            
+            this.calendarsPending = false;
         }
     },
 
     getters: {
-        allEvents: (state): any[] => {
-            let result = state.events.map((event: EventDto, index) => {
+        allEvents: (state) => {
+            let result = state.events.map((event: calendar_v3.Schema$Event, index) => {
             const palette = ['cyan','green', 'pink', 'amber','orange'];
                 return {
                     ...event,
-                    start: (new Date(event.start.dateTime)).toLocaleString(),
-                    end: (new Date(event.end.dateTime)).toLocaleString(),
+                    start: (new Date(event.start?.dateTime || '')).toLocaleString(),
+                    end: (new Date(event?.end?.dateTime || '')).toLocaleString(),
                     color: palette[index%palette.length],
                     // color: palette[Math.floor(Math.random()*palette.length)],
                 }
