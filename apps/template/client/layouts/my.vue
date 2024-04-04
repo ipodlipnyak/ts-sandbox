@@ -52,14 +52,34 @@
         >
           :key="item.title"
         </v-list-item> -->
+       
+        <div v-if="authStore.isAdmin">
+          <v-list-item title="Admin" subtitle="dunger zone"></v-list-item>
+
+          <v-list-item
+            v-for="item in adminNavTree"
+            :to="item.path"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            color="amber"
+            exact
+          />
+
+          <v-divider class="mb-4"></v-divider>
+
+          <v-list-item title="My" subtitle="safe space"></v-list-item>
+        </div>
+        
+
         <v-list-item
-          v-for="item in navTree"
+          v-for="item in myNavTree"
           :to="item.path"
           :title="item.title"
           :prepend-icon="item.icon"
-          :color="item?.color"
+          color="green"
           exact
         />
+
         
         <v-list-item
           title="Logout"
@@ -165,39 +185,25 @@
         {
           title: 'Calendars',
           path: '/admin/calendar',
-          icon: 'mdi-calendar'
+          icon: 'mdi-calendar-edit'
+        },
+        {
+          title: 'Edit events',
+          path: '/admin/event',
+          icon: 'mdi-calendar-plus'
         },
       ];
-
-      const navTree = computed(() => {
-        let result = myNavTree.map((el) => {
-          return {
-            ...el,
-            color: 'green',
-          }
-        });
-        if (authStore.isAdmin) {
-          result = [
-            ...result,
-            ...adminNavTree.map((el) => {
-              return {
-                ...el,
-                color: 'amber',
-              }
-            }),
-          ];
-        }
-        return result;
-      });
 
       const showNavBar = ref(false);
 
       return {
         mobile,
         showNavBar,
-        navTree,
+        adminNavTree,
+        myNavTree,
         loggedIn,
         logout,
+        authStore,
       };
     },
   })
