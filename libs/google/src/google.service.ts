@@ -1,3 +1,4 @@
+import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import {
     Injectable,
     Inject,
@@ -15,6 +16,10 @@ const SCOPES = [
     // 'https://www.googleapis.com/auth/compute',
 ];
 
+type CalToACLItemType = {
+    calendarId: string,
+    acl: calendar_v3.Schema$Acl,
+}
 
 @Injectable({ scope: Scope.REQUEST })
 export class GoogleService {
@@ -23,8 +28,13 @@ export class GoogleService {
     private authNoScope: Auth.GoogleAuth;
     
     static MAIN_CALENDAR_ID = 'google.mainCalendarId';
+    static CACHE_KEY_ALL_CALENDARS = 'google.allCalendars';
+    static CACHE_KEY_ALL_CALENDARS_ACL = 'google.allCalendarsACL';
 
-    constructor(@Inject('MY_GOOGLE_OPTIONS') readonly opts?: any) {
+    constructor(
+        @Inject('MY_GOOGLE_OPTIONS') readonly opts?: any,
+        @Inject(CACHE_MANAGER) private cacheManager?: Cache,
+    ) {
         if (!(opts && opts.clientId)) {
             // console.log('options not found. Did you use GoogleModule.forRoot?');
             return;
@@ -79,17 +89,64 @@ export class GoogleService {
         return response.data;
     }
 
+    /**
+     * clear cache from all related to calendar keys
+     */
+    async cacheDelCalendar() {
+        await this.cacheDelCalendarACL();
+        await this.cacheDelCalendarList();
+    }
+
+    /**
+     * clear cache only from calendars acl key
+     */
+    async cacheDelCalendarACL() {
+        await this.cacheManager.del(GoogleService.CACHE_KEY_ALL_CALENDARS_ACL);
+    }
+
+    /**
+     * clear cache only from calendars list key
+     */
+    async cacheDelCalendarList() {
+        await this.cacheManager.del(GoogleService.CACHE_KEY_ALL_CALENDARS);
+    }
+
+    /**
+     * Get all calendars accessible for service account
+     * Result is cachable
+     * 
+     * @returns google calendars list
+     */
     async getCalendarList() {
+        let result = null as calendar_v3.Schema$CalendarListEntry[] | null;
+        result = await this.cacheManager.get(GoogleService.CACHE_KEY_ALL_CALENDARS) as calendar_v3.Schema$CalendarListEntry[];
+        if (result) {
+            return result;
+        }
+
         const response = await this.calendarV3.calendarList.list();
-        return response.data.items;
+        result = response.data.items;
+
+        await this.cacheManager.set(GoogleService.CACHE_KEY_ALL_CALENDARS, result, {
+            ttl: 24 * 1000 * 3600, // one day
+        });
+        return result; 
     }
 
     /**
      * Get list of acl rules for each calendar accessible for service account
+     * Result is cachable
      * 
      * @returns map of calendar Id to ACL list
      */
     async getAllCaledarsACL() {
+        let result = null as CalToACLItemType[] | null;
+
+        result = await this.cacheManager.get(GoogleService.CACHE_KEY_ALL_CALENDARS_ACL);
+        if (result) {
+            return result;
+        }
+
         const allCalendars = await this.getCalendarList();
         const promisesList = allCalendars.map(async (calendar) => {
             const response = await this.calendarV3.acl.list({
@@ -103,11 +160,15 @@ export class GoogleService {
             }
         });
 
-        let calendarsIDtoAclMap = [];
         await Promise.all(promisesList).then((values) => {
-            calendarsIDtoAclMap = values
+            result = values
         });
-        return calendarsIDtoAclMap;
+
+        await this.cacheManager.set(GoogleService.CACHE_KEY_ALL_CALENDARS_ACL, result, {
+            ttl: 24 * 1000 * 3600, // one day
+        });
+
+        return result;
     }
 
     /**
