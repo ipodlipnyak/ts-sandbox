@@ -1,5 +1,6 @@
 // import "reflect-metadata";
-import { Module, Logger, CacheModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { Module, Logger, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { CacheModule } from '@nestjs/cache-manager';
 import { HttpModule } from '@nestjs/axios';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
