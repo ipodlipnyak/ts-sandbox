@@ -70,6 +70,11 @@ export class Users extends BaseEntity {
   })
   email: string;
 
+  @Column({
+    nullable: true,
+  })
+  pictureUrl: string;
+
   @CreateDateColumn()
   created: Date;
 

@@ -38,6 +38,7 @@ export class UserService {
         'middleName',
         'firstName',
         'lastName',
+        'pictureUrl',
         'created',
         'updated',
       ],
@@ -66,6 +67,7 @@ export class UserService {
         middleName: user.middleName,
         lastName: user.lastName,
         firstName: user.firstName,
+        pictureUrl: user.pictureUrl,
         updated: user.updated,
       }
     };

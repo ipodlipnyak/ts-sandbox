@@ -74,6 +74,8 @@ export class UserDto extends UserCachedDto {
   email: string;
   @ApiProperty({ example: '-200', description: 'Дельта к начислению' })
   delta: string | number;
+  @ApiProperty({ example: 'https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png', description: 'User picture' })
+  pictureUrl: string;
 }
 
 export class UsesListResponseDto extends RestListResponseDto {
