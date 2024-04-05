@@ -20,7 +20,19 @@
         </v-card>
       </v-col>
       <v-col>
-        
+
+        <v-card>
+          <v-list
+            :items="aclComputed"
+            lines="three"
+            item-props
+          >
+            <template v-slot:subtitle="{ subtitle }">
+              <div v-html="subtitle"></div>
+            </template>
+          </v-list>
+        </v-card>
+
       </v-col>
     </v-row>
   </v-container>
@@ -66,6 +78,16 @@ export default defineComponent({
       pendingAcl.value = false;
     }
 
+    const aclComputed = computed(() => {
+      return acl.value.items?.map((rule) => {
+        return {
+          prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
+          title: rule.scope?.value,
+          subtitle: 'blah',
+        };
+      });
+    });
+
     fetchCal();
     fetchAcl();
 
@@ -74,6 +96,7 @@ export default defineComponent({
       calId,
       cal,
       acl,
+      aclComputed,
     };
   },
 })
