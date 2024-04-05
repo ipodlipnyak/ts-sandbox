@@ -31,6 +31,8 @@ export class WhoAmIDto {
     description: 'Email используется как логин',
   })
   email: string;
+  @ApiProperty({ example: 'https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png', description: 'User picture' })
+  pictureUrl: string;
 }
 
 export class WhoAmIResponseDto extends RestResponseDto {

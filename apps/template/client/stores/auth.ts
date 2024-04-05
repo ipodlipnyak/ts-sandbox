@@ -43,6 +43,7 @@ export const useAuthStore = defineStore('auth', {
       return fullName || this.email || '';
     },
     isAdmin: (state): boolean => (state.whoami?.role || 100) >= 200,
+    picture: (state): string => state.whoami?.pictureUrl || '',
   },
 });
 

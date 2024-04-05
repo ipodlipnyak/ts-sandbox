@@ -1,5 +1,6 @@
 <template>
   <v-app key="layoutMy">
+    <!--
     <v-system-bar>
       <v-spacer></v-spacer>
 
@@ -19,6 +20,7 @@
         class="d-block text-center mx-auto mt-4"
         color="grey-darken-1"
         size="36"
+        :image="authStore.picture"
       ></v-avatar>
 
       <v-divider class="mx-3 my-5"></v-divider>
@@ -31,9 +33,10 @@
         size="28"
       ></v-avatar>
     </v-navigation-drawer>
+    -->
 
     <v-navigation-drawer
-      width="244"
+      width="300"
       :model-value="mobile ? showNavBar : true"
       @update:model-value="showNavBar = $event"
     >
@@ -52,7 +55,13 @@
         >
           :key="item.title"
         </v-list-item> -->
-       
+        <v-list-item
+          :prepend-avatar="authStore.picture"
+          :subtitle="authStore.email"
+          :title="authStore.fullName"
+          class="mb-6"
+        >
+        </v-list-item>
         <div v-if="authStore.isAdmin">
           <v-list-item title="Admin" subtitle="dunger zone"></v-list-item>
 
