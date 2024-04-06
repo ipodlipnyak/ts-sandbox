@@ -22,6 +22,7 @@ import {
   GoogleCalendarEventDto,
   GoogleCalendarAclDto,
 GoogleCalendarDto,
+CalendarAclListResponseDto,
 } from '../dto';
 import { AuthGuard, AdminGuard } from './../guards';
 import { GoogleService } from '@my/google';
@@ -68,10 +69,11 @@ export class CalendarController {
     const list = await this.googleService.getUserCalendarsList(email);
 
     result.payload = list;
-    // result.total = list.length;
-    // result.limit = list.length;
 
+    result.total = list.length;
+    result.limit = list.length;
     result.status = ResponseStatusEnum.SUCCESS;
+
     return result;
   }
 
@@ -248,10 +250,13 @@ export class CalendarController {
     },
   })
   @Get(':id/acl')
-  async getAcl(@Param('id') id: string): Promise<RestResponseDto> {
-    const result: RestResponseDto = {
+  async getAcl(@Param('id') id: string): Promise<CalendarAclListResponseDto> {
+    const result: CalendarAclListResponseDto = {
       status: ResponseStatusEnum.ERROR,
-      payload: undefined, 
+      payload: [],
+      total: 0,
+      offset: 0,
+      limit: 0, 
     };
     const response = await this.googleService.calendarV3.acl.list({
       calendarId: id,
@@ -286,11 +291,14 @@ export class CalendarController {
         firstName: user?.firstName || '',
         middleName: user?.middleName || '',
         lastName: user?.lastName || '',
-        picture: user?.pictureUrl || '',
+        pictureUrl: user?.pictureUrl || '',
       };
     });
 
+    result.total = result.payload.length;
+    result.limit = result.payload.length;
     result.status = ResponseStatusEnum.SUCCESS;
+
     return result;
   }
 
