@@ -7,7 +7,7 @@
         <v-toolbar>
           <v-toolbar-title>Calendars</v-toolbar-title>
           <v-spacer></v-spacer>
-          <v-btn icon="mdi-plus" variant="tonal"></v-btn>
+          <v-btn icon="mdi-plus" variant="tonal" to="/admin/calendar/new"></v-btn>
         </v-toolbar>
 
         <v-virtual-scroll height="calc(100vh - 200px)" :items="eventsStore.calendars">
