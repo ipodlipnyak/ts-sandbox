@@ -27,6 +27,8 @@ import { AuthGuard, AdminGuard } from './../guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
 import { /* EventsService,*/ UserService } from '../services';
+import { Users } from '../models';
+import { In } from 'typeorm';
 
 @Controller('calendar')
 export class CalendarController {
@@ -255,7 +257,38 @@ export class CalendarController {
       calendarId: id,
     });
 
-    result.payload = response.data;
+    const rulesList = response.data.items;
+    // const myEmail = await this.userService.getEmail();
+
+    // lets remove service accounts from this list
+    const serviceGoogleDomains = [
+      'group.calendar.google.com',
+      'iam.gserviceaccount.com',
+      // myEmail
+    ];
+
+    const rulesListFiltered = rulesList.filter((rule) => {
+      return ! serviceGoogleDomains.some((serviceDomain) => {
+        return rule.scope.value.endsWith(serviceDomain);
+      });
+    });
+
+    const usersList = await Users.find({
+      where: {
+        email: In(rulesListFiltered.map((rule) => rule.scope.value)),
+      }
+    });
+
+    result.payload = rulesListFiltered.map((rule) => {
+      const user = usersList.find((user) => user.email === rule.scope.value); 
+      return {
+        email: rule.scope.value,
+        firstName: user?.firstName || '',
+        middleName: user?.middleName || '',
+        lastName: user?.lastName || '',
+        picture: user?.pictureUrl || '',
+      };
+    });
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;

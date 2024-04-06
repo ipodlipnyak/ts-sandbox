@@ -3,7 +3,7 @@
     <v-row>
       <v-col>
         <v-card
-          :color="cal?.backgroundColor"
+          :color="cal?.backgroundColor || 'blue'"
           variant="tonal"
         >
           <v-card-item>
@@ -57,7 +57,7 @@ export default defineComponent({
     const pendingCal = ref(false);
     const pendingAcl = ref(false);
 
-    const cal = ref({} as calendar_v3.Schema$Calendar);
+    const cal = ref({} as calendar_v3.Schema$CalendarListEntry);
     const acl = ref({} as calendar_v3.Schema$Acl);
 
     const calUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/`);

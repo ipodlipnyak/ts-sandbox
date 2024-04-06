@@ -1,25 +1,37 @@
 <template>
-  <v-infinite-scroll :height="300" :items="eventsStore.calendars" :onLoad="load">
-    <template v-for="(cal, index) in eventsStore.calendars" :key="cal.id">
-      <v-list-item
-        :subtitle="`${cal.description}`"
-        :title="`${cal.summary}`"
-      >
-        <template v-slot:prepend>
-          <v-icon class="bg-primary">mdi-calendar</v-icon>
-        </template>
+  <v-container>
+    <v-virtual-scroll height="calc(100vh - 188px)" :items="eventsStore.calendars">
+      <template v-for="(cal, index) in eventsStore.calendars" :key="cal.id">
+        <v-card
+          :color="cal?.backgroundColor || ''"
+          variant="tonal"
+          class="pa-2 mb-2"
+          :to="`/admin/calendar/${cal.id}/`"
+        >
+          <v-row noGutters>
+            <v-card-title>
+              {{ cal?.summary }}
+            </v-card-title>
+            <v-spacer></v-spacer>
+            <v-btn 
+              icon="mdi-pencil"
+              variant="tonal"
+            ></v-btn>
+          </v-row>
+        </v-card>
+      </template>
 
-        <template v-slot:append>
-          <v-btn
-            icon="mdi-pencil"
-            size="x-small"
-            variant="tonal"
-            :to="`/admin/calendar/${cal.id}/`"
-          ></v-btn>
-        </template>
-      </v-list-item>
-    </template>
-  </v-infinite-scroll>
+    </v-virtual-scroll>
+  </v-container>
+  
+  <v-footer
+    name="footer"
+    app
+  >
+    <v-container>
+      <v-btn size="large" prepend-icon="mdi-plus" block variant="flat" color="blue">Add new</v-btn>
+    </v-container>
+  </v-footer>
 </template>
 
 <script lang="ts">
@@ -30,13 +42,20 @@ export default defineComponent({
   setup() {
     const eventsStore = useEventsStore();
     eventsStore.fetchAllCalendars();
-    const load = () => {
-      return false;
-    };
+    
+    const test = computed(() => {
+      return Array(5).fill(0).map((el, index) =>{
+        return {
+          id: index,
+          backgroundColor: 'red',
+          summary: `Fuck#${index}`,
+        };
+      });
+    });
 
     return {
       eventsStore,
-      load,
+      test
     };
   },
 })
