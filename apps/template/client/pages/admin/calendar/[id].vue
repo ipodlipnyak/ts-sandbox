@@ -1,37 +1,59 @@
 <template>
   <v-container>
     <v-row>
-      <v-col>
-        <v-card
-          :color="cal?.backgroundColor || 'blue'"
-          variant="tonal"
-        >
-          <v-card-item>
-            <v-card-title>
-              {{ cal.summary }}
-            </v-card-title>
-            <v-card-subtitle>
-              {{ cal.timeZone }}
-            </v-card-subtitle>
-          </v-card-item>
-          <v-card-text>
-            {{ cal.description }}
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col>
-
-        <v-card>
-          <v-list
-            :items="aclComputed"
-            lines="three"
-            item-props
+      <v-col cols="12" md="6">
+        <v-skeleton-loader type="card" :loading="pendingCal">
+          <v-card
+            :color="cal?.backgroundColor || 'blue'"
+            variant="tonal"
+            width="100%"
           >
-            <template v-slot:subtitle="{ subtitle }">
-              <div v-html="subtitle"></div>
-            </template>
-          </v-list>
-        </v-card>
+            <v-card-item>
+              <v-card-title>
+                {{ cal.summary }}
+              </v-card-title>
+              <v-card-subtitle>
+                {{ cal.timeZone }}
+              </v-card-subtitle>
+            </v-card-item>
+            <v-card-text>
+              {{ cal.description }}
+            </v-card-text>
+          </v-card>
+        </v-skeleton-loader>
+      </v-col>
+      <v-col cols="12" md="6">
+
+        <v-skeleton-loader type="card" :loading="pendingAcl">
+          <v-card
+            color="info"
+            variant="tonal"
+            width="100%"
+          >
+            <v-toolbar>
+              <v-toolbar-title>Users</v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon="mdi-plus" variant="tonal"></v-btn>
+            </v-toolbar>
+            <v-virtual-scroll
+              class="my-2"
+              :items="acl"
+              height="320"
+              item-height="48"
+            >
+              <template v-slot:default="{ item }">
+                <v-list-item
+                  :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ')"
+                  :subtitle="`${item.email}`"
+                >
+                  <template v-slot:prepend>
+                    <v-avatar :image="item.pictureUrl" />
+                  </template>
+                </v-list-item>
+              </template>
+            </v-virtual-scroll>
+          </v-card>
+        </v-skeleton-loader>
 
       </v-col>
     </v-row>
@@ -42,7 +64,7 @@
 import type { calendar_v3 } from 'googleapis';
 import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
-import type { RestResponseDto } from '../../../../src/dto';
+import type { CalendarAclDto, CalendarAclListResponseDto, RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   middleware(ctx) {
@@ -58,7 +80,7 @@ export default defineComponent({
     const pendingAcl = ref(false);
 
     const cal = ref({} as calendar_v3.Schema$CalendarListEntry);
-    const acl = ref({} as calendar_v3.Schema$Acl);
+    const acl = ref([] as CalendarAclDto[]);
 
     const calUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/`);
     const aclUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/acl/`); 
@@ -73,20 +95,10 @@ export default defineComponent({
     const fetchAcl = async () => {
       pendingAcl.value = true;
       const { data } = await useFetch(aclUrl.value);
-      const response = data.value as RestResponseDto; 
-      acl.value = response.payload as calendar_v3.Schema$Acl;
+      const response = data.value as CalendarAclListResponseDto; 
+      acl.value = response.payload;
       pendingAcl.value = false;
     }
-
-    const aclComputed = computed(() => {
-      return acl.value.items?.map((rule) => {
-        return {
-          prependAvatar: 'https://cdn.vuetifyjs.com/images/lists/2.jpg',
-          title: rule.scope?.value,
-          subtitle: 'blah',
-        };
-      });
-    });
 
     fetchCal();
     fetchAcl();
@@ -96,7 +108,8 @@ export default defineComponent({
       calId,
       cal,
       acl,
-      aclComputed,
+      pendingCal,
+      pendingAcl,
     };
   },
 })
