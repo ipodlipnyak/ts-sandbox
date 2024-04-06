@@ -36,13 +36,13 @@
               <v-btn icon="mdi-plus" variant="tonal"></v-btn>
             </v-toolbar>
             <v-virtual-scroll
-              class="my-2"
               :items="acl"
               height="320"
               item-height="48"
             >
               <template v-slot:default="{ item }">
                 <v-list-item
+                  class="my-2"
                   :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ')"
                   :subtitle="`${item.email}`"
                 >

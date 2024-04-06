@@ -1,39 +1,41 @@
 <template>
   <v-container>
     <v-skeleton-loader type="list-item" color="transparent" :loading="eventsStore.calendarsPending">
-      <v-virtual-scroll height="calc(100vh - 188px)" :items="eventsStore.calendars">
-        <template v-for="(cal, index) in eventsStore.calendars" :key="cal.id">
-          <v-card
-            :color="cal?.backgroundColor || ''"
-            variant="tonal"
-            class="pa-2 mb-2"
-            :to="`/admin/calendar/${cal.id}/`"
-          >
-            <v-row noGutters>
-              <v-card-title>
-                {{ cal?.summary }}
-              </v-card-title>
-              <v-spacer></v-spacer>
-              <v-btn 
-                icon="mdi-pencil"
-                variant="tonal"
-              ></v-btn>
-            </v-row>
-          </v-card>
-        </template>
+      <v-card
+        width="100%"
+      >
+        <v-toolbar>
+          <v-toolbar-title>Calendars</v-toolbar-title>
+          <v-spacer></v-spacer>
+          <v-btn icon="mdi-plus" variant="tonal"></v-btn>
+        </v-toolbar>
 
-      </v-virtual-scroll>
+        <v-virtual-scroll height="calc(100vh - 200px)" :items="eventsStore.calendars">
+          <template v-for="(cal, index) in eventsStore.calendars" :key="cal.id">
+            <v-card
+              :color="cal?.backgroundColor || ''"
+              variant="tonal"
+              class="pa-2 my-2 mx-4"
+              :to="`/admin/calendar/${cal.id}/`"
+            >
+              <v-row noGutters>
+                <v-card-title>
+                  {{ cal?.summary }}
+                </v-card-title>
+                <v-spacer></v-spacer>
+                <v-btn 
+                  icon="mdi-pencil"
+                  variant="tonal"
+                ></v-btn>
+              </v-row>
+            </v-card>
+          </template>
+
+        </v-virtual-scroll>
+      </v-card>
     </v-skeleton-loader>
   </v-container>
   
-  <v-footer
-    name="footer"
-    app
-  >
-    <v-container>
-      <v-btn size="large" prepend-icon="mdi-plus" block variant="flat" color="blue">Add new</v-btn>
-    </v-container>
-  </v-footer>
 </template>
 
 <script lang="ts">
