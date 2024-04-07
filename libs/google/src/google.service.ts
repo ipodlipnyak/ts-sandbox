@@ -211,6 +211,17 @@ export class GoogleService {
         return newCalendar;
     }
 
+    async deleteCalendar(id: string) {
+        const response = await this.calendarV3.calendars.delete({
+          calendarId: id,
+        });
+        if (response.status !== 204) {
+            // console.error(response);    
+            // return
+        }
+        this.cacheDelCalendar();
+    }
+
     /**
      * Get list of calendar ids user can access
      * 

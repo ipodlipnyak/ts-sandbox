@@ -16,7 +16,7 @@
               v-model="summary"
               :rules="nameRules"
             />
-            <v-btn :disabled="!valid" class="mt-4" block size="large" type="submit">Submit</v-btn>
+            <v-btn :disabled="!valid || newCalendarPending" :loading="newCalendarPending" class="mt-4" block size="large" type="submit">Submit</v-btn>
           </v-form>
         </v-card-item>
       </v-card>
@@ -24,7 +24,9 @@
 </template>
 
 <script lang="ts">
+import type { calendar_v3 } from 'googleapis';
 import { defineComponent } from 'vue';
+import type { RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   setup() {
@@ -32,14 +34,31 @@ export default defineComponent({
 
     const valid = ref(false);
     const summary = ref('');
-    const submit = () => {
+    const newCalendarPending = ref(false);
+    
+    const createCalendar = async () => {
+      newCalendarPending.value = true;
+      const { data } = await useFetch('/api/calendar', {
+        method: 'post',
+        body: {
+          summary: summary.value,
+        }
+      });
+      newCalendarPending.value = false;
+      const result = toRaw(data.value) as RestResponseDto;
+      return result.payload as calendar_v3.Schema$Calendar;
+    }
+
+    const submit = async () => {
       if (valid.value) {
-        console.log(summary.value);
-        router.push('/admin/calendar/');
+        const newCalendar = await createCalendar();
+        const newCalId = newCalendar.id;
+        const nextPage = newCalId ? `/admin/calendar/${newCalId}` : `/admin/calendar/`;
+        router.push(nextPage);
         return;
       }
 
-      console.error('FUCK you')
+      // console.log('error');
     }
     const nameRules = [
       (value: string) => {
@@ -60,6 +79,7 @@ export default defineComponent({
       submit,
       nameRules,
       valid,
+      newCalendarPending,
     };
   },
 })

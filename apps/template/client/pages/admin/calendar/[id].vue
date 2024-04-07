@@ -29,7 +29,27 @@
             <v-card-actions>
               <v-btn color="info" variant="tonal" width="200" icon="mdi-pencil"></v-btn>
               <v-spacer />
-              <v-btn color="error" variant="tonal" icon="mdi-delete"></v-btn>
+                <v-overlay
+                  location-strategy="connected"
+                  scroll-strategy="block"
+
+                >
+                <template #activator="{ isActive, props }">
+                  <v-btn v-bind="props" color="error" variant="tonal" icon="mdi-delete"></v-btn>
+                </template>
+                  <v-btn
+                    @click="deleteCalendar"
+                    icon="mdi-check"
+                    variant="flat"
+                    color="red"
+                    class="mt-2"
+                    :loading="deleteCalendarPending"
+                    :disabled="deleteCalendarPending"
+                  >
+                  </v-btn>
+
+                </v-overlay>
+
             </v-card-actions>
           </v-card>
         </v-skeleton-loader>
@@ -84,6 +104,7 @@ export default defineComponent({
   },
 
   setup() {
+    const router = useRouter();
     const display = useDisplay();
     const route = useRoute();
     const calId = route.params.id as string;
@@ -120,6 +141,15 @@ export default defineComponent({
       acl.value = response.payload;
       pendingAcl.value = false;
     }
+    const deleteCalendarPending = ref(false);
+    const deleteCalendar = async () => {
+      deleteCalendarPending.value = true;
+      const { data } = await useFetch(calUrl.value, {
+        method: 'delete',
+      });
+      deleteCalendarPending.value = false;
+      router.push('/admin/calendar');
+    }
 
     fetchCal();
     fetchAcl();
@@ -133,6 +163,8 @@ export default defineComponent({
       pendingAcl,
       copyLink,
       calEmbedUrl,
+      deleteCalendar,
+      deleteCalendarPending,
     };
   },
 })

@@ -257,6 +257,23 @@ export class CalendarController {
       ],
     },
   })
+
+  @Delete(':id')
+  async deleteCalendar(@Param('id') id: string): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+    }
+
+    try {
+      await this.googleService.deleteCalendar(id);
+      result.status = ResponseStatusEnum.SUCCESS;
+    } catch (error) {
+      //
+    }
+
+    return result;
+  }
+
   @Get(':id/acl')
   async getAcl(@Param('id') id: string): Promise<CalendarAclListResponseDto> {
     const result: CalendarAclListResponseDto = {
