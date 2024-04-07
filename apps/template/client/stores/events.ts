@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { RestListResponseDto } from '../../src/dto';
+import { GoogleDateDto, RestListResponseDto } from '../../src/dto';
 import { calendar_v3 } from 'googleapis';
 
 export const useEventsStore = defineStore('events', {
@@ -39,7 +39,9 @@ export const useEventsStore = defineStore('events', {
 
     getters: {
         allEvents: (state) => {
-            let result = state.events.map((event: calendar_v3.Schema$Event, index) => {
+            let result = state.events.sort((a, b) => {
+                return + new Date(a.start?.dateTime || '') < + new Date(b.start?.dateTime || '');
+            }).map((event: calendar_v3.Schema$Event, index) => {
             const palette = ['cyan','green', 'pink', 'amber','orange'];
                 return {
                     ...event,

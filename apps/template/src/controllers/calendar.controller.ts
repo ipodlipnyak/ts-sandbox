@@ -11,6 +11,7 @@ import {
   // Query,
   HttpStatus,
   HttpException,
+  Logger,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiSecurity, ApiBadRequestResponse, ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import {
@@ -33,6 +34,8 @@ import { In } from 'typeorm';
 
 @Controller('calendar')
 export class CalendarController {
+  private readonly logger = new Logger(CalendarController.name);
+
   constructor(
     private googleService: GoogleService,
     private configService: ConfigService,
@@ -190,28 +193,22 @@ export class CalendarController {
   @Post('event')
   async insertEvent(
     @Body() event: GoogleCalendarEventDto,
-  ): Promise<RestListResponseDto> {
-    const result: RestListResponseDto = {
+  ): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
       status: ResponseStatusEnum.ERROR,
-      payload: [],
-      total: 0,
-      offset: 0,
-      limit: 0
     };
 
-    const response = await this.googleService.calendarV3.events.insert({
-      calendarId: this.configService.get(GoogleService.MAIN_CALENDAR_ID),
-      requestBody: {
-        start: event.start || undefined,
-        end: event.end || undefined,
-        summary: event.summary || '',
-        description: event.description || '',
-        location: event.location || '',
-        attendees: event.attendees || [],
-      }
-    })
+    const email = await this.userService.getEmail();
+    const calendarId = event.calendarId || this.configService.get(GoogleService.MAIN_CALENDAR_ID);
 
-    result.status = ResponseStatusEnum.SUCCESS;
+    try {
+      const response = await this.googleService.createNewUserEvent(email, calendarId, event);
+      result.payload = response;
+      result.status = ResponseStatusEnum.SUCCESS;
+    } catch(error) {
+      this.logger.error(error);
+    }
+
     return result;
   }
 

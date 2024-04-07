@@ -6,7 +6,9 @@ import {
     OnApplicationShutdown,
     LogLevel,
     Scope,
+    Logger,
 } from '@nestjs/common';
+import { GoogleCalendarEventDto } from 'apps/template/src/dto';
 import { OAuth2Client, OAuth2ClientOptions, GoogleAuth } from 'google-auth-library';
 import { google, Auth, calendar_v3 } from 'googleapis';
 
@@ -26,6 +28,7 @@ export class GoogleService {
     private client: OAuth2Client;
     private auth: Auth.GoogleAuth;
     private authNoScope: Auth.GoogleAuth;
+    private readonly logger: Logger;
     
     static MAIN_CALENDAR_ID = 'google.mainCalendarId';
     static CACHE_KEY_ALL_CALENDARS = 'google.allCalendars';
@@ -268,6 +271,46 @@ export class GoogleService {
         });
 
         return result as calendar_v3.Schema$Event[];
+    }
+
+    /**
+     * Create new event for a user
+     * 
+     * @param email user who allowed to manage this calendar
+     * @param calendarId google calendar id
+     * @param event event body
+     * @returns new google event resource
+     */
+    async createNewUserEvent(email: string, calendarId: string, event: GoogleCalendarEventDto) {
+        const allowedCalendars = await this.getUserCalendarsIDList(email);
+        const isAllowed = !! allowedCalendars.find((id) => id === calendarId);
+        if (!isAllowed) {
+            throw new Error('Not allowed');
+        }
+
+        let { start, end } = event;
+        if (!end.dateTime) {
+            const dtStart = new Date(start.dateTime);
+            const dtEnd = new Date(+ dtStart + 60000 * 15);
+            end.dateTime = dtEnd.toISOString();
+        }
+
+        try {
+            const response = await this.calendarV3.events.insert({
+              calendarId,
+              requestBody: {
+                start: event.start || undefined,
+                end: event.end || undefined,
+                summary: event.summary || '',
+                description: event.description || '',
+                // location: event.location || '',
+                // attendees: event.attendees || [],
+              }
+            });
+            return response.data;
+        } catch(error) {
+            this.logger.error(error);
+        }
     }
 
     /**

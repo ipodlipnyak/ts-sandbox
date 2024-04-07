@@ -5,13 +5,43 @@
       <v-spacer />
       <v-btn icon="mdi-plus" variant="tonal"></v-btn>
     </v-toolbar>
-    <v-sheet class="overflow-auto" height="440">
+    <v-sheet class="overflow-auto px-4" height="440">
       <v-timeline side="end">
+
+        <v-timeline-item>
+          <template v-slot:opposite>
+            <v-text-field
+              label="Start date"
+              type="date"
+              v-model="newEventStartDate"
+            ></v-text-field>
+
+            <v-text-field
+              label="Start time"
+              type="time"
+              v-model="newEventStartTime"
+            ></v-text-field>
+          </template>
+          <v-card min-width="200">
+            <v-text-field label="Title" v-model="newEventName"></v-text-field>
+            <v-card-actions>
+              <v-btn 
+                :disabled="createEventPending"
+                :loading="createEventPending"
+                @click="createEvent"
+                prepend-icon="mdi-plus"
+                block
+                variant="tonal"
+              ></v-btn>
+            </v-card-actions>
+          </v-card>
+        </v-timeline-item>
+
         <v-timeline-item
           v-for="(event, i) in eventsList"
           :key="event?.id || i"
         >
-        <v-card>{{ event.summary }}</v-card>
+        <v-card :href="event.htmlLink" target="_blank_" class="pa-2">{{ event.summary }}</v-card>
         </v-timeline-item>
       </v-timeline>
     </v-sheet>
@@ -21,6 +51,19 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { useEventsStore } from '~/stores';
+import type { GoogleCalendarEventDto } from '../../../../src/dto';
+
+function getInputDateNow() {
+  const now = new Date();
+  const [date, time] = now.toISOString().split('T');
+  const [hour, minute, seconds] = time.split(':');
+  return {
+    date,
+    hour,
+    minute,
+    seconds
+  };
+}
 
 export default defineComponent({
   props: {
@@ -32,14 +75,60 @@ export default defineComponent({
     const eventsList = computed(() => {
       return eventsStore.events.filter((event) => {
         return event.organizer?.email === props.calendarId;
-      });
+      })
     });
+
+    const newEventName = ref('');
+    const now = getInputDateNow();
+    const newEventStartTime = ref(`${now.hour}:00`);
+    const newEventStartDate = ref(now.date);
+    const dtStartUTC = computed(() => {
+      return (new Date(`${newEventStartDate.value}T${newEventStartTime.value}`)).toISOString();
+    });
+    
+    const createEventPending = ref(false);
+    const createEvent = async () => {
+      const calId = props.calendarId;
+      if (!calId) {
+        return;
+      }
+      createEventPending.value = true;
+
+      const body: GoogleCalendarEventDto = {
+        calendarId: calId,
+        summary: newEventName.value,
+        description: '',
+        location: '',
+        start: {
+          dateTime: dtStartUTC.value,
+          timeZone: ''
+        },
+        end: {
+          dateTime: '',
+          timeZone: ''
+        },
+        attendees: []
+      };
+
+      const { data } = await useFetch(`/api/calendar/event`, {
+        method: 'post',
+        body,
+      });
+
+      createEventPending.value = false;
+      eventsStore.fetchAll();
+    };
 
     eventsStore.fetchAll();
 
     return {
       eventsStore,
-      eventsList
+      eventsList,
+      createEvent,
+      createEventPending,
+      newEventName,
+      newEventStartTime,
+      newEventStartDate,
     }
   },
 })
