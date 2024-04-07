@@ -91,9 +91,11 @@ export default defineComponent({
     const calUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/`);
     const aclUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/acl/`); 
 
-    const timeZone = 'Europe/Moscow';
+    const timeZone = computed(() => {
+      return cal.value.timeZone || 'Europe/Moscow';
+    });
     const apiCalEmbedURL = 'https://calendar.google.com/calendar/embed'; 
-    const calEmbedUrl = computed(() => `${apiCalEmbedURL}?src=${encodeURIComponent(calId)}&ctz=${encodeURIComponent(timeZone)}`);
+    const calEmbedUrl = computed(() => `${apiCalEmbedURL}?src=${encodeURIComponent(calId)}&ctz=${encodeURIComponent(timeZone.value)}`);
     const copyLink = () => {
        navigator.clipboard.writeText(calEmbedUrl.value);
     };
