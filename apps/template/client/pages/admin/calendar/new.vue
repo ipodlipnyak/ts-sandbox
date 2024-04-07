@@ -19,7 +19,6 @@
             <v-btn :disabled="!valid" class="mt-4" block size="large" type="submit">Submit</v-btn>
           </v-form>
         </v-card-item>
-
       </v-card>
     </v-container>
 </template>

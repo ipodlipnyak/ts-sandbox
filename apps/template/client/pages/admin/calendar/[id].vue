@@ -25,6 +25,12 @@
             <v-card-text>
               {{ cal.description }}
             </v-card-text>
+
+            <v-card-actions>
+              <v-btn color="info" variant="tonal" width="300" icon="mdi-pencil"></v-btn>
+              <v-spacer />
+              <v-btn color="error" variant="tonal" icon="mdi-delete"></v-btn>
+            </v-card-actions>
           </v-card>
         </v-skeleton-loader>
       </v-col>
