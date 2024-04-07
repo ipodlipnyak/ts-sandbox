@@ -17,17 +17,10 @@
               variant="tonal"
               class="pa-2 my-2 mx-4"
               :to="`/admin/calendar/${item.id}/`"
+              :title="item?.summary || ''"
+              prependIcon="mdi-calendar"
+              appendIcon="mdi-pencil"
             >
-              <v-row noGutters>
-                <v-card-title>
-                  {{ item?.summary }}
-                </v-card-title>
-                <v-spacer></v-spacer>
-                <v-btn 
-                  icon="mdi-pencil"
-                  variant="tonal"
-                ></v-btn>
-              </v-row>
             </v-card>
           </template>
 
