@@ -2,12 +2,18 @@
   <v-container>
     <v-row>
       <v-col cols="12" md="6">
-        <v-skeleton-loader type="card" :loading="pendingCal">
+        <v-skeleton-loader color="transparent" type="card" :loading="pendingCal">
           <v-card
             :color="cal?.backgroundColor || 'blue'"
             variant="tonal"
             width="100%"
           >
+            <v-toolbar>
+              <v-toolbar-title>Details</v-toolbar-title>
+              <v-spacer />
+              <v-btn icon="mdi-content-copy" variant="tonal" @click="copyLink" class="mr-2"></v-btn>
+              <v-btn icon="mdi-link-variant" variant="tonal" target="_blank_" :href="calEmbedUrl"></v-btn>
+            </v-toolbar>
             <v-card-item>
               <v-card-title>
                 {{ cal.summary }}
@@ -84,6 +90,13 @@ export default defineComponent({
 
     const calUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/`);
     const aclUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/acl/`); 
+
+    const timeZone = 'Europe/Moscow';
+    const apiCalEmbedURL = 'https://calendar.google.com/calendar/embed'; 
+    const calEmbedUrl = computed(() => `${apiCalEmbedURL}?src=${encodeURIComponent(calId)}&ctz=${encodeURIComponent(timeZone)}`);
+    const copyLink = () => {
+       navigator.clipboard.writeText(calEmbedUrl.value);
+    };
     
     const fetchCal = async () => {
       pendingCal.value = true;
@@ -110,6 +123,8 @@ export default defineComponent({
       acl,
       pendingCal,
       pendingAcl,
+      copyLink,
+      calEmbedUrl,
     };
   },
 })

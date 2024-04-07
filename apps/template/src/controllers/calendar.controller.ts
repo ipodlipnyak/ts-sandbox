@@ -100,8 +100,14 @@ export class CalendarController {
 
   @UseGuards(AdminGuard)
   @ApiSecurity('admin')
-  @ApiOperation({ summary: 'Create new calendar' })
-  @ApiResponse({ status: 200, type: RestListResponseDto })
+  @ApiOperation({ 
+    summary: 'Create new calendar',
+    externalDocs: {
+      description: 'Payload field in response contain google calendar resource',
+      url: 'https://developers.google.com/calendar/api/v3/reference/calendars#resource',
+    }
+  })
+  @ApiResponse({ status: 200, type: RestResponseDto })
   @Post('')
   async insertCalendar(
     @Body() input: GoogleCalendarDto
@@ -111,14 +117,16 @@ export class CalendarController {
       payload: undefined,
     };
 
-    const response = await this.googleService.calendarV3.calendars.insert({
-      requestBody: {
-        summary: input.summary,
-        timeZone: input?.timeZone || undefined,
-      }
-    });
+    // const response = await this.googleService.calendarV3.calendars.insert({
+    //   requestBody: {
+    //     summary: input.summary,
+    //     timeZone: input?.timeZone || undefined,
+    //   }
+    // });
+    const email = await this.userService.getEmail();   
+    const newCalendar = await this.googleService.createCalendarForUser(email, input.summary, input.timeZone);
 
-    result.payload = response.statusText;
+    result.payload = newCalendar;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;

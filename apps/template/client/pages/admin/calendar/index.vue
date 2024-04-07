@@ -11,16 +11,16 @@
         </v-toolbar>
 
         <v-virtual-scroll height="calc(100vh - 200px)" :items="eventsStore.calendars">
-          <template v-for="(cal, index) in eventsStore.calendars" :key="cal.id">
+          <template v-slot:default="{ item }">
             <v-card
-              :color="cal?.backgroundColor || ''"
+              :color="item?.backgroundColor || ''"
               variant="tonal"
               class="pa-2 my-2 mx-4"
-              :to="`/admin/calendar/${cal.id}/`"
+              :to="`/admin/calendar/${item.id}/`"
             >
               <v-row noGutters>
                 <v-card-title>
-                  {{ cal?.summary }}
+                  {{ item?.summary }}
                 </v-card-title>
                 <v-spacer></v-spacer>
                 <v-btn 
@@ -47,19 +47,8 @@ export default defineComponent({
     const eventsStore = useEventsStore();
     eventsStore.fetchAllCalendars();
     
-    const test = computed(() => {
-      return Array(5).fill(0).map((el, index) =>{
-        return {
-          id: index,
-          backgroundColor: 'red',
-          summary: `Fuck#${index}`,
-        };
-      });
-    });
-
     return {
       eventsStore,
-      test
     };
   },
 })

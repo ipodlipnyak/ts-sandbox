@@ -172,6 +172,46 @@ export class GoogleService {
     }
 
     /**
+     * Create new calendar with owner access rights for a specific user
+     * as well as for a service account
+     * 
+     * @see https://developers.google.com/calendar/api/v3/reference/calendars/insert
+     * @see https://developers.google.com/calendar/api/v3/reference/acl/insert
+     *  
+     * @param email user who will have owner rights to access calendar
+     * @param title title of the calendar. Use eamil as a title if ommited
+     * @param timeZone the time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional 
+     * @returns new google calendar resource
+     */
+    async createCalendarForUser(email: string, title?: string, timeZone?: string) {
+        let summary = title || email ;
+
+        const newCalendarResponse = await this.calendarV3.calendars.insert({
+          requestBody: {
+            summary,
+            timeZone: timeZone || 'Europe/Moscow',
+          }
+        });
+
+        const newCalendar = newCalendarResponse.data;
+
+        const newAclResponse = await this.calendarV3.acl.insert({
+          calendarId: newCalendar.id,
+          requestBody: {
+            role: 'owner', // writer, owner, freeBusyReader, none
+            scope: {
+              type: 'user',
+              value: email,
+            }
+          }
+        });
+
+        await this.cacheDelCalendar();
+
+        return newCalendar;
+    }
+
+    /**
      * Get list of calendar ids user can access
      * 
      * @param email user's email
