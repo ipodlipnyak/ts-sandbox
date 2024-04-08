@@ -33,11 +33,11 @@
       <template v-slot:default="{ item }">
         <v-list-item
           class="my-2"
-          :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ')"
+          :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ') || 'Anonimus'"
           :subtitle="`${item.email}`"
         >
           <template v-slot:prepend>
-            <v-avatar :image="item.pictureUrl" />
+            <v-avatar icon="mdi-incognito" :image="item.pictureUrl" />
           </template>
         </v-list-item>
       </template>
