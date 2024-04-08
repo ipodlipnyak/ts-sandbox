@@ -8,8 +8,6 @@
 import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
 import { useAuthStore } from '@/stores/auth';
-import { useUsersStore } from '@/stores/users';
-import { useMinecraftStore } from '~/stores';
 
 export default defineComponent({
   middleware(ctx) {
@@ -20,12 +18,10 @@ export default defineComponent({
     const display = useDisplay();
     const layout = useLayout();
     const authStore = useAuthStore();
-    const usersStore = useUsersStore();
 
     return {
       display,
       authStore,
-      usersStore,
     };
   },
 })

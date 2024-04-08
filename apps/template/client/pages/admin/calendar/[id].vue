@@ -2,6 +2,7 @@
   <v-container>
     <v-row>
       <v-col cols="12" md="6">
+
         <v-card
           :loading="pendingCal"
           :color="cal?.backgroundColor || 'blue'"
@@ -56,35 +57,7 @@
       </v-col>
       <v-col cols="12" md="6">
 
-        <v-card
-          :loading="pendingAcl"
-          color="info"
-          variant="tonal"
-          width="100%"
-        >
-          <v-toolbar>
-            <v-toolbar-title>Users</v-toolbar-title>
-            <v-spacer></v-spacer>
-            <v-btn icon="mdi-plus" variant="tonal"></v-btn>
-          </v-toolbar>
-          <v-virtual-scroll
-            :items="acl"
-            height="320"
-            item-height="48"
-          >
-            <template v-slot:default="{ item }">
-              <v-list-item
-                class="my-2"
-                :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ')"
-                :subtitle="`${item.email}`"
-              >
-                <template v-slot:prepend>
-                  <v-avatar :image="item.pictureUrl" />
-                </template>
-              </v-list-item>
-            </template>
-          </v-virtual-scroll>
-        </v-card>
+        <my-calendar-acl :calendar-id="calId" />
 
       </v-col>
     </v-row>
@@ -94,8 +67,7 @@
 <script lang="ts">
 import type { calendar_v3 } from 'googleapis';
 import { defineComponent } from 'vue';
-import { useDisplay, useLayout } from 'vuetify';
-import type { CalendarAclDto, CalendarAclListResponseDto, RestResponseDto } from '../../../../src/dto';
+import type { RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   middleware(ctx) {
@@ -104,18 +76,14 @@ export default defineComponent({
 
   setup() {
     const router = useRouter();
-    const display = useDisplay();
     const route = useRoute();
     const calId = route.params.id as string;
 
     const pendingCal = ref(false);
-    const pendingAcl = ref(false);
 
     const cal = ref({} as calendar_v3.Schema$CalendarListEntry);
-    const acl = ref([] as CalendarAclDto[]);
 
     const calUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/`);
-    const aclUrl = computed(() => `/api/calendar/${encodeURIComponent(calId)}/acl/`); 
 
     const timeZone = computed(() => {
       return cal.value.timeZone || 'Europe/Moscow';
@@ -133,13 +101,6 @@ export default defineComponent({
       cal.value = response.payload;
       pendingCal.value = false;
     }
-    const fetchAcl = async () => {
-      pendingAcl.value = true;
-      const { data } = await useFetch(aclUrl.value);
-      const response = data.value as CalendarAclListResponseDto; 
-      acl.value = response.payload;
-      pendingAcl.value = false;
-    }
     const deleteCalendarPending = ref(false);
     const deleteCalendar = async () => {
       deleteCalendarPending.value = true;
@@ -151,15 +112,11 @@ export default defineComponent({
     }
 
     fetchCal();
-    fetchAcl();
 
     return {
-      display,
       calId,
       cal,
-      acl,
       pendingCal,
-      pendingAcl,
       copyLink,
       calEmbedUrl,
       deleteCalendar,
