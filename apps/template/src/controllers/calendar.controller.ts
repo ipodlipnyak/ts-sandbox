@@ -196,6 +196,9 @@ export class CalendarController {
         {
           description: 'Event summary required',
         },
+        {
+          description: 'Not allowed',
+        },
       ],
     },
   })
@@ -213,6 +216,12 @@ export class CalendarController {
 
     const email = await this.userService.getEmail();
     const calendarId = event.calendarId || this.configService.get(GoogleService.MAIN_CALENDAR_ID);
+
+    const isAllowed = this.googleService.checkCalendarAccess(calendarId, email, 'writer');
+
+    if (!isAllowed) {
+      throw new HttpException('Not allowed', HttpStatus.BAD_REQUEST);
+    }
 
     try {
       const response = await this.googleService.createNewUserEvent(email, calendarId, event);
@@ -270,6 +279,13 @@ export class CalendarController {
 
   @Delete(':id')
   async deleteCalendar(@Param('id') id: string): Promise<RestResponseDto> {
+    const email = await this.userService.getEmail();
+    const isAllowed = this.googleService.checkCalendarAccess(id, email, 'owner');
+
+    if (!isAllowed) {
+      throw new HttpException('Not allowed', HttpStatus.BAD_REQUEST);
+    }
+
     const result: RestResponseDto = {
       status: ResponseStatusEnum.ERROR,
     }
@@ -373,6 +389,11 @@ export class CalendarController {
       payload: undefined, 
     };
     const email = await this.userService.getEmail();
+    const isAllowed = this.googleService.checkCalendarAccess(id, email, 'owner');
+
+    if (!isAllowed) {
+      throw new HttpException('Not allowed', HttpStatus.BAD_REQUEST);
+    }
 
     // Check if required email specified
     const newEmail = acl.scope.value;
@@ -422,6 +443,13 @@ export class CalendarController {
       status: ResponseStatusEnum.ERROR,
       payload: undefined, 
     };
+    const email = await this.userService.getEmail();
+    const isAllowed = this.googleService.checkCalendarAccess(id, email, 'owner');
+
+    if (!isAllowed) {
+      throw new HttpException('Not allowed', HttpStatus.BAD_REQUEST);
+    }
+
     const response = await this.googleService.calendarV3.acl.delete({
       calendarId: id,
       ruleId: ruleId,
