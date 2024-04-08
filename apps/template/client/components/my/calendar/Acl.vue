@@ -17,6 +17,8 @@
       class="ma-4"
       label="E-mail"
       :loading="pendingAddReader"
+      :error-messages="addReaderErrorMessage"
+      :error="addReaderError"
     >
       <template v-slot:append-inner>
         <v-btn :loading="pendingAddReader" @click="addReader" variant="tonal" icon="mdi-plus"></v-btn>
@@ -45,7 +47,7 @@
 
 <script lang="ts">
 import { defineComponent, computed, watch } from 'vue';
-import { ResponseStatusEnum, type CalendarAclDto, type CalendarAclListResponseDto, type GoogleCalendarAclDto, type RestResponseDto } from '../../../../src/dto';
+import type { CalendarAclDto, CalendarAclListResponseDto, GoogleCalendarAclDto, RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   props: {
@@ -64,14 +66,16 @@ export default defineComponent({
       pendingAcl.value = false;
     }
 
-    const addReaderError = ref('');
+    const addReaderError = ref(false);
+    const addReaderErrorMessage = ref('');
     const newEmail = ref('');
-    // watch(
-    //   () => newEmail,
-    //   () => {
-    //     addReaderError.value = '';
-    //   },
-    // );
+    watch(
+      newEmail,
+      async () => {
+        addReaderErrorMessage.value = '';
+        addReaderError.value = false;
+      },
+    );
     const pendingAddReader = ref(false);
     const addReader = async () => {
       if (!newEmail.value) {
@@ -92,8 +96,9 @@ export default defineComponent({
       });
 
       const response = data.value as RestResponseDto;
-      if (response.status === ResponseStatusEnum.ERROR) {
-        addReaderError.value = response.payload;
+      if (response.status === 'error') {
+        addReaderErrorMessage.value = response.payload;
+        addReaderError.value = true;
       }
 
       fetchAcl();
@@ -109,6 +114,8 @@ export default defineComponent({
       newEmail,
       addReader,
       pendingAddReader,
+      addReaderError,
+      addReaderErrorMessage,
     }
   },
 })

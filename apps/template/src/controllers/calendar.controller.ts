@@ -385,7 +385,7 @@ export class CalendarController {
       email: newEmail,
     });
     if (!newCalendarUser) {
-      result.payload = 'User with this email should be registered';
+      result.payload = 'User with this email should be registered first';
       return result;
     }
 
