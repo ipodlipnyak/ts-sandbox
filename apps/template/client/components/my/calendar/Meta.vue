@@ -11,17 +11,26 @@
       <v-btn icon="mdi-content-copy" variant="tonal" @click="copyLink" class="mr-2"></v-btn>
       <v-btn icon="mdi-link-variant" variant="tonal" target="_blank_" :href="calEmbedUrl"></v-btn>
     </v-toolbar>
-    <v-card-item>
-      <v-card-title>
-        {{ cal.summary }}
-      </v-card-title>
-      <v-card-subtitle>
-        {{ cal.timeZone }}
-      </v-card-subtitle>
-    </v-card-item>
-    <v-card-text>
-      {{ cal.description }}
-    </v-card-text>
+
+    <v-form class="mt-2">
+      <v-card-item>
+        <v-text-field
+          label="Title"
+          v-model="newCalendarTitle"
+          variant="solo-filled"
+        ></v-text-field>
+        <v-card-subtitle>
+          {{ cal.timeZone }}
+        </v-card-subtitle>
+      </v-card-item>
+    
+      <v-textarea
+        label="Description"
+        v-model="newCalendarDescription"
+        variant="solo-filled"
+        class="ma-4"
+      ></v-textarea>
+    </v-form>
 
     <v-card-actions>
       <v-btn color="info" variant="tonal" width="200" icon="mdi-pencil"></v-btn>
@@ -64,6 +73,9 @@ export default defineComponent({
   setup(props, ctx) {
     const calId = props.calendarId || '';
 
+    const newCalendarTitle = ref('');
+    const newCalendarDescription = ref('');
+
     const router = useRouter();
 
     const pendingCal = ref(false);
@@ -86,6 +98,8 @@ export default defineComponent({
       const { data } = await useFetch(calUrl.value);
       const response = data.value as RestResponseDto; 
       cal.value = response.payload;
+      newCalendarTitle.value = cal.value.summary || '';
+      newCalendarDescription.value = cal.value.description || '';
       pendingCal.value = false;
     }
     const deleteCalendarPending = ref(false);
@@ -107,6 +121,8 @@ export default defineComponent({
       calEmbedUrl,
       deleteCalendar,
       deleteCalendarPending,
+      newCalendarTitle,
+      newCalendarDescription,
     }
   },
 })
