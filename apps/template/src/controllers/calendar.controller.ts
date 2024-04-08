@@ -354,6 +354,15 @@ export class CalendarController {
       ],
     },
   })
+  @ApiBadRequestResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'Value field in acl is required',
+        },
+      ],
+    },
+  })
   @Post(':id/acl')
   async addAclRule(
     @Param('id') id: string,
@@ -364,11 +373,29 @@ export class CalendarController {
       payload: undefined, 
     };
     const email = await this.userService.getEmail();
-    const response = this.googleService.addCalendarAclRule(email, id, acl);
 
-    result.payload = response;
+    // Check if required email specified
+    const newEmail = acl.scope.value;
+    if (!newEmail) {
+      throw new HttpException('Value field in acl is required', HttpStatus.BAD_REQUEST);
+    }
 
-    result.status = ResponseStatusEnum.SUCCESS;
+    // Check if user with required email alreader in system
+    const newCalendarUser = await Users.findBy({
+      email: newEmail,
+    });
+    if (!newCalendarUser) {
+      throw new HttpException('User with this email should be registered', HttpStatus.BAD_REQUEST);
+    }
+
+    try {
+      const response = this.googleService.addCalendarAclRule(email, id, acl);
+      result.payload = response;
+      result.status = ResponseStatusEnum.SUCCESS;
+    } catch(error) {
+      this.logger.error(error);
+    }
+
     return result;
   }
 
