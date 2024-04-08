@@ -12,6 +12,7 @@ import {
   HttpStatus,
   HttpException,
   Logger,
+  Patch,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiSecurity, ApiBadRequestResponse, ApiInternalServerErrorResponse } from '@nestjs/swagger';
 import {
@@ -130,6 +131,45 @@ export class CalendarController {
     const newCalendar = await this.googleService.createCalendarForUser(email, input.summary, input.timeZone);
 
     result.payload = newCalendar;
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
+
+  @UseGuards(AdminGuard)
+  @ApiSecurity('admin')
+  @ApiOperation({ 
+    summary: 'Update calendar methadata',
+    externalDocs: {
+      description: 'Payload field in response contain google calendar resource',
+      url: 'https://developers.google.com/calendar/api/v3/reference/calendars#resource',
+    }
+  })
+  @ApiResponse({ status: 200, type: RestResponseDto })
+  @Patch(':id')
+  async patchCalendar(
+    @Param('id') id: string,
+    @Body() input: GoogleCalendarDto
+  ): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+    
+    const email = await this.userService.getEmail();   
+    const isAllowed = this.googleService.checkCalendarAccess(id, email, 'writer');
+
+    if (!isAllowed) {
+      throw new HttpException('Not allowed', HttpStatus.BAD_REQUEST);
+    }
+
+    const response = await this.googleService.calendarV3.calendars.patch({
+      calendarId: id,
+      requestBody: input,
+    });
+    await this.googleService.cacheDelCalendarList();
+
+    result.payload = response.data;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
