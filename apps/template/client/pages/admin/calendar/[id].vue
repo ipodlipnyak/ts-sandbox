@@ -53,7 +53,7 @@
 
           </v-card-actions>
         </v-card>
-        <my-event-calendar class="mt-6" :calendar-id="calId" />
+        <my-calendar-events class="mt-6" :calendar-id="calId" />
       </v-col>
       <v-col cols="12" md="6">
 

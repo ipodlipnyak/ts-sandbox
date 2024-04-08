@@ -363,18 +363,10 @@ export class CalendarController {
       status: ResponseStatusEnum.ERROR,
       payload: undefined, 
     };
-    const response = await this.googleService.calendarV3.acl.insert({
-      calendarId: id,
-      requestBody: {
-        role: acl?.role || 'reader', // writer, owner, freeBusyReader, none
-        scope: {
-          type: acl?.scope?.type || 'user',
-          value: acl?.scope?.value || 'default',
-        }
-      }
-    });
+    const email = await this.userService.getEmail();
+    const response = this.googleService.addCalendarAclRule(email, id, acl);
 
-    result.payload = response.data;
+    result.payload = response;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;

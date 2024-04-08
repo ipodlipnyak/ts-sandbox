@@ -8,7 +8,7 @@ import {
     Scope,
     Logger,
 } from '@nestjs/common';
-import { GoogleCalendarEventDto } from 'apps/template/src/dto';
+import { GoogleCalendarAclDto, GoogleCalendarEventDto } from 'apps/template/src/dto';
 import { OAuth2Client, OAuth2ClientOptions, GoogleAuth } from 'google-auth-library';
 import { google, Auth, calendar_v3 } from 'googleapis';
 
@@ -21,6 +21,16 @@ const SCOPES = [
 type CalToACLItemType = {
     calendarId: string,
     acl: calendar_v3.Schema$Acl,
+}
+
+type AclRolesType = 'owner' | 'writer' | 'reader' | 'freeBusyReader' | 'none';
+
+enum ACL_ROLES_LEVEL {
+    'owner' = 400,
+    'writer' = 300,
+    'reader' = 200,
+    'freeBusyReader' = 100,
+    'none' = 0,
 }
 
 @Injectable({ scope: Scope.REQUEST })
@@ -90,6 +100,66 @@ export class GoogleService {
                 id
             },
         });
+        return response.data;
+    }
+
+    /**
+     * Check if user have enought rights for this calendar
+     * 
+     * @param calendarId calendar to check
+     * @param email user`s email
+     * @param role target access level. By default reader. Possible: owner, writer, reader, freeBusyReader, none
+     * @returns 
+     */
+    async checkCalendarAccess(calendarId: string, email: string, role?: AclRolesType): Promise<boolean> {
+        const roleToCheck = role || 'reader';
+
+        const acl = await this.calendarV3.acl.list({
+            calendarId,
+        });
+        const rule = acl.data.items.find((el) => el.scope.value === email);
+        if (!rule) {
+            return false;
+        }
+
+        const actualRole = rule.role;
+
+        return ACL_ROLES_LEVEL[roleToCheck] >= ACL_ROLES_LEVEL[actualRole];
+    }
+
+    /**
+     * Add new acl rule to user owned calendar
+     * 
+     * @see https://developers.google.com/calendar/api/v3/reference/acl/insert#request-body
+     * @param email 
+     * @param calendarId 
+     * @param acl 
+     * @returns 
+     */
+    async addCalendarAclRule(email: string, calendarId: string, acl: GoogleCalendarAclDto) {
+        const isAllowed = await this.checkCalendarAccess(calendarId, email, 'owner');
+
+        if (!isAllowed) {
+            throw new Error('Not allowed');
+        }
+
+        const value = acl.scope.value;
+        if (!value) {
+            throw new Error('Empty value field');
+        }
+
+        const response = await this.calendarV3.acl.insert({
+          calendarId: calendarId,
+          requestBody: {
+            role: acl?.role || 'reader', // writer, owner, freeBusyReader, none
+            scope: {
+              type: acl?.scope?.type || 'user',
+              value,
+              // value: acl?.scope?.value || 'default',
+            }
+          }
+        });
+
         return response.data;
     }
 

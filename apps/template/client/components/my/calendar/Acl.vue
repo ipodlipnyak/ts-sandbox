@@ -8,8 +8,21 @@
     <v-toolbar>
       <v-toolbar-title>Users</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn icon="mdi-plus" variant="tonal"></v-btn>
+      <v-btn icon="mdi-refresh" :loading="pendingAcl" @click="fetchAcl" variant="tonal"></v-btn>
     </v-toolbar>
+
+    <v-text-field
+      v-model="newEmail"
+      variant="solo-filled"
+      class="ma-4"
+      label="E-mail"
+      :loading="pendingAddReader"
+    >
+      <template v-slot:append-inner>
+        <v-btn :loading="pendingAddReader" @click="addReader" variant="tonal" icon="mdi-plus"></v-btn>
+      </template>
+    </v-text-field>
+
     <v-virtual-scroll
       :items="acl"
       height="320"
@@ -32,7 +45,7 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
-import type { CalendarAclDto, CalendarAclListResponseDto, RestResponseDto } from '../../../../src/dto';
+import type { CalendarAclDto, CalendarAclListResponseDto, GoogleCalendarAclDto, RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   props: {
@@ -51,12 +64,39 @@ export default defineComponent({
       pendingAcl.value = false;
     }
 
+    const newEmail = ref('');
+    const pendingAddReader = ref(false);
+    const addReader = async () => {
+      if (!newEmail.value) {
+        return;
+      }
+
+      pendingAddReader.value = true;
+      const body: GoogleCalendarAclDto = {
+        role: 'reader',
+        scope: {
+          type: 'user',
+          value: newEmail.value
+        }
+      }
+      const { data } = await useFetch(aclUrl.value, {
+        method: 'post',
+        body,
+      });
+
+      fetchAcl();
+      pendingAddReader.value = false;
+    }
+
     fetchAcl();
 
     return {
       fetchAcl,
       acl,
       pendingAcl,
+      newEmail,
+      addReader,
+      pendingAddReader,
     }
   },
 })
