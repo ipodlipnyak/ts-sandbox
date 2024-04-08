@@ -24,7 +24,6 @@
 import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
 import { useAuthStore } from '@/stores/auth';
-import { useUsersStore } from '@/stores/users';
 import { useEventsStore } from '@/stores/events';
 
 export default defineComponent({
@@ -36,7 +35,6 @@ export default defineComponent({
     const display = useDisplay();
     const layout = useLayout();
     const authStore = useAuthStore();
-    const usersStore = useUsersStore();
     const eventsStore = useEventsStore();
     
     eventsStore.fetchAll();
@@ -44,7 +42,6 @@ export default defineComponent({
     return {
       display,
       authStore,
-      usersStore,
       eventsStore,
     };
   },

@@ -190,10 +190,23 @@ export class CalendarController {
       ],
     },
   })
+  @ApiBadRequestResponse({
+    schema: {
+      oneOf: [
+        {
+          description: 'Event summary required',
+        },
+      ],
+    },
+  })
   @Post('event')
   async insertEvent(
     @Body() event: GoogleCalendarEventDto,
   ): Promise<RestResponseDto> {
+    if (!event.summary) {
+      throw new HttpException('Event summary required', HttpStatus.BAD_REQUEST);
+    }
+
     const result: RestResponseDto = {
       status: ResponseStatusEnum.ERROR,
     };

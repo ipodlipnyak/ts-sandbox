@@ -31,6 +31,7 @@ export class GoogleService {
     private readonly logger: Logger;
     
     static MAIN_CALENDAR_ID = 'google.mainCalendarId';
+    static CAHCE_KEY_EVENTS = 'google.events';
     static CACHE_KEY_ALL_CALENDARS = 'google.allCalendars';
     static CACHE_KEY_ALL_CALENDARS_ACL = 'google.allCalendarsACL';
 
@@ -98,6 +99,18 @@ export class GoogleService {
     async cacheDelCalendar() {
         await this.cacheDelCalendarACL();
         await this.cacheDelCalendarList();
+        const allKeys = await this.cacheManager.store.keys(`${GoogleService.CAHCE_KEY_EVENTS}*`) as string[];
+        await Promise.all(allKeys.map(async (key) => {
+            await this.cacheManager.del(key);
+        }));
+    }
+
+    getCacheKeyUserEvents(email: string) {
+        return `${GoogleService.CAHCE_KEY_EVENTS}.${email}`;
+    }
+
+    async cacheDelUserEvents(email: string) {
+        await this.cacheManager.del(this.getCacheKeyUserEvents(email));
     }
 
     /**
@@ -255,7 +268,13 @@ export class GoogleService {
     }
 
     async getUserEventsList(email: string) {
-        let result = [];
+        let result = null as calendar_v3.Schema$Event[] | null;
+
+        const key = this.getCacheKeyUserEvents(email);
+        result = await this.cacheManager.get(key);
+        if (result) {
+            return result;
+        }
 
         const calendarsList = await this.getUserCalendarsIDList(email);
 
@@ -265,12 +284,16 @@ export class GoogleService {
         });
 
         await Promise.all(allPromises).then((values) => {
+            result = [];
             values.forEach((calEventList) => {
                 result = [...result, ...calEventList];
             })
         });
 
-        return result as calendar_v3.Schema$Event[];
+        await this.cacheManager.set(key, result, {
+            ttl: 5, // for 5 sec. Just to prevent spamming
+        });
+        return result;
     }
 
     /**
@@ -284,6 +307,11 @@ export class GoogleService {
     async createNewUserEvent(email: string, calendarId: string, event: GoogleCalendarEventDto) {
         const allowedCalendars = await this.getUserCalendarsIDList(email);
         const isAllowed = !! allowedCalendars.find((id) => id === calendarId);
+
+        if (!event.summary) {
+            throw new Error('No title in summary field for event');
+        }
+
         if (!isAllowed) {
             throw new Error('Not allowed');
         }
@@ -308,6 +336,13 @@ export class GoogleService {
                 // attendees: event.attendees || [],
               }
             });
+
+            /**
+             * clean the cache before inform the user about created event, 
+             * so he can request a fresh event list later
+             */
+            await this.cacheDelUserEvents(email);
+
             return response.data;
         } catch(error) {
             this.logger.error(error);

@@ -1,10 +1,17 @@
 <template>
   <v-card color="teal" variant="tonal" :loading="eventsStore.eventsPending" height="500" type="flat">
+
     <v-toolbar>
       <v-toolbar-title>Events</v-toolbar-title>
       <v-spacer />
-      <v-btn icon="mdi-plus" variant="tonal"></v-btn>
+      <v-btn
+        icon="mdi-refresh"
+        :loading="eventsStore.eventsPending"
+        @click="eventsStore.fetchAll"
+        variant="tonal"
+      ></v-btn>
     </v-toolbar>
+
     <v-sheet class="overflow-auto px-4" height="440">
       <v-timeline side="end">
 

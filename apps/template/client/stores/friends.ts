@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
-export const useUsersStore = defineStore('users', {
+export const useFriendsStore = defineStore('friends', {
     // arrow function recommended for full type inference
     state: () => ({
         data: null as any,
@@ -30,5 +30,5 @@ export const useUsersStore = defineStore('users', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useUsersStore, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useFriendsStore, import.meta.hot));
 }

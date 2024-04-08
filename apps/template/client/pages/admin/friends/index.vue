@@ -5,6 +5,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
+import { useFriendsStore } from '~/stores';
 
 export default defineComponent({
   middleware(ctx) {
@@ -13,6 +14,9 @@ export default defineComponent({
 
   setup() {
     const display = useDisplay();
+    const friendsStore = useFriendsStore();
+    friendsStore.fetchAll();
+
 
     return {
       display,
