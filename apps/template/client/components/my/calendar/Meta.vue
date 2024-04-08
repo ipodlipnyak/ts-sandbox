@@ -6,7 +6,7 @@
     width="100%"
   >
     <v-toolbar>
-      <v-toolbar-title>Details</v-toolbar-title>
+      <v-toolbar-title>Meta</v-toolbar-title>
       <v-spacer />
       <v-btn icon="mdi-content-copy" variant="tonal" @click="copyLink" class="mr-2"></v-btn>
       <v-btn icon="mdi-link-variant" variant="tonal" target="_blank_" :href="calEmbedUrl"></v-btn>
@@ -23,17 +23,20 @@
           {{ cal.timeZone }}
         </v-card-subtitle>
       </v-card-item>
-    
+   
+      <!--
       <v-textarea
         label="Description"
         v-model="newCalendarDescription"
         variant="solo-filled"
         class="ma-4"
       ></v-textarea>
+      -->
     </v-form>
 
     <v-card-actions>
-      <v-btn color="info" variant="tonal" width="200" icon="mdi-pencil"></v-btn>
+      <v-btn color="green" @click="patchCal" :loading="patchCalPending" variant="tonal" width="100" icon="mdi-content-save"></v-btn>
+      <v-btn color="yellow" :loading="pendingCal" @click="fetchCal" variant="tonal" width="100" icon="mdi-refresh"></v-btn>
       <v-spacer />
         <v-overlay
           location-strategy="connected"
@@ -63,7 +66,7 @@
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import type { calendar_v3 } from 'googleapis';
-import type { RestResponseDto } from '../../../../src/dto';
+import type { GoogleCalendarDto, RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   props: {
@@ -102,6 +105,32 @@ export default defineComponent({
       newCalendarDescription.value = cal.value.description || '';
       pendingCal.value = false;
     }
+
+    const patchCalPending = ref(false);
+    const patchCal = async () => {
+      if (!newCalendarTitle.value || newCalendarTitle.value === cal.value.summary) {
+        return;
+      }
+
+      patchCalPending.value = true;
+
+      const body: GoogleCalendarDto = {
+        summary: newCalendarTitle.value
+      }
+
+      const { data } = await useFetch(calUrl.value, {
+        method: 'patch',
+        body,
+      });
+      const response = data.value as RestResponseDto;
+      cal.value = {
+        ...cal.value,
+        ...response.payload,
+      };
+
+      patchCalPending.value = false;
+    }
+
     const deleteCalendarPending = ref(false);
     const deleteCalendar = async () => {
       deleteCalendarPending.value = true;
@@ -123,6 +152,9 @@ export default defineComponent({
       deleteCalendarPending,
       newCalendarTitle,
       newCalendarDescription,
+      fetchCal,
+      patchCal,
+      patchCalPending,
     }
   },
 })
