@@ -44,8 +44,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
-import type { CalendarAclDto, CalendarAclListResponseDto, GoogleCalendarAclDto, RestResponseDto } from '../../../../src/dto';
+import { defineComponent, computed, watch } from 'vue';
+import { ResponseStatusEnum, type CalendarAclDto, type CalendarAclListResponseDto, type GoogleCalendarAclDto, type RestResponseDto } from '../../../../src/dto';
 
 export default defineComponent({
   props: {
@@ -64,7 +64,14 @@ export default defineComponent({
       pendingAcl.value = false;
     }
 
+    const addReaderError = ref('');
     const newEmail = ref('');
+    // watch(
+    //   () => newEmail,
+    //   () => {
+    //     addReaderError.value = '';
+    //   },
+    // );
     const pendingAddReader = ref(false);
     const addReader = async () => {
       if (!newEmail.value) {
@@ -83,6 +90,11 @@ export default defineComponent({
         method: 'post',
         body,
       });
+
+      const response = data.value as RestResponseDto;
+      if (response.status === ResponseStatusEnum.ERROR) {
+        addReaderError.value = response.payload;
+      }
 
       fetchAcl();
       pendingAddReader.value = false;

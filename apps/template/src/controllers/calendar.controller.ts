@@ -381,11 +381,12 @@ export class CalendarController {
     }
 
     // Check if user with required email alreader in system
-    const newCalendarUser = await Users.findBy({
+    const newCalendarUser = await Users.findOneBy({
       email: newEmail,
     });
     if (!newCalendarUser) {
-      throw new HttpException('User with this email should be registered', HttpStatus.BAD_REQUEST);
+      result.payload = 'User with this email should be registered';
+      return result;
     }
 
     try {
