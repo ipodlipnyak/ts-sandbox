@@ -1,20 +1,20 @@
 <template>
   <v-timeline side="end" align="start">
-    <v-timeline-item v-for="event in eventsStore.allEvents" :key="event.id" :dot-color="event.color" size="small">
+    <v-timeline-item v-for="(event, index) in eventsStore.allEvents" :key="event?.id || index" :dot-color="event.color" size="small">
 
       <template v-slot:opposite>
         <div
           :class="`pt-1 headline font-weight-bold text-${event.color}`"
-          v-text="event.start"
+          v-text="event.startFormatted"
         ></div>
       </template>
 
       <my-event-card 
-        :description="event.description"
-        :html-link="event.htmlLink"
-        :location="event.location"
+        :description="event?.description || ''"
+        :html-link="event?.htmlLink || ''"
+        :location="event?.location || ''"
         :color="event.color"
-        :summary="event.summary"
+        :summary="event?.summary || ''"
       />
     </v-timeline-item>
   </v-timeline>

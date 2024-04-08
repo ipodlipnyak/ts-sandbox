@@ -290,8 +290,9 @@ export class GoogleService {
 
         let { start, end } = event;
         if (!end.dateTime) {
+            // create a 1 hour long event
             const dtStart = new Date(start.dateTime);
-            const dtEnd = new Date(+ dtStart + 60000 * 15);
+            const dtEnd = new Date(+ dtStart + 1000 * 60 * 60);
             end.dateTime = dtEnd.toISOString();
         }
 

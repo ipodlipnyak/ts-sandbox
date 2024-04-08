@@ -8,7 +8,9 @@
     <v-sheet class="overflow-auto px-4" height="440">
       <v-timeline side="end">
 
-        <v-timeline-item>
+        <v-timeline-item
+          dot-color="info"
+        >
           <template v-slot:opposite>
             <v-text-field
               label="Start date"
@@ -22,7 +24,7 @@
               v-model="newEventStartTime"
             ></v-text-field>
           </template>
-          <v-card min-width="200">
+          <v-card width="125">
             <v-text-field label="Title" v-model="newEventName"></v-text-field>
             <v-card-actions>
               <v-btn 
@@ -40,8 +42,12 @@
         <v-timeline-item
           v-for="(event, i) in eventsList"
           :key="event?.id || i"
+          :dot-color="event.color"
         >
-        <v-card :href="event.htmlLink" target="_blank_" class="pa-2">{{ event.summary }}</v-card>
+          <template v-slot:opposite>
+            <span>{{ event.startFormatted }}</span>
+          </template>
+        <v-card :href="event?.htmlLink || ''" target="_blank_" class="pa-2">{{ event.summary }}</v-card>
         </v-timeline-item>
       </v-timeline>
     </v-sheet>
@@ -73,7 +79,7 @@ export default defineComponent({
   setup(props, ctx) {
     const eventsStore = useEventsStore();
     const eventsList = computed(() => {
-      return eventsStore.events.filter((event) => {
+      return eventsStore.allEvents.filter((event) => {
         return event.organizer?.email === props.calendarId;
       })
     });
