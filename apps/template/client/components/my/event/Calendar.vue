@@ -25,13 +25,13 @@
             ></v-text-field>
           </template>
           <v-card width="125">
-            <v-text-field label="Title" v-model="newEventName"></v-text-field>
+            <v-text-field hide-details label="Title" v-model="newEventName"></v-text-field>
             <v-card-actions>
               <v-btn 
                 :disabled="createEventPending"
                 :loading="createEventPending"
                 @click="createEvent"
-                prepend-icon="mdi-plus"
+                icon="mdi-plus"
                 block
                 variant="tonal"
               ></v-btn>
