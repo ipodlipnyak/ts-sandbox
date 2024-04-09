@@ -1,13 +1,10 @@
 import {
   Entity,
-  Column,
   PrimaryGeneratedColumn,
-  // OneToMany,
   ManyToOne,
   BaseEntity,
   CreateDateColumn,
   UpdateDateColumn,
-  In,
 } from 'typeorm';
 
 import { Users } from './../users';
