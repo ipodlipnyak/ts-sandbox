@@ -33,6 +33,8 @@ export class UserOutputDto {
     nullable: true
   })
   friends: UserOutputDto[];
+  @Field({ nullable: true })
+  pictureUrl: string
 }
 
 @InputType()

@@ -52,6 +52,7 @@ export class UsersResolver {
                 middleName: friend.friend.middleName,
                 lastName: friend.friend.lastName,
                 email: friend.friend.email,
+                pictureUrl: friend.friend.pictureUrl,
                 friends: null
             };
             return dto;
@@ -64,6 +65,7 @@ export class UsersResolver {
             middleName: user.middleName,
             lastName: user.lastName,
             email: user.email,
+            pictureUrl: user.pictureUrl,
             friends,
         };
         return myDto;
