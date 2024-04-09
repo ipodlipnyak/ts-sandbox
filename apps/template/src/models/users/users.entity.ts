@@ -15,7 +15,7 @@ import { Purchase } from './../purchase';
 import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
-import { Friendsheep } from '../friendsheep';
+import { Friendsheep } from './friendship.entity';
 // import { EventUser } from './../event';
 
 export class UserExistError extends Error {

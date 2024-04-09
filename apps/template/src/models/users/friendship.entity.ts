@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Users } from '../users';
+import { Users } from './users.entity';
 
 
 /**
