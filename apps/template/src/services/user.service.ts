@@ -4,6 +4,7 @@ import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RatingService } from './rating.service';
 import { MyRatingItemDto, SessionDto, UserNameDto } from './../dto';
+import { IncomingMessage } from 'http';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {
@@ -12,13 +13,21 @@ export class UserService {
     private req: Request,
     private readonly ratingService: RatingService,
   ) { }
+  get session(): SessionDto | null {
+    const req = this.req as any;
+    if (req?.session) {
+      return req.session;
+    }
 
+    // freacking apollo graphql context meddling with request
+    return req?.req?.session || null;
+  }
   get userId(): string {
-    return this.req.session?.whoami?.id || undefined;
+    return this.session?.whoami?.id || undefined;
   }
 
   get isAdmin(): boolean {
-    return this.req?.session?.whoami?.role > UserRole.ADMIN;
+    return this.session?.whoami?.role > UserRole.ADMIN;
   }
 
   /**
@@ -49,7 +58,7 @@ export class UserService {
 
     const whoami = { ...user };
     delete whoami.active;
-    this.req.session.whoami = whoami;
+    this.session.whoami = whoami;
     return true;
   }
 
@@ -59,8 +68,8 @@ export class UserService {
   async refreshWhoami() {
     const user = await this.getUser();
 
-    this.req.session.whoami = { 
-      ...this.req.session.whoami,
+    this.session.whoami = { 
+      ...this.session.whoami,
       ...{
         role: user.role,
         email: user.email,
@@ -131,6 +140,7 @@ export class UserService {
    */
   async getUser(): Promise<Users> {
     const id = this.userId;
+
     if (!id) {
       return null;
     }

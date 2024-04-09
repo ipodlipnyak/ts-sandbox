@@ -28,6 +28,8 @@ export class UserOutputDto {
   lastName: string;
   @Field()
   email: string;
+  @Field()
+  friends: UserOutputDto
 }
 
 @InputType()

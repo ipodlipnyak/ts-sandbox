@@ -197,8 +197,8 @@
           icon: 'mdi-calendar-edit'
         },
         {
-          title: 'Edit events',
-          path: '/admin/event',
+          title: 'Edit friends',
+          path: '/admin/friends',
           icon: 'mdi-calendar-plus'
         },
       ];

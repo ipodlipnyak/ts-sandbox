@@ -66,8 +66,8 @@ import { LLMModule } from '@my/llm';
       },
       // autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
       autoSchemaFile: true,
-      debug: true,
-      playground: true,
+      debug: !!process.env?.DEBUG,
+      playground: !!process.env?.DEBUG,
       // plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
     ServeStaticModule.forRoot({
