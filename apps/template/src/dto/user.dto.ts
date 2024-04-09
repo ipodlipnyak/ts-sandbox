@@ -33,6 +33,14 @@ export class UserOutputDto {
     nullable: true
   })
   friends: UserOutputDto[];
+  @Field(type => [UserOutputDto], {
+    nullable: true
+  })
+  followers: UserOutputDto[];
+  @Field(type => [UserOutputDto], {
+    nullable: true
+  })
+  subscriptions: UserOutputDto[];
   @Field({ nullable: true })
   pictureUrl: string
 }

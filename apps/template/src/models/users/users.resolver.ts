@@ -27,11 +27,42 @@ const pubSub = new PubSub();
 //     }
 // }
 
+async function mapUserToDto(user: Users): Promise<UserOutputDto> {
+  function mapthem(user: Users): UserOutputDto {
+    const dto: UserOutputDto = {
+      id: user.id,
+      role: user.role,
+      firstName: user.firstName,
+      middleName: user.middleName,
+      lastName: user.lastName,
+      email: user.email,
+      pictureUrl: user.pictureUrl,
+      friends: null,
+      followers: null,
+      subscriptions: null,
+    };
+    return dto;
+  }
+  const result = mapthem(user);
+
+  if (user?.friends) {
+    const friends = await user.getFriends();
+    const followers = await user.getFollowers();
+    const subscriptions = await user.getSubscriptions();
+
+    result.friends = friends.map((f) => mapthem(f));
+    result.followers = followers.map((f) => mapthem(f));
+    result.subscriptions = subscriptions.map((f) => mapthem(f));
+  }
+
+  return result;
+}
+
 @UseGuards(GqlAuthGuard)
 @Resolver(Users)
 export class UsersResolver {
-    constructor (private readonly userService: UserService) {}
-    
+    constructor(private readonly userService: UserService) { }
+
     @Query(returns => UserOutputDto)
     async whoami(): Promise<UserOutputDto> {
         const id = this.userService.userId;
@@ -43,32 +74,8 @@ export class UsersResolver {
                 friends: true
             }
         });
-
-        const friends = user.friends?.map((friend): UserOutputDto => {
-            const dto: UserOutputDto = {
-                id: friend.friend.id,
-                role: friend.friend.role,
-                firstName: friend.friend.firstName,
-                middleName: friend.friend.middleName,
-                lastName: friend.friend.lastName,
-                email: friend.friend.email,
-                pictureUrl: friend.friend.pictureUrl,
-                friends: null
-            };
-            return dto;
-        }) || null;
-
-        const myDto: UserOutputDto = {
-            id: user.id,
-            role: user.role,
-            firstName: user.firstName,
-            middleName: user.middleName,
-            lastName: user.lastName,
-            email: user.email,
-            pictureUrl: user.pictureUrl,
-            friends,
-        };
-        return myDto;
+        const result = mapUserToDto(user);
+        return result;
     }
 
     @Query(returns => UserOutputDto)
@@ -83,7 +90,7 @@ export class UsersResolver {
     async users(@Args('role') role?: UserRole) {
         let query = {};
         if (role) {
-            query = {...query, role}
+            query = { ...query, role }
         }
 
         if (Object.keys(query).length > 0) {
@@ -98,8 +105,8 @@ export class UsersResolver {
     // }
 
     @Mutation(() => UserOutputDto)
-    async createUser (@Args('data') data: UserInputDto): Promise<Users> {
-        const newUserData: DeepPartial<Users> = {...data};
+    async createUser(@Args('data') data: UserInputDto): Promise<Users> {
+        const newUserData: DeepPartial<Users> = { ...data };
         const newUser = Users.create(newUserData);
 
         await newUser.save();
