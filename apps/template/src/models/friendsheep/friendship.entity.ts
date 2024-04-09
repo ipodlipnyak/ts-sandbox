@@ -6,8 +6,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Users } from '../users';
 
-import { Users } from './../users';
 
 /**
  * Let's make some friends

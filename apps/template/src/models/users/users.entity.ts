@@ -15,7 +15,7 @@ import { Purchase } from './../purchase';
 import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
-import { Friendsheep } from './friendship.entity';
+import { Friendsheep } from '../friendsheep';
 // import { EventUser } from './../event';
 
 export class UserExistError extends Error {
@@ -92,7 +92,7 @@ export class Users extends BaseEntity {
   })
   track: Track;
   
-  @OneToMany(() => Friendsheep, (friendsheep) => friendsheep.user, { eager: true })
+  @OneToMany(() => Friendsheep, (friendsheep) => friendsheep.user, { eager: false })
   friends: Friendsheep[];
 
   /*
