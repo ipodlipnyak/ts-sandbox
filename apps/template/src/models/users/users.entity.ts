@@ -16,6 +16,8 @@ import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
 import { Friendsheep } from './friendsheep.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ID } from 'type-graphql';
 // import { EventUser } from './../event';
 
 export class UserExistError extends Error {
@@ -32,7 +34,9 @@ export enum UserRole {
 }
 
 @Entity()
+// @ObjectType()
 export class Users extends BaseEntity {
+  // @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -65,6 +69,7 @@ export class Users extends BaseEntity {
   })
   lastName: string;
 
+  // @Field()
   @Column({
     nullable: true,
     unique: true,
@@ -92,6 +97,7 @@ export class Users extends BaseEntity {
   })
   track: Track;
   
+  // @Field(type => Users)
   @OneToMany(() => Friendsheep, (friendsheep) => friendsheep.user, { eager: false })
   friends: Friendsheep[];
 

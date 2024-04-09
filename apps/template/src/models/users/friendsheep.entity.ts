@@ -7,6 +7,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Users } from './users.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ID } from 'type-graphql';
 
 
 /**
@@ -15,6 +17,7 @@ import { Users } from './users.entity';
  */
 @Entity()
 export class Friendsheep extends BaseEntity {
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 

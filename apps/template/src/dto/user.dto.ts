@@ -8,6 +8,7 @@ import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/gra
 import { UserRole } from '../models/users/users.entity';
 import { gqlCheckRoleMiddleware } from './../middleware/gql-check-role-middleware';
 import {registerEnumType} from '@nestjs/graphql';
+import { isListType } from 'graphql';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -19,7 +20,7 @@ export class UserOutputDto {
   id: string;
   @Field({ middleware: [gqlCheckRoleMiddleware] })
   @Extensions({ role: UserRole?.ADMIN || 200 }) // in unit test environment UserRole usually is undefined
-  role: string;
+  role: UserRole;
   @Field()
   firstName: string;
   @Field()
@@ -28,8 +29,10 @@ export class UserOutputDto {
   lastName: string;
   @Field()
   email: string;
-  @Field()
-  friends: UserOutputDto
+  @Field(type => [UserOutputDto], {
+    nullable: true
+  })
+  friends: UserOutputDto[];
 }
 
 @InputType()

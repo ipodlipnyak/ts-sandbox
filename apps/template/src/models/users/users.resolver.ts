@@ -1,4 +1,4 @@
-import { Resolver, Query, Mutation, Args } from '@nestjs/graphql'
+import { Resolver, Query, Mutation, Args, ResolveField, Parent, Info } from '@nestjs/graphql'
 import { Users, UserRole } from './users.entity'
 import { UserOutputDto, UserInputDto } from "../../dto";
 import {
@@ -14,16 +14,59 @@ import { UserService } from '../../services';
 
 const pubSub = new PubSub();
 
+// @Resolver(type => Users) // Reminder: Character is an interface
+// export class UsersInterfaceResolver {
+//     @ResolveField(() => [Users])
+//     friends(
+//       @Parent() user: any, // Resolved object that implements Character
+//       @Info() { parentType }, // Type of the object that implements Character
+//       @Args('search', { type: () => String }) searchTerm: string,
+//     ) {
+//       // Get character's friends
+//       return [];
+//     }
+// }
+
 @UseGuards(GqlAuthGuard)
 @Resolver(Users)
 export class UsersResolver {
     constructor (private readonly userService: UserService) {}
-
+    
     @Query(returns => UserOutputDto)
-    async whoami(): Promise<Users> {
-        const user = await this.userService.getUser();
-        const id = user.id;
-        return await Users.findOne({ where: {id} });
+    async whoami(): Promise<UserOutputDto> {
+        const id = this.userService.userId;
+        const user = await Users.findOne({
+            where: {
+                id
+            },
+            relations: {
+                friends: true
+            }
+        });
+
+        const friends = user.friends?.map((friend): UserOutputDto => {
+            const dto: UserOutputDto = {
+                id: friend.friend.id,
+                role: friend.friend.role,
+                firstName: friend.friend.firstName,
+                middleName: friend.friend.middleName,
+                lastName: friend.friend.lastName,
+                email: friend.friend.email,
+                friends: null
+            };
+            return dto;
+        }) || null;
+
+        const myDto: UserOutputDto = {
+            id: user.id,
+            role: user.role,
+            firstName: user.firstName,
+            middleName: user.middleName,
+            lastName: user.lastName,
+            email: user.email,
+            friends,
+        };
+        return myDto;
     }
 
     @Query(returns => UserOutputDto)
