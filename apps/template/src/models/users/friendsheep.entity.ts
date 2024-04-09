@@ -20,7 +20,7 @@ export class Friendsheep extends BaseEntity {
 
   @ManyToOne(() => Users, (user) => user.id, {
     onDelete: 'CASCADE',
-    eager: true,
+    eager: false,
   })
   user: Users;
   

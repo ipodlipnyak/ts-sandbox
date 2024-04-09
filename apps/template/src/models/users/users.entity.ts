@@ -92,7 +92,7 @@ export class Users extends BaseEntity {
   })
   track: Track;
   
-  @OneToMany(() => Friendsheep, (friend) => friend.user, { eager: false })
+  @OneToMany(() => Friendsheep, (friendsheep) => friendsheep.user, { eager: false })
   friends: Friendsheep[];
 
   /*
