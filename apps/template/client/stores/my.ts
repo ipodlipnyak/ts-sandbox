@@ -9,15 +9,19 @@ import { UserNameDto } from './../../src/dto/user.dto';
 export const useMyStore = defineStore('my', {
     // arrow function recommended for full type inference
     state: () => ({
-        whoamiPending: false,
+        friendsPending: false,
+        followersPending: false,
+        subscriptionsPending: false,
         whoami: {} as UserOutputDto,
         nameUpdatePending: false
     }),
     actions: {
         async fetchMyFriends() {
-            this.whoamiPending = true;
+            this.friendsPending = true;
 
-            const query = gql`{whoami{friends{email, firstName, middleName, lastName, pictureUrl}}}`;
+            const query = gql`{whoami{
+              friends{email, firstName, middleName, lastName, pictureUrl}
+            }}`;
             const {data} = await useAsyncQuery(query);
             const response = await data.value as any;
             this.whoami = {
@@ -25,7 +29,39 @@ export const useMyStore = defineStore('my', {
                 ...response.whoami
             }
 
-            this.whoamiPending = false;
+            this.friendsPending = false;
+        },
+
+        async fetchMyFollowers() {
+            this.followersPending = true;
+
+            const query = gql`{whoami{
+              followers{email, firstName, middleName, lastName, pictureUrl}
+            }}`;
+            const {data} = await useAsyncQuery(query);
+            const response = await data.value as any;
+            this.whoami = {
+                ...this.whoami,
+                ...response.whoami
+            }
+
+            this.followersPending = false;
+        },
+
+        async fetchMySubscriptions() {
+            this.subscriptionsPending = true;
+
+            const query = gql`{whoami{
+              subscriptions{email, firstName, middleName, lastName, pictureUrl}
+            }}`;
+            const {data} = await useAsyncQuery(query);
+            const response = await data.value as any;
+            this.whoami = {
+                ...this.whoami,
+                ...response.whoami
+            }
+
+            this.subscriptionsPending = false;
         },
 
         async updateName(name: UserNameDto) {
@@ -47,7 +83,9 @@ export const useMyStore = defineStore('my', {
 
     getters: {
         nameUpdatePendingGetter: (state): boolean => state.nameUpdatePending,
-        friends: (state) => state.whoami.friends,
+        friends: (state) => state.whoami?.friends || [],
+        subscriptions: (state) => state.whoami?.subscriptions || [],
+        followers: (state) => state.whoami?.followers || [],
     },
 });
 

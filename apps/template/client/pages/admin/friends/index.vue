@@ -1,11 +1,14 @@
 <template>
   <v-container>
     <v-row>
-      <v-col cols="12" md="6">
-        <my-friends-confirmed />
+      <v-col cols="12" md="4">
+        <my-friends-accepted />
       </v-col>
-      <v-col cols="12" md="6">
-        <my-friends-invited />
+      <v-col cols="12" md="4">
+        <my-friends-followers />
+      </v-col>
+      <v-col cols="12" md="4">
+        <my-friends-subscriptions />
       </v-col>
     </v-row>
   </v-container>
@@ -24,7 +27,6 @@ export default defineComponent({
   setup() {
     const display = useDisplay();
     const myStore = useMyStore();
-    myStore.fetchMyFriends();
 
     return {
       display,

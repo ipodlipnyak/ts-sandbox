@@ -1,17 +1,13 @@
 <template>
-  <v-card color="green" variant="tonal" :loading="myStore.whoamiPending">
+  <v-card color="amber" variant="tonal" :loading="myStore.followersPending">
     <v-toolbar>
-      <v-toolbar-title>My pals</v-toolbar-title>
+      <v-toolbar-title>Followers</v-toolbar-title>
+      <v-spacer />
+      <v-btn @click="myStore.fetchMySubscriptions" :loading="myStore.followersPending" icon="mdi-refresh" variant="tonal"></v-btn>
     </v-toolbar>
 
-    <v-text-field class="ma-4" variant="solo-filled" label="Make a friend">
-      <template v-slot:append-inner>
-        <v-btn variant="tonal" icon="mdi-human-baby-changing-table"></v-btn>
-      </template>
-    </v-text-field>
-
     <v-virtual-scroll
-      :items="myStore.friends"
+      :items="myStore.followers"
       height="320"
       item-height="48"
     >
@@ -25,7 +21,8 @@
             <v-avatar icon="mdi-incognito" :image="item.pictureUrl" />
           </template>
           <template v-slot:append>
-            <v-btn variant="tonal" color="red" icon="mdi-dance-pole"></v-btn>
+            <v-btn variant="tonal" color="green" icon="mdi-human-greeting-variant"></v-btn>
+            <v-btn variant="tonal" color="red" icon="mdi-human-greeting-variant"></v-btn>
           </template>
         </v-list-item>
       </template>
@@ -40,6 +37,7 @@ import { useMyStore } from '~/stores';
 export default defineComponent({
   setup(props, ctx) {
     const myStore = useMyStore();
+    myStore.fetchMyFollowers();
 
     return {
       myStore,
