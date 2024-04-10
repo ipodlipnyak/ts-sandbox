@@ -27,7 +27,7 @@
             <v-avatar icon="mdi-incognito" :image="item.pictureUrl" />
           </template>
           <template v-slot:append>
-            <v-btn variant="tonal" color="red" icon="mdi-dance-pole"></v-btn>
+            <v-btn variant="tonal" color="red" icon="mdi-axe"></v-btn>
           </template>
         </v-list-item>
       </template>
