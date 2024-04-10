@@ -271,17 +271,20 @@ export class Users extends BaseEntity {
 
   /**
    * He invited me to be a friend. So he is my follower
-   *
+   6dbe38ce-0e2e-4b7f-9fdc-f4908da73a19*
    * @returns Users[]
    */
   async getFollowers() {
     const query = `
-      id IN (
-        select f1."friendId"
-        from friendsheep f1
-        inner join friendsheep f2 on f1."userId" != f2."friendId" and f1."friendId" = f2."userId"
-        where f1."userId" = '${this.id}'
-      );
+        id in (
+          select sub from (
+            select f1."userId" as sub, f2."userId" as obj
+            from friendsheep f1
+            left outer join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+            where f1."friendId" = '${this.id}'
+        ) as rel where rel.obj is NULL
+      )
+      ;
     `;
     const result = await Users.createQueryBuilder().where(query).getMany();
     return result;
@@ -294,12 +297,15 @@ export class Users extends BaseEntity {
    */
   async getSubscriptions() {
     const query = `
-      id IN (
-        select f1."friendId"
-        from friendsheep f1
-        inner join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" != f2."userId"
-        where f1."userId" = '${this.id}'
-      );
+        id in (
+          select obj from (
+            select f1."friendId" as obj, f2."friendId" as sub
+            from friendsheep f1
+            left outer join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+            where f1."userId" = '${this.id}'
+        ) as rel where rel.sub is NULL
+      )
+      ;
     `;
     const result = await Users.createQueryBuilder().where(query).getMany();
     return result;
