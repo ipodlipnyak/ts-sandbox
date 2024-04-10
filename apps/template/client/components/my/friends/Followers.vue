@@ -12,19 +12,11 @@
       item-height="48"
     >
       <template v-slot:default="{ item }">
-        <v-list-item
-          class="my-2"
-          :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ') || 'Anonimus'"
-          :subtitle="`${item.email}`"
-        >
-          <template v-slot:prepend>
-            <v-avatar icon="mdi-incognito" :image="item.pictureUrl" />
-          </template>
-          <template v-slot:append>
-            <v-btn variant="tonal" class="mr-2" color="green" icon="mdi-human-greeting-variant"></v-btn>
-            <v-btn variant="tonal" color="red" icon="mdi-karate"></v-btn>
-          </template>
-        </v-list-item>
+        <my-friends-followers-item
+          :name="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ') || 'Anonimus'"
+          :email="item.email"
+          :picture="item.pictureUrl"
+        />
       </template>
     </v-virtual-scroll>
   </v-card>

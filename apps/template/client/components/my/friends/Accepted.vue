@@ -12,24 +12,19 @@
       </template>
     </v-text-field>
 
+    <v-divider/>
+
     <v-virtual-scroll
       :items="myStore.friends"
       height="400"
       item-height="48"
     >
       <template v-slot:default="{ item }">
-        <v-list-item
-          class="my-2"
-          :title="[item.firstName, item.middleName, item.lastName].filter((el) => !!el).join(' ') || 'Anonimus'"
-          :subtitle="`${item.email}`"
-        >
-          <template v-slot:prepend>
-            <v-avatar icon="mdi-incognito" :image="item.pictureUrl" />
-          </template>
-          <template v-slot:append>
-            <v-btn variant="tonal" color="red" icon="mdi-axe"></v-btn>
-          </template>
-        </v-list-item>
+        <my-friends-accepted-item
+          :name="[item?.firstName, item?.middleName, item?.lastName].filter((el) => !!el).join(' ') || 'Anonimus'"
+          :email="item.email"
+          :picture="item.pictureUrl"
+        />
       </template>
     </v-virtual-scroll>
   </v-card>
