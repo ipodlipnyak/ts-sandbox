@@ -28,7 +28,6 @@ export default defineComponent({
   setup(props, ctx) {
     const myStore = useMyStore();
 
-    const newFriendEmail = ref('');
     const unmakeFriendPending = ref(false);
     const unmakeFriend = async () => {
       unmakeFriendPending.value = true;
@@ -50,7 +49,6 @@ export default defineComponent({
       await myStore.fetchMyFriends();
       myStore.fetchMyFollowers();
       myStore.fetchMySubscriptions();
-      newFriendEmail.value = '';
     };
 
     const makeFriendPending = ref(false);
@@ -74,7 +72,6 @@ export default defineComponent({
       await myStore.fetchMyFriends();
       myStore.fetchMySubscriptions();
       myStore.fetchMyFollowers();
-      newFriendEmail.value = '';
     };
 
     return {

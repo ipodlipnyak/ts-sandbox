@@ -8,7 +8,7 @@
       <v-avatar icon="mdi-incognito" :image="picture" />
     </template>
     <template v-slot:append>
-      <v-btn variant="tonal" color="red" icon="mdi-axe"></v-btn>
+      <v-btn @click="unmakeFriend" :loading="unmakeFriendPending" variant="tonal" color="red" icon="mdi-axe"></v-btn>
     </template>
   </v-list-item>
 </template>
@@ -27,20 +27,19 @@ export default defineComponent({
   setup(props, ctx) {
     const myStore = useMyStore();
 
-    const newFriendEmail = ref('');
     const unmakeFriendPending = ref(false);
     const unmakeFriend = async () => {
       unmakeFriendPending.value = true;
 
       const query = gql`
         mutation MakeFriend($email: String!) {
-          makeFriend(email: $email) {
-            email
+          unmakeFriend(email: $email) {
+            status
           }
         }
       `;
       const variables = {
-        email: newFriendEmail.value
+        email: props.email,
       };
       const { mutate } = useMutation(query, {variables});
       await mutate();
@@ -49,9 +48,10 @@ export default defineComponent({
       await myStore.fetchMyFriends();
       myStore.fetchMyFollowers();
       myStore.fetchMySubscriptions();
-      newFriendEmail.value = '';
     };
     return {
+      unmakeFriend,
+      unmakeFriendPending,
     }
   },
 })

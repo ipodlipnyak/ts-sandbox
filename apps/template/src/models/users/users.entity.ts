@@ -198,6 +198,10 @@ export class Users extends BaseEntity {
    * @returns new friend's user model
    */
   async makeFriend(email: string) {
+    if (!email) {
+      return;
+    }
+
     let friend = await Users.findOne({
       where: { email: email },
     });
@@ -217,12 +221,61 @@ export class Users extends BaseEntity {
   }
 
   /**
+   *
+   * @param email
+   * @returns
+   */
+  async unmakeFriend(email: string) {
+    if (!email) {
+      return;
+    }
+
+    let friend = await Users.findOne({
+      where: { email: email },
+
+    });
+    if (!friend) {
+      return;
+    }
+
+    await this.unsubscribe(email);
+    await friend.unsubscribe(this.email);
+  }
+
+  /**
+   * Check if user have a friend with admin role
+   *
+   * @returns boolean
+   */
+  async isFriendWithAdmins() {
+    // i am an admin
+    if (this.role >= UserRole.ADMIN) {
+      return true;
+    }
+
+    const query = `
+      id IN (
+        select f1."friendId"
+        from friendsheep f1
+        inner join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+        where f1."userId" = '${this.id}'
+      ) and role >= ${UserRole.ADMIN}
+    `;
+    const result = await Users.createQueryBuilder().where(query).getExists();
+    return result;
+  }
+
+  /**
    * Remove friendsheep from one side
    *
    * @param email friend to break with
    * @returns
    */
   async unsubscribe(email: string) {
+    if (!email) {
+      return;
+    }
+
     const query = `
     id IN (
       select f1."friendId"
@@ -240,7 +293,16 @@ export class Users extends BaseEntity {
         friend: { id: friend.id },
       }
     });
-    return await friendsheep.remove();
+
+    const result = await friendsheep.remove();
+
+    // remove this user if there is no admin to check on him
+    const isFriendWithAdmin = await this.isFriendWithAdmins();
+    if (!isFriendWithAdmin) {
+      this.remove();
+    }
+
+    return result;
   }
 
   /**
@@ -250,6 +312,10 @@ export class Users extends BaseEntity {
    * @returns
    */
   async unfollow(email: string) {
+    if (!email) {
+      return;
+    }
+
     const query = `
     id IN (
       select f1."userId"
@@ -267,7 +333,15 @@ export class Users extends BaseEntity {
         user: { id: follower.id },
       }
     });
-    return await friendsheep.remove();
+    const result = await friendsheep.remove();
+
+    // remove this user if there is no admin to check on him
+    const isFriendWithAdmin = await follower.isFriendWithAdmins();
+    if (!isFriendWithAdmin) {
+      follower.remove();
+    }
+
+    return result;
   }
 
   /**
@@ -277,6 +351,10 @@ export class Users extends BaseEntity {
    * @returns
    */
   async subscribe(email: string) {
+    if (!email) {
+      return;
+    }
+
     const query = `
     id IN (
       select f1."friendId"

@@ -87,6 +87,9 @@ export class UsersResolver {
     async subscribe(@Args('email') email: string): Promise<UserOutputDto> {
       const user = await this.userService.getUser();
       const friend = await user.subscribe(email);
+      if (!friend) {
+        throw new BadRequestException('User should be rgistered first');
+      }
       return mapUserToDto(friend);
     }
 
@@ -118,5 +121,16 @@ export class UsersResolver {
       const user = await this.userService.getUser();
       const friend = await user.makeFriend(email);
       return mapUserToDto(friend);
+    }
+
+    @UseGuards(GqlAdminGuard)
+    @Mutation(() => RestResponseDto)
+    async unmakeFriend(@Args('email') email: string): Promise<RestResponseDto> {
+      const user = await this.userService.getUser();
+      const friend = await user.unmakeFriend(email);
+
+      return {
+        status: ResponseStatusEnum.SUCCESS
+      };
     }
 }

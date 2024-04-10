@@ -3,7 +3,7 @@
     <v-toolbar>
       <v-toolbar-title>Followers</v-toolbar-title>
       <v-spacer />
-      <v-btn @click="myStore.fetchMySubscriptions" :loading="myStore.followersPending" icon="mdi-refresh" variant="tonal"></v-btn>
+      <v-btn @click="myStore.fetchMyFollowers" :loading="myStore.followersPending" icon="mdi-refresh" variant="tonal"></v-btn>
     </v-toolbar>
 
     <v-virtual-scroll

@@ -6,7 +6,15 @@
       <v-btn @click="myStore.fetchMySubscriptions" :loading="myStore.subscriptionsPending" icon="mdi-refresh" variant="tonal"></v-btn>
     </v-toolbar>
 
-    <v-text-field v-model="newFriendEmail" :loading="makeFriendPending" class="ma-4" variant="solo-filled" label="Invite to be a friend">
+    <v-text-field
+      v-model="newFriendEmail"
+      :loading="makeFriendPending"
+      :error="errorState"
+      :error-messages="errorMessage"
+      class="ma-4"
+      variant="solo-filled"
+      label="Invite to be a friend"
+    >
       <template v-slot:append-inner>
         <v-btn @click="makeFriend" :loading="makeFriendPending" variant="tonal" icon="mdi-paw"></v-btn>
       </template>
@@ -39,7 +47,19 @@ export default defineComponent({
     const myStore = useMyStore();
     myStore.fetchMySubscriptions();
 
+    const errorState = ref(false);
+    const errorMessage = ref('');
+
     const newFriendEmail = ref('');
+
+    watch(
+      newFriendEmail,
+      () => {
+        errorState.value = false;
+        errorMessage.value = '';
+      }
+    );
+
     const makeFriendPending = ref(false);
     const makeFriend = async () => {
       makeFriendPending.value = true;
@@ -54,14 +74,22 @@ export default defineComponent({
       const variables = {
         email: newFriendEmail.value
       };
-      const { mutate } = useMutation(query, {variables});
-      await mutate();
+      const { mutate, error } = useMutation(query, {variables});
+
+      try {
+        await mutate();
+        await myStore.fetchMyFriends();
+        myStore.fetchMySubscriptions();
+        myStore.fetchMyFollowers();
+        newFriendEmail.value = '';
+      } catch(e) {
+        const eMsg = error.value?.message;
+        if (eMsg) {
+          errorMessage.value = eMsg;
+        }
+      }
 
       makeFriendPending.value = false;
-      await myStore.fetchMyFriends();
-      myStore.fetchMySubscriptions();
-      myStore.fetchMyFollowers();
-      newFriendEmail.value = '';
     };
 
     return {
@@ -69,6 +97,8 @@ export default defineComponent({
       makeFriend,
       makeFriendPending,
       newFriendEmail,
+      errorMessage,
+      errorState,
     }
   },
 })
