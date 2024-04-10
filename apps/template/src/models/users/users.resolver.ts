@@ -88,7 +88,7 @@ export class UsersResolver {
       const user = await this.userService.getUser();
       const friend = await user.subscribe(email);
       if (!friend) {
-        throw new BadRequestException('User should be rgistered first');
+        throw new BadRequestException('User should be registered first');
       }
       return mapUserToDto(friend);
     }

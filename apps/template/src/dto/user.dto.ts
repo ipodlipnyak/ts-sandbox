@@ -21,11 +21,11 @@ export class UserOutputDto {
   @Field({ middleware: [gqlCheckRoleMiddleware] })
   @Extensions({ role: UserRole?.ADMIN || 200 }) // in unit test environment UserRole usually is undefined
   role: UserRole;
-  @Field()
+  @Field({ nullable: true })
   firstName: string;
-  @Field()
+  @Field({ nullable: true })
   middleName: string;
-  @Field()
+  @Field({ nullable: true })
   lastName: string;
   @Field()
   email: string;
