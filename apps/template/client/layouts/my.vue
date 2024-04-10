@@ -174,6 +174,16 @@
           icon: 'mdi-view-dashboard'
         },
         {
+          title: 'Events',
+          path: '/my/events',
+          icon: 'mdi-calendar'
+        },
+        {
+          title: 'Friends',
+          path: '/my/friends',
+          icon: 'mdi-human-greeting'
+        },
+        {
           title: 'Bot',
           path: '/my/bot',
           icon: 'mdi-robot-happy'
@@ -182,11 +192,6 @@
           title: 'Settings',
           path: '/my/settings',
           icon: 'mdi-cog'
-        },
-        {
-          title: 'Events',
-          path: '/my/events',
-          icon: 'mdi-calendar'
         },
       ];
 
