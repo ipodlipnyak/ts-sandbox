@@ -78,7 +78,7 @@
 
           <v-list-item title="My" subtitle="safe space"></v-list-item>
         </div>
-        
+
 
         <v-list-item
           v-for="item in myNavTree"
@@ -89,7 +89,7 @@
           exact
         />
 
-        
+
         <v-list-item
           title="Logout"
           @click.stop="logout"
@@ -197,9 +197,9 @@
           icon: 'mdi-calendar-edit'
         },
         {
-          title: 'Edit friends',
+          title: 'Manage friends',
           path: '/admin/friends',
-          icon: 'mdi-calendar-plus'
+          icon: 'mdi-cat'
         },
       ];
 

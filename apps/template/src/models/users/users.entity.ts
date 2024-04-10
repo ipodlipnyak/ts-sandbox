@@ -372,6 +372,10 @@ export class Users extends BaseEntity {
       // relations: { friends: true },
     });
 
+    if (!friend) {
+      return null;
+    }
+
     const friendsheep = new Friendsheep();
     friendsheep.user = this;
     friendsheep.friend = friend;
