@@ -101,6 +101,17 @@ export class UsersResolver {
       return result;
     }
 
+    @Mutation(() => RestResponseDto)
+    async unfollow(@Args('email') email: string): Promise<RestResponseDto> {
+      const result: RestResponseDto = {
+        status: ResponseStatusEnum.SUCCESS,
+      }
+      const user = await this.userService.getUser();
+      await user.unfollow(email);
+
+      return result;
+    }
+
     @UseGuards(GqlAdminGuard)
     @Mutation(() => UserOutputDto)
     async makeFriend(@Args('email') email: string): Promise<UserOutputDto> {
