@@ -15,6 +15,7 @@
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
+import { useMyStore } from '~/stores';
 
 export default defineComponent({
   props: {
@@ -24,7 +25,32 @@ export default defineComponent({
   },
 
   setup(props, ctx) {
+    const myStore = useMyStore();
 
+    const newFriendEmail = ref('');
+    const unmakeFriendPending = ref(false);
+    const unmakeFriend = async () => {
+      unmakeFriendPending.value = true;
+
+      const query = gql`
+        mutation MakeFriend($email: String!) {
+          makeFriend(email: $email) {
+            email
+          }
+        }
+      `;
+      const variables = {
+        email: newFriendEmail.value
+      };
+      const { mutate } = useMutation(query, {variables});
+      await mutate();
+
+      unmakeFriendPending.value = false;
+      await myStore.fetchMyFriends();
+      myStore.fetchMyFollowers();
+      myStore.fetchMySubscriptions();
+      newFriendEmail.value = '';
+    };
     return {
     }
   },
