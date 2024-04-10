@@ -3,12 +3,12 @@
     <v-toolbar>
       <v-toolbar-title>My pals</v-toolbar-title>
       <v-spacer />
-      <v-btn @click="myStore.fetchMySubscriptions" :loading="myStore.friendsPending" icon="mdi-refresh" variant="tonal"></v-btn>
+      <v-btn @click="myStore.fetchMyFriends" :loading="myStore.friendsPending" icon="mdi-refresh" variant="tonal"></v-btn>
     </v-toolbar>
 
-    <v-text-field class="ma-4" variant="solo-filled" label="Make a friend">
+    <v-text-field v-model="newFriendEmail" :loading="makeFriendPending" class="ma-4" variant="solo-filled" label="Make a friend">
       <template v-slot:append-inner>
-        <v-btn variant="tonal" icon="mdi-human-baby-changing-table"></v-btn>
+        <v-btn @click="makeFriend" :loading="makeFriendPending" variant="tonal" icon="mdi-human-baby-changing-table"></v-btn>
       </template>
     </v-text-field>
 
@@ -44,8 +44,36 @@ export default defineComponent({
     const myStore = useMyStore();
     myStore.fetchMyFriends();
 
+    const newFriendEmail = ref('');
+    const makeFriendPending = ref(false);
+    const makeFriend = async () => {
+      makeFriendPending.value = true;
+
+      const query = gql`
+        mutation MakeFriend($email: String!) {
+          makeFriend(email: $email) {
+            email
+          }
+        }
+      `;
+      const variables = {
+        email: newFriendEmail.value
+      };
+      const { mutate } = useMutation(query, {variables});
+      await mutate();
+
+      makeFriendPending.value = false;
+      await myStore.fetchMyFriends();
+      myStore.fetchMyFollowers();
+      myStore.fetchMySubscriptions();
+      newFriendEmail.value = '';
+    };
+
     return {
       myStore,
+      makeFriend,
+      makeFriendPending,
+      newFriendEmail,
     }
   },
 })

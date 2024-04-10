@@ -78,7 +78,7 @@ export const useMyStore = defineStore('my', {
             }
 
             this.nameUpdatePending = false;
-        }
+        },
     },
 
     getters: {
