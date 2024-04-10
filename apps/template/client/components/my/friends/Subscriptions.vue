@@ -26,6 +26,9 @@
           <template v-slot:prepend>
             <v-avatar icon="mdi-incognito" :image="item.pictureUrl" />
           </template>
+          <template v-slot:append>
+            <v-btn variant="tonal" color="red" icon="mdi-paw-off"></v-btn>
+          </template>
         </v-list-item>
       </template>
     </v-virtual-scroll>
