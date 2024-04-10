@@ -15,6 +15,10 @@ import { Purchase } from './../purchase';
 import { BalanceImportDto, NewUserDto } from './../../dto';
 import * as bcrypt from 'bcrypt';
 import { Track } from './../track';
+import { Friendsheep } from './friendsheep.entity';
+import { Field, ObjectType } from '@nestjs/graphql';
+import { ID } from 'type-graphql';
+import { randomUUID } from 'crypto';
 // import { EventUser } from './../event';
 
 export class UserExistError extends Error {
@@ -31,7 +35,9 @@ export enum UserRole {
 }
 
 @Entity()
+// @ObjectType()
 export class Users extends BaseEntity {
+  // @Field(() => ID)
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -64,11 +70,17 @@ export class Users extends BaseEntity {
   })
   lastName: string;
 
+  // @Field()
   @Column({
     nullable: true,
     unique: true,
   })
   email: string;
+
+  @Column({
+    nullable: true,
+  })
+  pictureUrl: string;
 
   @CreateDateColumn()
   created: Date;
@@ -85,6 +97,10 @@ export class Users extends BaseEntity {
     nullable: true,
   })
   track: Track;
+
+  // @Field(type => Users)
+  @OneToMany(() => Friendsheep, (friendsheep) => friendsheep.user, { eager: false })
+  friends: Friendsheep[];
 
   /*
   @ManyToOne(() => EventUser, (event) => event.user, {
@@ -113,7 +129,6 @@ export class Users extends BaseEntity {
    */
   @OneToMany(() => Purchase, (purchase) => purchase.user, { eager: false })
   purchases: Purchase[];
-
 
   /**
    * Registration for new user
@@ -174,6 +189,259 @@ export class Users extends BaseEntity {
     await user.reload();
 
     return user;
+  }
+
+  /**
+   * Create a user if required with new email and subscribe each other profiles
+   *
+   * @param email for a new friend
+   * @returns new friend's user model
+   */
+  async makeFriend(email: string) {
+    if (!email) {
+      return;
+    }
+
+    let friend = await Users.findOne({
+      where: { email: email },
+    });
+
+    if (!friend) {
+      friend = new Users();
+      friend.email = email;
+      await friend.save();
+      await friend.reload();
+    }
+
+    await this.subscribe(email);
+    await friend.subscribe(this.email);
+
+    await friend.reload();
+    return friend;
+  }
+
+  /**
+   *
+   * @param email
+   * @returns
+   */
+  async unmakeFriend(email: string) {
+    if (!email) {
+      return;
+    }
+
+    let friend = await Users.findOne({
+      where: { email: email },
+
+    });
+    if (!friend) {
+      return;
+    }
+
+    await this.unsubscribe(email);
+    await friend.unsubscribe(this.email);
+  }
+
+  /**
+   * Check if user have a friend with admin role
+   *
+   * @returns boolean
+   */
+  async isFriendWithAdmins() {
+    // i am an admin
+    if (this.role >= UserRole.ADMIN) {
+      return true;
+    }
+
+    const query = `
+      id IN (
+        select f1."friendId"
+        from friendsheep f1
+        inner join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+        where f1."userId" = '${this.id}'
+      ) and role >= ${UserRole.ADMIN}
+    `;
+    const result = await Users.createQueryBuilder().where(query).getExists();
+    return result;
+  }
+
+  /**
+   * Remove friendsheep from one side
+   *
+   * @param email friend to break with
+   * @returns
+   */
+  async unsubscribe(email: string) {
+    if (!email) {
+      return;
+    }
+
+    const query = `
+    id IN (
+      select f1."friendId"
+      from friendsheep f1
+      where f1."userId" = '${this.id}'
+    ) and email = '${email}';
+    `;
+    const friend = await Users.createQueryBuilder().where(query).getOne();
+    if (!friend) {
+      return;
+    }
+    const friendsheep = await Friendsheep.findOne({
+      where: {
+        user: { id: this.id },
+        friend: { id: friend.id },
+      }
+    });
+
+    const result = await friendsheep.remove();
+
+    // remove this user if there is no admin to check on him
+    const isFriendWithAdmin = await this.isFriendWithAdmins();
+    if (!isFriendWithAdmin) {
+      this.remove();
+    }
+
+    return result;
+  }
+
+  /**
+   * Remove friendsheep from other side
+   *
+   * @param email follower to kick off
+   * @returns
+   */
+  async unfollow(email: string) {
+    if (!email) {
+      return;
+    }
+
+    const query = `
+    id IN (
+      select f1."userId"
+      from friendsheep f1
+      where f1."friendId" = '${this.id}'
+    ) and email = '${email}';
+    `;
+    const follower = await Users.createQueryBuilder().where(query).getOne();
+    if (!follower) {
+      return;
+    }
+    const friendsheep = await Friendsheep.findOne({
+      where: {
+        friend: { id: this.id },
+        user: { id: follower.id },
+      }
+    });
+    const result = await friendsheep.remove();
+
+    // remove this user if there is no admin to check on him
+    const isFriendWithAdmin = await follower.isFriendWithAdmins();
+    if (!isFriendWithAdmin) {
+      follower.remove();
+    }
+
+    return result;
+  }
+
+  /**
+   * Invite somebody to be a friend. In meentime you are subscribed to him
+   *
+   * @param email to subscribe
+   * @returns
+   */
+  async subscribe(email: string) {
+    if (!email) {
+      return;
+    }
+
+    const query = `
+    id IN (
+      select f1."friendId"
+      from friendsheep f1
+      where f1."userId" = '${this.id}'
+    ) and email = '${email}';
+    `;
+    const subscribtion = await Users.createQueryBuilder().where(query).getOne();
+    if (subscribtion) {
+      return subscribtion;
+    }
+
+    const friend = await Users.findOne({
+      where: { email: email },
+      // relations: { friends: true },
+    });
+
+    if (!friend) {
+      return null;
+    }
+
+    const friendsheep = new Friendsheep();
+    friendsheep.user = this;
+    friendsheep.friend = friend;
+    await friendsheep.save();
+    await friendsheep.reload();
+    return friendsheep.friend;
+  }
+
+  /**
+   * We both accepted this friendsheep
+   *
+   * @returns Users[]
+   */
+  async getFriends() {
+    const query = `
+      id IN (
+        select f1."friendId"
+        from friendsheep f1
+        inner join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+        where f1."userId" = '${this.id}'
+      );
+    `;
+    const result = await Users.createQueryBuilder().where(query).getMany();
+    return result;
+  }
+
+  /**
+   * He invited me to be a friend. So he is my follower
+   6dbe38ce-0e2e-4b7f-9fdc-f4908da73a19*
+   * @returns Users[]
+   */
+  async getFollowers() {
+    const query = `
+        id in (
+          select sub from (
+            select f1."userId" as sub, f2."userId" as obj
+            from friendsheep f1
+            left outer join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+            where f1."friendId" = '${this.id}'
+        ) as rel where rel.obj is NULL
+      )
+      ;
+    `;
+    const result = await Users.createQueryBuilder().where(query).getMany();
+    return result;
+  }
+
+  /**
+   * I invited him to be a friend. So i am subscribed for him
+   *
+   * @returns Users[]
+   */
+  async getSubscriptions() {
+    const query = `
+        id in (
+          select obj from (
+            select f1."friendId" as obj, f2."friendId" as sub
+            from friendsheep f1
+            left outer join friendsheep f2 on f1."userId" = f2."friendId" and f1."friendId" = f2."userId"
+            where f1."userId" = '${this.id}'
+        ) as rel where rel.sub is NULL
+      )
+      ;
+    `;
+    const result = await Users.createQueryBuilder().where(query).getMany();
+    return result;
   }
 
   /**

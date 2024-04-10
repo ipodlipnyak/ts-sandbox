@@ -1,11 +1,12 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import type { RestResponseDto } from '../../src/dto';
+import type { RestResponseDto, WhoAmIDto } from '../../src/dto';
 // import { AxiosError } from 'axios';
+
 export const useAuthStore = defineStore('auth', {
   // arrow function recommended for full type inference
   state: () => ({
     // all these properties will have their type inferred automatically
-    whoami: null,
+    whoami: null as WhoAmIDto | null,
     errorMessage: '',
   }),
   actions: {
@@ -13,7 +14,7 @@ export const useAuthStore = defineStore('auth', {
       const { data, pending, error, refresh } = await useFetch('/api/auth/');
       const response = data.value as RestResponseDto;
       if (response?.status === 'success') {
-        this.whoami = response.payload;
+        this.whoami = response.payload as WhoAmIDto;
       }
     },
 
@@ -36,11 +37,13 @@ export const useAuthStore = defineStore('auth', {
     firstName: (state): string => state.whoami?.firstName || '',
     middleName: (state): string => state.whoami?.middleName || '',
     lastName: (state): string => state.whoami?.lastName || '',
-    email: (state) => state.whoami?.whoami || '',
+    email: (state) => state.whoami?.email || '',
     fullName(): string {
       const fullName = [this.firstName, this.middleName, this.lastName].join(' ').trim();
       return fullName || this.email || '';
     },
+    isAdmin: (state): boolean => (state.whoami?.role || 100) >= 200,
+    picture: (state): string => state.whoami?.pictureUrl || '',
   },
 });
 

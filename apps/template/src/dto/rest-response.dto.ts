@@ -1,12 +1,15 @@
 import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Field, ObjectType } from '@nestjs/graphql';
 
 export enum ResponseStatusEnum {
   SUCCESS = 'success',
   ERROR = 'error',
 }
 
+@ObjectType()
 export class RestResponseDto {
+  @Field()
   @IsString()
   @ApiProperty({ example: ResponseStatusEnum.SUCCESS, description: 'Статус запроса' })
   status: ResponseStatusEnum;

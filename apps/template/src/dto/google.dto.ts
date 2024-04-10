@@ -77,6 +77,8 @@ export class GoogleAttendeesDto {
  * @see https://developers.google.com/calendar/api/v3/reference/events#resource-representations
  */
 export class GoogleCalendarEventDto {
+  @ApiProperty({ example: '12345blah@@group.calendar.google.com' })
+  calendarId: string;
   @ApiProperty({ example: 'Google I/O 2015' })
   summary: string;
   @ApiProperty({ example: '800 Howard St., San Francisco, CA 94103' })

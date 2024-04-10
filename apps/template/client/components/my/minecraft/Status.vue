@@ -77,10 +77,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, getCurrentInstance } from 'vue';
-import { useDisplay, useLayout } from 'vuetify';
+import { defineComponent, computed } from 'vue';
 import { useMinecraftStore } from '@/stores/minecraft';
-import { resourceLimits } from 'worker_threads';
 
 export default defineComponent({
   setup(props, ctx) {

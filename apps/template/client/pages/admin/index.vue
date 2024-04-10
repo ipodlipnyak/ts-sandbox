@@ -1,27 +1,21 @@
 <template>
-  <v-container>
-    <my-minecraft-status />
-  </v-container>
+    <div></div>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
-import { useAuthStore } from '@/stores/auth';
 
 export default defineComponent({
   middleware(ctx) {
-    // return ctx.redirect('/admin/db');
+    return ctx.redirect('/admin/event');
   },
 
   setup() {
     const display = useDisplay();
-    const layout = useLayout();
-    const authStore = useAuthStore();
 
     return {
       display,
-      authStore,
     };
   },
 })

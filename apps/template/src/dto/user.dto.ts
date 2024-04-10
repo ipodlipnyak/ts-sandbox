@@ -8,6 +8,7 @@ import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/gra
 import { UserRole } from '../models/users/users.entity';
 import { gqlCheckRoleMiddleware } from './../middleware/gql-check-role-middleware';
 import {registerEnumType} from '@nestjs/graphql';
+import { isListType } from 'graphql';
 
 registerEnumType(UserRole, {
   name: 'UserRole',
@@ -19,7 +20,7 @@ export class UserOutputDto {
   id: string;
   @Field({ middleware: [gqlCheckRoleMiddleware] })
   @Extensions({ role: UserRole?.ADMIN || 200 }) // in unit test environment UserRole usually is undefined
-  role: string;
+  role: UserRole;
   @Field()
   firstName: string;
   @Field()
@@ -28,6 +29,20 @@ export class UserOutputDto {
   lastName: string;
   @Field()
   email: string;
+  @Field(type => [UserOutputDto], {
+    nullable: true
+  })
+  friends: UserOutputDto[];
+  @Field(type => [UserOutputDto], {
+    nullable: true
+  })
+  followers: UserOutputDto[];
+  @Field(type => [UserOutputDto], {
+    nullable: true
+  })
+  subscriptions: UserOutputDto[];
+  @Field({ nullable: true })
+  pictureUrl: string
 }
 
 @InputType()
@@ -74,6 +89,8 @@ export class UserDto extends UserCachedDto {
   email: string;
   @ApiProperty({ example: '-200', description: 'Дельта к начислению' })
   delta: string | number;
+  @ApiProperty({ example: 'https://upload.wikimedia.org/wikipedia/en/7/7d/Lenna_%28test_image%29.png', description: 'User picture' })
+  pictureUrl: string;
 }
 
 export class UsesListResponseDto extends RestListResponseDto {

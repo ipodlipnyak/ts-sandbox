@@ -1,5 +1,6 @@
 <template>
   <v-app key="layoutMy">
+    <!--
     <v-system-bar>
       <v-spacer></v-spacer>
 
@@ -19,6 +20,7 @@
         class="d-block text-center mx-auto mt-4"
         color="grey-darken-1"
         size="36"
+        :image="authStore.picture"
       ></v-avatar>
 
       <v-divider class="mx-3 my-5"></v-divider>
@@ -31,9 +33,10 @@
         size="28"
       ></v-avatar>
     </v-navigation-drawer>
+    -->
 
     <v-navigation-drawer
-      width="244"
+      width="300"
       :model-value="mobile ? showNavBar : true"
       @update:model-value="showNavBar = $event"
     >
@@ -50,16 +53,43 @@
           :title="`Item ${ n }`"
           link
         >
+          :key="item.title"
         </v-list-item> -->
         <v-list-item
-          v-for="item in navTree"
-          :key="item.title"
+          :prepend-avatar="authStore.picture"
+          :subtitle="authStore.email"
+          :title="authStore.fullName"
+          class="mb-6"
+        >
+        </v-list-item>
+        <div v-if="authStore.isAdmin">
+          <v-list-item title="Admin" subtitle="dunger zone"></v-list-item>
+
+          <v-list-item
+            v-for="item in adminNavTree"
+            :to="item.path"
+            :title="item.title"
+            :prepend-icon="item.icon"
+            color="amber"
+            :exact="false"
+          />
+
+          <v-divider class="mb-4"></v-divider>
+
+          <v-list-item title="My" subtitle="safe space"></v-list-item>
+        </div>
+
+
+        <v-list-item
+          v-for="item in myNavTree"
           :to="item.path"
           :title="item.title"
           :prepend-icon="item.icon"
+          color="green"
           exact
         />
-        
+
+
         <v-list-item
           title="Logout"
           @click.stop="logout"
@@ -134,14 +164,24 @@
     setup(props, ctx) {
       const { width, mobile } = useDisplay()
 
-      const autStore = useAuthStore();
-      const {logout} = autStore;
-      const {loggedIn} = storeToRefs(autStore);
-      const navTree = [
+      const authStore = useAuthStore();
+      const {logout} = authStore;
+      const {loggedIn} = storeToRefs(authStore);
+      const myNavTree = [
         {
           title: 'Dashboard',
           path: '/my',
           icon: 'mdi-view-dashboard'
+        },
+        {
+          title: 'Events',
+          path: '/my/events',
+          icon: 'mdi-calendar'
+        },
+        {
+          title: 'Friends',
+          path: '/my/friends',
+          icon: 'mdi-human-greeting'
         },
         {
           title: 'Bot',
@@ -153,10 +193,18 @@
           path: '/my/settings',
           icon: 'mdi-cog'
         },
+      ];
+
+      const adminNavTree = [
         {
-          title: 'Events',
-          path: '/my/events',
-          icon: 'mdi-calendar'
+          title: 'Calendars',
+          path: '/admin/calendar',
+          icon: 'mdi-calendar-edit'
+        },
+        {
+          title: 'Manage friends',
+          path: '/admin/friends',
+          icon: 'mdi-cat'
         },
       ];
 
@@ -165,9 +213,11 @@
       return {
         mobile,
         showNavBar,
-        navTree,
+        adminNavTree,
+        myNavTree,
         loggedIn,
         logout,
+        authStore,
       };
     },
   })

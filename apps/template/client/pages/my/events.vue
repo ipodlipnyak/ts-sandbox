@@ -1,34 +1,29 @@
 <template>
-  <v-timeline side="end" align="start">
-    <v-timeline-item v-for="event in eventsStore.allEvents" :key="event.id" :dot-color="event.color" size="small">
+    <v-timeline class="mx-4" side="end" align="start">
+      <v-timeline-item v-for="(event, index) in eventsStore.allEvents" :key="event?.id || index" :dot-color="event.color" size="small">
 
-      <template v-slot:opposite>
-        <div
-          :class="`pt-1 headline font-weight-bold text-${event.color}`"
-          v-text="event.start"
-        ></div>
-      </template>
+        <template v-slot:opposite>
+          <div
+            :class="`pt-1 headline font-weight-bold text-${event.color}`"
+            v-text="event.startFormatted"
+          ></div>
+        </template>
 
-      <v-card color="transparent" elevation="0" class="pa-4" :href="event.htmlLink" target="_blank">
-        <div>
-          <h2 :class="`mt-n1 headline font-weight-light mb-4 text-${event.color}`">
-            {{ event.summary }}
-          </h2>
-          <div>
-            {{ event.description }}
-          </div>
-        </div>
-      </v-card>
-
-    </v-timeline-item>
-  </v-timeline>
+        <my-event-card
+          :description="event?.description || ''"
+          :html-link="event?.htmlLink || ''"
+          :location="event?.location || ''"
+          :color="event.color"
+          :summary="event?.summary || ''"
+        />
+      </v-timeline-item>
+    </v-timeline>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 import { useDisplay, useLayout } from 'vuetify';
 import { useAuthStore } from '@/stores/auth';
-import { useUsersStore } from '@/stores/users';
 import { useEventsStore } from '@/stores/events';
 
 export default defineComponent({
@@ -40,15 +35,13 @@ export default defineComponent({
     const display = useDisplay();
     const layout = useLayout();
     const authStore = useAuthStore();
-    const usersStore = useUsersStore();
     const eventsStore = useEventsStore();
-    
+
     eventsStore.fetchAll();
 
     return {
       display,
       authStore,
-      usersStore,
       eventsStore,
     };
   },

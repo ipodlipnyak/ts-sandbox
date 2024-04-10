@@ -35,10 +35,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed, getCurrentInstance } from 'vue';
-import { useDisplay, useLayout } from 'vuetify';
-import { useAuthStore } from '@/stores/auth';
-import { useUsersStore } from '@/stores/users';
+import { defineComponent } from 'vue';
 import { useAssistantStore } from '~/stores/assistant';
 
 export default defineComponent({

@@ -38,7 +38,7 @@ export class UsersController {
   @ApiOperation({ summary: 'Деактивировать пользователя' })
   @ApiResponse({ status: 200, type: RestResponseDto })
   @Post(':id/deactivate')
-  async addScore(@Param('id') id: string): Promise<RestResponseDto> {
+  async deactivate(@Param('id') id: string): Promise<RestResponseDto> {
     const result = {
       status: ResponseStatusEnum.ERROR,
       payload: undefined,

@@ -110,6 +110,10 @@ export class GoogleController {
       user.lastName = payload.family_name;
       isdirty = true;
     }
+    if (user.pictureUrl !== payload.picture) {
+      user.pictureUrl = payload.picture;
+      isdirty = true;
+    }
     if (isdirty) {
       user.save();
     }

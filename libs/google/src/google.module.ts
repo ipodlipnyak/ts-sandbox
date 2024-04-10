@@ -1,7 +1,21 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { GoogleService } from './google.service';
+import { CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
+import { AppModule } from 'apps/template/src/app.module';
+import { ConfigService } from '@nestjs/config';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
+  imports: [
+    CacheModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        ...configService.get('cache'),
+        isGlobal: true,
+        store: redisStore,
+      }),
+    }),
+  ],
   providers: [GoogleService],
   exports: [GoogleService],
 })

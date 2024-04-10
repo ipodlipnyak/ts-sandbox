@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
-export const useUsersStore = defineStore('users', {
+export const useUsersStore = defineStore('friends', {
     // arrow function recommended for full type inference
     state: () => ({
         data: null as any,

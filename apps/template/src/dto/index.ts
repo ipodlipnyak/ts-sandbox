@@ -12,3 +12,4 @@ export * from './track.dto';
 export * from './google.dto';
 export * from './llm.dto';
 export * from './minecraft.dto';
+export * from './events.dto';
