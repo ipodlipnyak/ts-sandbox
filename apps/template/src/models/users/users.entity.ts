@@ -217,6 +217,33 @@ export class Users extends BaseEntity {
   }
 
   /**
+   * Remove friendsheep from one side
+   *
+   * @param email friend to break with
+   * @returns
+   */
+  async unsubscribe(email: string) {
+    const query = `
+    id IN (
+      select f1."friendId"
+      from friendsheep f1
+      where f1."userId" = '${this.id}'
+    ) and email = '${email}';
+    `;
+    const friend = await Users.createQueryBuilder().where(query).getOne();
+    if (!friend) {
+      return;
+    }
+    const friendsheep = await Friendsheep.findOne({
+      where: {
+        user: { id: this.id },
+        friend: { id: friend.id },
+      }
+    });
+    return await friendsheep.remove();
+  }
+
+  /**
    * Invite somebody to be a friend. In meentime you are subscribed to him
    *
    * @param email to subscribe

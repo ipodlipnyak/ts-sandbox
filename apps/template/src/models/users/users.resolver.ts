@@ -1,6 +1,6 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent, Info } from '@nestjs/graphql'
 import { Users, UserRole } from './users.entity'
-import { UserOutputDto, UserInputDto } from "../../dto";
+import { UserOutputDto, UserInputDto, RestResponseDto, ResponseStatusEnum } from "../../dto";
 import {
     BadRequestException,
     UseGuards,
@@ -88,6 +88,17 @@ export class UsersResolver {
       const user = await this.userService.getUser();
       const friend = await user.subscribe(email);
       return mapUserToDto(friend);
+    }
+
+    @Mutation(() => RestResponseDto)
+    async unsubscribe(@Args('email') email: string): Promise<RestResponseDto> {
+      const result: RestResponseDto = {
+        status: ResponseStatusEnum.SUCCESS,
+      }
+      const user = await this.userService.getUser();
+      await user.unsubscribe(email);
+
+      return result;
     }
 
     @UseGuards(GqlAdminGuard)
