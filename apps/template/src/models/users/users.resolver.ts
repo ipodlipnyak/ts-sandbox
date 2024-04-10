@@ -5,7 +5,7 @@ import {
     BadRequestException,
     UseGuards,
 } from '@nestjs/common';
-import { GqlAuthGuard } from '../../guards';
+import { GqlAdminGuard, GqlAuthGuard } from '../../guards';
 import { Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { DeepPartial } from 'typeorm';
@@ -90,6 +90,7 @@ export class UsersResolver {
       return mapUserToDto(friend);
     }
 
+    @UseGuards(GqlAdminGuard)
     @Mutation(() => UserOutputDto)
     async makeFriend(@Args('email') email: string): Promise<UserOutputDto> {
       const user = await this.userService.getUser();

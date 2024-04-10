@@ -13,3 +13,13 @@ export class GqlAuthGuard implements CanActivate {
     return request.session?.whoami?.role >= UserRole.USER;
   }
 }
+
+@Injectable()
+export class GqlAdminGuard implements CanActivate {
+  canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    const ctx = GqlExecutionContext.create(context);
+    const request = ctx.getContext().req as Request;
+
+    return request.session?.whoami?.role >= UserRole.ADMIN;
+  }
+}
