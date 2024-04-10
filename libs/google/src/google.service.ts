@@ -9,6 +9,7 @@ import {
     Logger,
 } from '@nestjs/common';
 import { GoogleCalendarAclDto, GoogleCalendarEventDto } from 'apps/template/src/dto';
+import { randomUUID } from 'crypto';
 import { OAuth2Client, OAuth2ClientOptions, GoogleAuth } from 'google-auth-library';
 import { google, Auth, calendar_v3 } from 'googleapis';
 
@@ -33,13 +34,15 @@ enum ACL_ROLES_LEVEL {
     'none' = 0,
 }
 
+const JITSI_MEET_URL = 'https://meet.jit.si/';
+
 @Injectable({ scope: Scope.REQUEST })
 export class GoogleService {
     private client: OAuth2Client;
     private auth: Auth.GoogleAuth;
     private authNoScope: Auth.GoogleAuth;
     private readonly logger: Logger;
-    
+
     static MAIN_CALENDAR_ID = 'google.mainCalendarId';
     static CAHCE_KEY_EVENTS = 'google.events';
     static CACHE_KEY_ALL_CALENDARS = 'google.allCalendars';
@@ -88,9 +91,9 @@ export class GoogleService {
     /**
      * Accept an invitation and insert calendar to service account calendars list.
      * This method helps to subscribe service account to existing calendars from another accounts.
-     * 
+     *
      * @param id calendar id with invitation
-     * 
+     *
      * @see https://developers.google.com/calendar/api/v3/reference/calendarList/insert#python
      * @see https://stackoverflow.com/questions/26064095/inserting-google-calendar-entries-with-service-account
      */
@@ -105,11 +108,11 @@ export class GoogleService {
 
     /**
      * Check if user have enought rights for this calendar
-     * 
+     *
      * @param calendarId calendar to check
      * @param email user`s email
      * @param role target access level. By default reader. Possible: owner, writer, reader, freeBusyReader, none
-     * @returns 
+     * @returns
      */
     async checkCalendarAccess(calendarId: string, email: string, role?: AclRolesType): Promise<boolean> {
         const roleToCheck = role || 'reader';
@@ -129,12 +132,12 @@ export class GoogleService {
 
     /**
      * Add new acl rule to user owned calendar
-     * 
+     *
      * @see https://developers.google.com/calendar/api/v3/reference/acl/insert#request-body
-     * @param email 
-     * @param calendarId 
-     * @param acl 
-     * @returns 
+     * @param email
+     * @param calendarId
+     * @param acl
+     * @returns
      */
     async addCalendarAclRule(email: string, calendarId: string, acl: GoogleCalendarAclDto) {
         const isAllowed = await this.checkCalendarAccess(calendarId, email, 'owner');
@@ -200,7 +203,7 @@ export class GoogleService {
     /**
      * Get all calendars accessible for service account
      * Result is cachable
-     * 
+     *
      * @returns google calendars list
      */
     async getCalendarList() {
@@ -216,13 +219,13 @@ export class GoogleService {
         await this.cacheManager.set(GoogleService.CACHE_KEY_ALL_CALENDARS, result, {
             ttl: 24 * 1000 * 3600, // one day
         });
-        return result; 
+        return result;
     }
 
     /**
      * Get list of acl rules for each calendar accessible for service account
      * Result is cachable
-     * 
+     *
      * @returns map of calendar Id to ACL list
      */
     async getAllCaledarsACL() {
@@ -260,13 +263,13 @@ export class GoogleService {
     /**
      * Create new calendar with owner access rights for a specific user
      * as well as for a service account
-     * 
+     *
      * @see https://developers.google.com/calendar/api/v3/reference/calendars/insert
      * @see https://developers.google.com/calendar/api/v3/reference/acl/insert
-     *  
+     *
      * @param email user who will have owner rights to access calendar
      * @param title title of the calendar. Use eamil as a title if ommited
-     * @param timeZone the time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional 
+     * @param timeZone the time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional
      * @returns new google calendar resource
      */
     async createCalendarForUser(email: string, title?: string, timeZone?: string) {
@@ -302,7 +305,7 @@ export class GoogleService {
           calendarId: id,
         });
         if (response.status !== 204) {
-            // console.error(response);    
+            // console.error(response);
             // return
         }
         this.cacheDelCalendar();
@@ -310,9 +313,9 @@ export class GoogleService {
 
     /**
      * Get list of calendar ids user can access
-     * 
+     *
      * @param email user's email
-     * @returns 
+     * @returns
      */
     async getUserCalendarsIDList(email: string) {
         const allCalsAclRules = await this.getAllCaledarsACL();
@@ -324,9 +327,9 @@ export class GoogleService {
 
     /**
      * Get list of calendars user can access
-     * 
+     *
      * @param email user's email
-     * @returns 
+     * @returns
      */
     async getUserCalendarsList(email: string) {
         const allCals = await this.getCalendarList();
@@ -368,7 +371,7 @@ export class GoogleService {
 
     /**
      * Create new event for a user
-     * 
+     *
      * @param email user who allowed to manage this calendar
      * @param calendarId google calendar id
      * @param event event body
@@ -402,13 +405,14 @@ export class GoogleService {
                 end: event.end || undefined,
                 summary: event.summary || '',
                 description: event.description || '',
+                location: `${JITSI_MEET_URL}CertainHistoriesPowerHumbly/${encodeURIComponent(randomUUID())}`
                 // location: event.location || '',
                 // attendees: event.attendees || [],
               }
             });
 
             /**
-             * clean the cache before inform the user about created event, 
+             * clean the cache before inform the user about created event,
              * so he can request a fresh event list later
              */
             await this.cacheDelUserEvents(email);
@@ -421,11 +425,11 @@ export class GoogleService {
 
     /**
      * Invoke Google Cloud Functions
-     *  
+     *
      * @param url Cloud Functions uses your function's url as the `targetAudience` value
      * @returns all that cloud function returns
-     * 
-     * @see https://cloud.google.com/functions/docs/securing/authenticating#functions-bearer-token-example-nodejs 
+     *
+     * @see https://cloud.google.com/functions/docs/securing/authenticating#functions-bearer-token-example-nodejs
      */
     async invokeGCFunction(url: string, data?: any) {
         const client = await this.authNoScope.getIdTokenClient(url);
