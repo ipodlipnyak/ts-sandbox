@@ -78,42 +78,22 @@ export class UsersResolver {
         return result;
     }
 
-    @Query(returns => UserOutputDto)
-    async user(@Args('id') id: string): Promise<Users> {
-        const query = {
-            id,
-        }
-        return await Users.findOne({ where: query });
-    }
-
-    @Query(returns => [UserOutputDto])
-    async users(@Args('role') role?: UserRole) {
-        let query = {};
-        if (role) {
-            query = { ...query, role }
-        }
-
-        if (Object.keys(query).length > 0) {
-            return await Users.findBy(query);
-        }
-        return await Users.find();
-    }
-
     // @Subscription((returns) => UserOutputDto)
     // userAdded() {
     //     pubSub.asyncIterator('userAdded');
     // }
 
     @Mutation(() => UserOutputDto)
-    async createUser(@Args('data') data: UserInputDto): Promise<Users> {
-        const newUserData: DeepPartial<Users> = { ...data };
-        const newUser = Users.create(newUserData);
+    async subscribe(@Args('email') email: string): Promise<UserOutputDto> {
+      const user = await this.userService.getUser();
+      const friend = await user.subscribe(email);
+      return mapUserToDto(friend);
+    }
 
-        await newUser.save();
-        newUser.reload();
-
-        pubSub.publish('userAdded', { userAdded: newUser });
-
-        return newUser as Users;
+    @Mutation(() => UserOutputDto)
+    async makeFriend(@Args('email') email: string): Promise<UserOutputDto> {
+      const user = await this.userService.getUser();
+      const friend = await user.makeFriend(email);
+      return mapUserToDto(friend);
     }
 }

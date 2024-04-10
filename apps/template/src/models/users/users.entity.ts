@@ -195,28 +195,25 @@ export class Users extends BaseEntity {
    * Create a user if required with new email and subscribe each other profiles
    *
    * @param email for a new friend
+   * @returns new friend's user model
    */
   async makeFriend(email: string) {
-    try {
-      Users.createUser({
-        password: `${randomUUID()}`,
-        email: email,
-        firstName: '',
-        middleName: '',
-        lastName: '',
-        trackId: 0
-      });
-    } catch (error) {
-      //
-    }
-
-    const friend = await Users.findOne({
+    let friend = await Users.findOne({
       where: { email: email },
-      // relations: { friends: true },
     });
+
+    if (!friend) {
+      friend = new Users();
+      friend.email = email;
+      await friend.save();
+      await friend.reload();
+    }
 
     await this.subscribe(email);
     await friend.subscribe(this.email);
+
+    await friend.reload();
+    return friend;
   }
 
   /**

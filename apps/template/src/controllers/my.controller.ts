@@ -36,7 +36,7 @@ export class MyController {
   ) {
     //
   }
-  
+
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Update user`s name fields' })
   @ApiResponse({ status: 200, type: RestResponseDto})
@@ -59,5 +59,4 @@ export class MyController {
 
     return result;
   }
-
 }
