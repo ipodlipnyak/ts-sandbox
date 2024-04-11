@@ -1,4 +1,15 @@
 <template>
+  <v-container>
+    <v-card color="teal-darken-4" variant="tonal">
+      <v-toolbar>
+        <v-toolbar-title>
+          Events
+        </v-toolbar-title>
+        <v-spacer />
+          <v-btn @click="eventsStore.fetchAll" :loading="eventsStore.eventsPending" variant="tonal" icon="mdi-reload"></v-btn>
+      </v-toolbar>
+
+      <v-sheet height="calc(100vh - 180px)" class="overflow-auto">
     <v-timeline class="mx-4" side="end" align="start">
       <v-timeline-item v-for="(event, index) in eventsStore.allEvents" :key="event?.id || index" :dot-color="event.color" size="small">
 
@@ -18,6 +29,10 @@
         />
       </v-timeline-item>
     </v-timeline>
+
+      </v-sheet>
+    </v-card>
+  </v-container>
 </template>
 
 <script lang="ts">

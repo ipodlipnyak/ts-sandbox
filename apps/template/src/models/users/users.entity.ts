@@ -209,6 +209,7 @@ export class Users extends BaseEntity {
     if (!friend) {
       friend = new Users();
       friend.email = email;
+      friend.active = true;
       await friend.save();
       await friend.reload();
     }

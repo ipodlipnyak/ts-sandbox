@@ -1,12 +1,14 @@
 <template>
-  <v-card color="transparent" elevation="0" class="pa-4" :href="href" target="_blank">
+  <v-card variant="tonal" elevation="0" class="pa-4" :href="href" target="_blank">
     <div>
       <h2 :class="`mt-n1 headline font-weight-light mb-4 text-${color}`">
         {{ summary }}
       </h2>
+      <!--
       <div v-if="message">
         {{ message }}
       </div>
+      -->
     </div>
   </v-card>
 </template>

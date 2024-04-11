@@ -33,127 +33,127 @@ export class AuthController {
     private readonly ratingService: RatingService,
   ) { }
 
-  @Post('signup')
-  @ApiOperation({ summary: 'Регистрация' })
-  @ApiResponse({ status: 200, type: RestResponseDto })
-  @ApiBadRequestResponse({
-    schema: {
-      oneOf: [
-        {
-          description: 'Already logged in',
-        },
-        {
-          description: 'Email required',
-        },
-        {
-          description: 'Password required',
-        },
-        {
-          description: 'Email already exist',
-        },
-        {
-          description: 'Bad data',
-        },
-      ],
-    },
-  })
-  async signup(
-    @Body() newUserDto: NewUserDto,
-    @Session() session: Record<string, any>,
-  ): Promise<RestResponseDto> {
-    const result = {
-      status: ResponseStatusEnum.ERROR,
-      payload: undefined,
-    };
+  // @Post('signup')
+  // @ApiOperation({ summary: 'Регистрация' })
+  // @ApiResponse({ status: 200, type: RestResponseDto })
+  // @ApiBadRequestResponse({
+  //   schema: {
+  //     oneOf: [
+  //       {
+  //         description: 'Already logged in',
+  //       },
+  //       {
+  //         description: 'Email required',
+  //       },
+  //       {
+  //         description: 'Password required',
+  //       },
+  //       {
+  //         description: 'Email already exist',
+  //       },
+  //       {
+  //         description: 'Bad data',
+  //       },
+  //     ],
+  //   },
+  // })
+  // async signup(
+  //   @Body() newUserDto: NewUserDto,
+  //   @Session() session: Record<string, any>,
+  // ): Promise<RestResponseDto> {
+  //   const result = {
+  //     status: ResponseStatusEnum.ERROR,
+  //     payload: undefined,
+  //   };
 
-    if (this.userService?.userId) {
-      throw new HttpException('Already logged in', HttpStatus.BAD_REQUEST);
-    }
+  //   if (this.userService?.userId) {
+  //     throw new HttpException('Already logged in', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const email = newUserDto?.email;
-    if (!email) {
-      throw new HttpException('Email required', HttpStatus.BAD_REQUEST);
-    }
-    const password = newUserDto?.password;
-    if (!password) {
-      throw new HttpException('Password required', HttpStatus.BAD_REQUEST);
-    }
+  //   const email = newUserDto?.email;
+  //   if (!email) {
+  //     throw new HttpException('Email required', HttpStatus.BAD_REQUEST);
+  //   }
+  //   const password = newUserDto?.password;
+  //   if (!password) {
+  //     throw new HttpException('Password required', HttpStatus.BAD_REQUEST);
+  //   }
 
-    let user: Users;
-    try {
-      user = await Users.createUser(newUserDto);
-    } catch (error) {
-      switch (error.name) {
-        case USER_EMAIL_EXIST_EXCEPTION.name:
-          throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
-        case NewUserDataError.name:
-          throw new HttpException(error?.message || 'Bad data', HttpStatus.BAD_REQUEST);
-        default:
-          throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
-      }
-    }
+  //   let user: Users;
+  //   try {
+  //     user = await Users.createUser(newUserDto);
+  //   } catch (error) {
+  //     switch (error.name) {
+  //       case USER_EMAIL_EXIST_EXCEPTION.name:
+  //         throw new HttpException('Email already exist', HttpStatus.BAD_REQUEST);
+  //       case NewUserDataError.name:
+  //         throw new HttpException(error?.message || 'Bad data', HttpStatus.BAD_REQUEST);
+  //       default:
+  //         throw new HttpException('Something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+  //     }
+  //   }
 
-    if (user) {
-      result.status = ResponseStatusEnum.SUCCESS;
-      const whoami = { ...user };
-      delete whoami.password;
-      session.whoami = whoami;
-    }
+  //   if (user) {
+  //     result.status = ResponseStatusEnum.SUCCESS;
+  //     const whoami = { ...user };
+  //     delete whoami.password;
+  //     session.whoami = whoami;
+  //   }
 
-    await this.ratingService.cleanBoardCache();
+  //   await this.ratingService.cleanBoardCache();
 
-    return result;
-  }
+  //   return result;
+  // }
 
-  @Post('login')
-  @ApiOperation({ summary: 'Авторизация' })
-  @ApiResponse({ status: 200, type: RestResponseDto })
-  async auth(
-    @Body() loginDto: LoginDto,
-    @Session() session: Record<string, any>,
-  ): Promise<RestResponseDto> {
-    const result = {
-      status: ResponseStatusEnum.ERROR,
-      payload: undefined,
-    };
+  // @Post('login')
+  // @ApiOperation({ summary: 'Авторизация' })
+  // @ApiResponse({ status: 200, type: RestResponseDto })
+  // async auth(
+  //   @Body() loginDto: LoginDto,
+  //   @Session() session: Record<string, any>,
+  // ): Promise<RestResponseDto> {
+  //   const result = {
+  //     status: ResponseStatusEnum.ERROR,
+  //     payload: undefined,
+  //   };
 
-    const email = loginDto?.login;
-    if (!email) {
-      throw new HttpException('Login required', HttpStatus.BAD_REQUEST);
-    }
+  //   const email = loginDto?.login;
+  //   if (!email) {
+  //     throw new HttpException('Login required', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const user = await Users.findOne({
-      where: { email },
-      select: [
-        'id',
-        'password',
-        'active',
-      ],
-    });
+  //   const user = await Users.findOne({
+  //     where: { email },
+  //     select: [
+  //       'id',
+  //       'password',
+  //       'active',
+  //     ],
+  //   });
 
-    /**
-     * Can not login by this strategy without password.
-     * Probably this user was using google authentication.
-     * He should go and set a password in his profile settings.
-     * Also should not show an inactive user... probably.
-     *  */ 
-    if (!user || !user.active || !user.password) {
-      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    }
+  //   /**
+  //    * Can not login by this strategy without password.
+  //    * Probably this user was using google authentication.
+  //    * He should go and set a password in his profile settings.
+  //    * Also should not show an inactive user... probably.
+  //    *  */
+  //   if (!user || !user.active || !user.password) {
+  //     throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  //   }
 
-    const password = loginDto?.password || '';
-    const verified = await user.passwordVerify(password);
-    if (!verified) {
-      throw new HttpException('Incorrect or missing credentials', HttpStatus.FORBIDDEN);
-    }
+  //   const password = loginDto?.password || '';
+  //   const verified = await user.passwordVerify(password);
+  //   if (!verified) {
+  //     throw new HttpException('Incorrect or missing credentials', HttpStatus.FORBIDDEN);
+  //   }
 
-    const isLoggedIn = await this.userService.loginByEmail(email);
-    if (isLoggedIn) {
-      result.status = ResponseStatusEnum.SUCCESS;
-    }
+  //   const isLoggedIn = await this.userService.loginByEmail(email);
+  //   if (isLoggedIn) {
+  //     result.status = ResponseStatusEnum.SUCCESS;
+  //   }
 
-    return result;
-  }
+  //   return result;
+  // }
 
   @Post('logout')
   @ApiOperation({ summary: 'Разлогиниться' })
