@@ -340,6 +340,14 @@ export class GoogleService {
         return userCals;
     }
 
+    /**
+     * Get list of last 10 events for every calendar
+     * from last month and until next second month
+     *
+     * @see https://developers.google.com/calendar/api/v3/reference/events/list
+     * @param email user's email
+     * @returns
+     */
     async getUserEventsList(email: string) {
         let result = null as calendar_v3.Schema$Event[] | null;
 
@@ -352,7 +360,14 @@ export class GoogleService {
         const calendarsList = await this.getUserCalendarsIDList(email);
 
         const allPromises = calendarsList.map(async (calendarId) => {
-            const calEventsList = await this.calendarV3.events.list({ calendarId });
+            const calEventsList = await this.calendarV3.events.list({
+              calendarId,
+              orderBy: 'startTime', // ascend by default
+              singleEvents: true, // return single one-off events and instances of recurring events
+              maxResults: 10,
+              timeMax: (new Date(+new Date() + 1000 * 3600 * 24 * 61)).toISOString(), // two months ahead
+              timeMin: (new Date(+new Date() - 1000 * 3600 * 24 * 31)).toISOString(), // month ago
+            });
             return calEventsList.data.items;
         });
 
@@ -367,6 +382,53 @@ export class GoogleService {
             ttl: 5, // for 5 sec. Just to prevent spamming
         });
         return result;
+    }
+
+    /**
+     * Show soon to start or already in progress event
+     *
+     * @param email
+     * @returns
+     */
+    async getUserEventOngoing(email: string) {
+        let result = null as calendar_v3.Schema$Event | null;
+
+        const calendarsList = await this.getUserCalendarsIDList(email);
+
+        const allPromises = calendarsList.map(async (calendarId) => {
+            const calEventsList = await this.calendarV3.events.list({
+              calendarId,
+              orderBy: 'startTime', // ascend by default
+              singleEvents: true, // return single one-off events and instances of recurring events
+              maxResults: 10,
+              timeMax: (new Date(+new Date() + 1000 * 3600 * 24)).toISOString(), // two months ahead
+              timeMin: (new Date(+new Date() - 1000 * 3600 * 1)).toISOString(), // month ago
+            });
+            const events = calEventsList.data.items;
+            return {
+              calendarId,
+              event: events.reverse().shift()
+            }
+        });
+
+        const eventsList = [];
+        await Promise.all(allPromises).then((values) => {
+            values.forEach((cal) => {
+                eventsList.push(cal);
+            })
+        });
+        eventsList.filter((el) => el?.events?.lenght > 0).sort((a, b) => {
+          return +new Date(a.event.start.dateTime) - +new Date(a.event.start.dateTime);
+        })
+
+        const cal = eventsList.shift();
+        const calendarId: string = cal.calendarId;
+        const event: calendar_v3.Schema$Event = cal.event;
+
+        return {
+          calendarId,
+          event,
+        };
     }
 
     /**

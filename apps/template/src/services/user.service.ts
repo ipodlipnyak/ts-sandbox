@@ -32,7 +32,7 @@ export class UserService {
 
   /**
    * To authorise a user whom we found by email we will create a session with his own public data
-   * 
+   *
    * @param email email to find a user
    * @returns false if user not found, true if session created succesfully
    */
@@ -53,7 +53,7 @@ export class UserService {
       ],
     });
     if (!user || !user.active) {
-      return false;  
+      return false;
     }
 
     const whoami = { ...user };
@@ -68,7 +68,7 @@ export class UserService {
   async refreshWhoami() {
     const user = await this.getUser();
 
-    this.session.whoami = { 
+    this.session.whoami = {
       ...this.session.whoami,
       ...{
         role: user.role,
@@ -84,9 +84,9 @@ export class UserService {
   }
 
   /**
-   * Update name fields for current user 
-   * @param name 
-   * @returns 
+   * Update name fields for current user
+   * @param name
+   * @returns
    */
   async updateName(name: UserNameDto): Promise<boolean> {
     let result = false;
@@ -151,11 +151,23 @@ export class UserService {
     return user;
   }
 
-  async getEmail(): Promise<string> {
-    return (await this.getSession()).whoami.email; 
+  get email() {
+    return this.session.whoami.email;
   }
 
+  /**
+   * @deprecated use userService.email
+   * @returns
+   */
+  async getEmail(): Promise<string> {
+    return (await this.getSession()).whoami.email;
+  }
+
+  /**
+   * @deprecated use userService.session
+   */
   async getSession(): Promise<SessionDto> {
-    return await this.req.session;
+    return this.session;
+    // return await this.req.session;
   }
 }

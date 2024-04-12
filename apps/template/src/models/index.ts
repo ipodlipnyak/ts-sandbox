@@ -3,6 +3,7 @@ import { Balance, TransactionCodeEnum } from './balance';
 import { Purchase } from './purchase';
 import { Product, ProductTypeEnum } from './product';
 import { Track } from './track';
+import { EventResolver } from './event';
 // import { Event, EventUser } from './event';
 
 export * from './users';
@@ -25,6 +26,7 @@ export const entities = {
 
 export const resolvers = [
   UsersResolver,
+  EventResolver,
 ];
 
 export const enums = {
