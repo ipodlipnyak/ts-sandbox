@@ -105,6 +105,19 @@ export class GoogleCalendarEventDto {
 }
 
 /**
+ * @see https://developers.google.com/calendar/api/v3/reference/events#resource-representations
+ */
+@ObjectType()
+export class GoogleCalendarEventResourceDto extends GoogleCalendarEventDto {
+  @Field()
+  htmlLink: string
+  @Field()
+  created: string
+  @Field()
+  updated: string
+}
+
+/**
  * @see https://developers.google.com/calendar/api/v3/reference/calendars#resource
  */
 @ObjectType()

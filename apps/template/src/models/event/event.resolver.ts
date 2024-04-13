@@ -1,5 +1,5 @@
 import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
-import { GoogleCalendarEventDto, GoogleCalendarDto } from "../../dto";
+import { GoogleCalendarEventDto, GoogleCalendarDto, GoogleCalendarEventResourceDto } from "../../dto";
 import {
     UseGuards,
 } from '@nestjs/common';
@@ -12,12 +12,15 @@ import { calendar_v3 } from 'googleapis';
 function mapGoogleEventToDto(
   event: calendar_v3.Schema$Event,
   calendarId: string,
-): GoogleCalendarEventDto {
-  const result: GoogleCalendarEventDto = {
+): GoogleCalendarEventResourceDto {
+  const result: GoogleCalendarEventResourceDto = {
     calendarId,
     summary: event?.summary,
     location: event?.location,
     description: event?.description,
+    htmlLink: event.htmlLink,
+    created: event.created,
+    updated: event.updated,
     start: {
       dateTime: event?.start?.dateTime,
       timeZone: event?.start?.timeZone
@@ -26,13 +29,13 @@ function mapGoogleEventToDto(
       dateTime: event?.end?.dateTime,
       timeZone: event?.end?.timeZone
     },
-    attendees: [],
+    attendees: []
   }
   return result;
 }
 
 @UseGuards(GqlAuthGuard)
-@Resolver(of => GoogleCalendarEventDto)
+@Resolver(of => GoogleCalendarEventResourceDto)
 export class EventResolver {
     constructor(
       private readonly userService: UserService,
@@ -40,12 +43,12 @@ export class EventResolver {
     ) { }
 
     @ResolveField('calendar', returns => GoogleCalendarDto)
-    async calendar(@Parent() event: GoogleCalendarEventDto) {
+    async calendar(@Parent() event: GoogleCalendarEventResourceDto) {
       const result = this.googleService.getCalendar(event.calendarId);
       return result;
     }
 
-    @Query(returns => [GoogleCalendarEventDto])
+    @Query(returns => [GoogleCalendarEventResourceDto])
     async eventsOngoing(): Promise<GoogleCalendarDto[]> {
         const email = this.userService.email;
         const all = await this.googleService.getUserEventOngoing(email);

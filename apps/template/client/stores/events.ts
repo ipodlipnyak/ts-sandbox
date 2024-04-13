@@ -1,100 +1,133 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { GoogleDateDto, RestListResponseDto } from '../../src/dto';
+import { GoogleCalendarEventResourceDto, RestListResponseDto } from '../../src/dto';
 import { calendar_v3 } from 'googleapis';
 
 function getPalette(baseColor: string) {
-    const darken = Array(4).fill(0).map((el, i) => `${baseColor}-darken-${i + 1}`);
-    let base = [
-        baseColor,
-        ...darken,
-    ];
-    let revers = [...base];
-    revers.reverse().shift();
-    return [
-        ...base,
-        ...revers
-    ]
+  const darken = Array(4).fill(0).map((el, i) => `${baseColor}-darken-${i + 1}`);
+  let base = [
+    baseColor,
+    ...darken,
+  ];
+  let revers = [...base];
+  revers.reverse().shift();
+  return [
+    ...base,
+    ...revers
+  ]
 };
 
 export const useEventsStore = defineStore('events', {
-    // arrow function recommended for full type inference
-    state: () => ({
-        events: [] as calendar_v3.Schema$Event[],
-        eventsPending: false,
-        calendars: [] as calendar_v3.Schema$CalendarListEntry[],
-        calendarsPending: false,
-    }),
+  // arrow function recommended for full type inference
+  state: () => ({
+    events: [] as calendar_v3.Schema$Event[],
+    eventsPending: false,
+    calendars: [] as calendar_v3.Schema$CalendarListEntry[],
+    calendarsPending: false,
+    ongoingEventsPending: false,
+    ongoingEvents: [] as GoogleCalendarEventResourceDto[]
+  }),
 
-    actions: {
-        async fetchAll() {
-            this.eventsPending = true;
+  actions: {
+    async fetchAll() {
+      this.eventsPending = true;
 
-            const { data, pending, error, refresh } = await useFetch('/api/calendar/event');
-            const response = data.value as RestListResponseDto;
-            if (response?.status === 'success') {
-              this.events = response.payload || [];
+      const { data, pending, error, refresh } = await useFetch('/api/calendar/event');
+      const response = data.value as RestListResponseDto;
+      if (response?.status === 'success') {
+        this.events = response.payload || [];
+      }
+
+      this.eventsPending = false;
+    },
+
+    async fetchAllCalendars() {
+      this.calendarsPending = true;
+
+      const { data, pending, error, refresh } = await useFetch('/api/calendar/');
+      const response = data.value as RestListResponseDto;
+      if (response?.status === 'success') {
+        this.calendars = response.payload || [];
+      }
+
+      this.calendarsPending = false;
+    },
+
+    async fetchOngoingEvents() {
+      this.ongoingEventsPending = true;
+
+      const gqQuery = gql`
+        query {
+          eventsOngoing {
+            summary,
+            location,
+            htmlLink,
+            start {
+              dateTime
+            },
+            end {
+              dateTime
+            },
+            calendar {
+              summary,
+              timeZone
             }
-
-            this.eventsPending = false;
-        },
-
-        async fetchAllCalendars() {
-            this.calendarsPending = true;
-
-            const { data, pending, error, refresh } = await useFetch('/api/calendar/');
-            const response = data.value as RestListResponseDto;
-            if (response?.status === 'success') {
-              this.calendars = response.payload || [];
-            }
-            
-            this.calendarsPending = false;
+          }
         }
+      `;
+      // const { data } = await useAsyncQuery(query);
+      const { result, refetch } = useQuery(gqQuery);
+      await refetch();
+      const { eventsOngoing } = await result.value as any;
+      this.ongoingEvents = eventsOngoing;
+
+      this.ongoingEventsPending = false;
     },
+  },
 
-    getters: {
-        allEvents: (state) => {
-            const dtNow = new Date();
+  getters: {
+    allEvents: (state) => {
+      const dtNow = new Date();
 
-            let result = state.events.sort((a, b) => {
-                return + new Date(a.start?.dateTime || '') < + new Date(b.start?.dateTime || '');
-            }).map((event: calendar_v3.Schema$Event, index) => {
+      let result = state.events.sort((a, b) => {
+        return + new Date(a.start?.dateTime || '') < + new Date(b.start?.dateTime || '');
+      }).map((event: calendar_v3.Schema$Event, index) => {
 
-                const paletteFuture = getPalette('yellow');
-                const paletteOngoing = getPalette('green');
-                const palettePast = getPalette('red');
+        const paletteFuture = getPalette('yellow');
+        const paletteOngoing = getPalette('green');
+        const palettePast = getPalette('red');
 
-                const dtStart = new Date(event.start?.dateTime || '');
-                const dtEnd = new Date(event.end?.dateTime || '');
+        const dtStart = new Date(event.start?.dateTime || '');
+        const dtEnd = new Date(event.end?.dateTime || '');
 
-                let eventStatus = 'future';
-                let palette = paletteFuture;
-                
-                // past event check
-                if (+dtEnd <= +dtNow) {
-                    eventStatus = 'past';
-                    palette = palettePast;
-                }
+        let eventStatus = 'future';
+        let palette = paletteFuture;
 
-                // ongoing event check
-                if (+dtStart <= +dtNow && +dtEnd >= +dtNow) {
-                    eventStatus = 'ongoing';
-                    palette = paletteOngoing;
-                }
+        // past event check
+        if (+dtEnd <= +dtNow) {
+          eventStatus = 'past';
+          palette = palettePast;
+        }
 
-                return {
-                    ...event,
-                    startFormatted: (new Date(event.start?.dateTime || '')).toLocaleString().slice(0,-3),
-                    endFormatted: (new Date(event?.end?.dateTime || '')).toLocaleString().slice(0,-3),
-                    color: palette[index%palette.length],
-                    eventStatus,
-                    // color: palette[Math.floor(Math.random()*palette.length)],
-                }
-            });
-            return result;
-        },
+        // ongoing event check
+        if (+dtStart <= +dtNow && +dtEnd >= +dtNow) {
+          eventStatus = 'ongoing';
+          palette = paletteOngoing;
+        }
+
+        return {
+          ...event,
+          startFormatted: (new Date(event.start?.dateTime || '')).toLocaleString().slice(0, -3),
+          endFormatted: (new Date(event?.end?.dateTime || '')).toLocaleString().slice(0, -3),
+          color: palette[index % palette.length],
+          eventStatus,
+          // color: palette[Math.floor(Math.random()*palette.length)],
+        }
+      });
+      return result;
     },
+  },
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useEventsStore, import.meta.hot));
+  import.meta.hot.accept(acceptHMRUpdate(useEventsStore, import.meta.hot));
 }
