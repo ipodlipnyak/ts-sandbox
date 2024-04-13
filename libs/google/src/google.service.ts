@@ -341,6 +341,18 @@ export class GoogleService {
     }
 
     /**
+     * Get specific calendar
+     *
+     * @param calendarId
+     * @returns
+     */
+    async getCalendar(calendarId: string): Promise<calendar_v3.Schema$CalendarListEntry> {
+      const allCalendars = await this.getCalendarList();
+      const result = allCalendars.find((cal) => cal.id === calendarId);
+      return result;
+    }
+
+    /**
      * Get list of last 10 events for every calendar
      * from last month and until next second month
      *
@@ -394,7 +406,6 @@ export class GoogleService {
         let result = null as calendar_v3.Schema$Event | null;
 
         const calendarsIdList = await this.getUserCalendarsIDList(email);
-        const calendarList = await this.getUserCalendarsList(email);
 
         const allPromises = calendarsIdList.map(async (calendarId) => {
             const calEventsList = await this.calendarV3.events.list({
@@ -407,7 +418,6 @@ export class GoogleService {
             });
             const events = calEventsList.data.items;
             return {
-              calendar: calendarList.find((cal) => cal.id === calendarId),
               calendarId,
               event: events.reverse().shift()
             }
