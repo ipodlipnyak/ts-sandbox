@@ -104,7 +104,7 @@ export class CalendarController {
 
   @UseGuards(AdminGuard)
   @ApiSecurity('admin')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Create new calendar',
     externalDocs: {
       description: 'Payload field in response contain google calendar resource',
@@ -127,7 +127,7 @@ export class CalendarController {
     //     timeZone: input?.timeZone || undefined,
     //   }
     // });
-    const email = await this.userService.getEmail();   
+    const email = await this.userService.getEmail();
     const newCalendar = await this.googleService.createCalendarForUser(email, input.summary, input.timeZone);
 
     result.payload = newCalendar;
@@ -138,7 +138,7 @@ export class CalendarController {
 
   @UseGuards(AdminGuard)
   @ApiSecurity('admin')
-  @ApiOperation({ 
+  @ApiOperation({
     summary: 'Update calendar methadata',
     externalDocs: {
       description: 'Payload field in response contain google calendar resource',
@@ -155,8 +155,8 @@ export class CalendarController {
       status: ResponseStatusEnum.ERROR,
       payload: undefined,
     };
-    
-    const email = await this.userService.getEmail();   
+
+    const email = await this.userService.getEmail();
     const isAllowed = this.googleService.checkCalendarAccess(id, email, 'writer');
 
     if (!isAllowed) {
@@ -205,14 +205,13 @@ export class CalendarController {
     */
 
     const email = await this.userService.getEmail();
-    result.payload = await this.googleService.getUserEventsList(email); 
-    result.total = result.payload.length; 
+    result.payload = await this.googleService.getUserEventsList(email);
+    result.total = result.payload.length;
     result.limit = result.payload.length;
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
   }
-
 
   /**
    * @see https://developers.google.com/calendar/api/v3/reference/events/insert#node.js
@@ -291,7 +290,7 @@ export class CalendarController {
   async getCalendar(@Param('id') id: string): Promise<RestResponseDto> {
     const result: RestResponseDto = {
       status: ResponseStatusEnum.ERROR,
-      payload: undefined, 
+      payload: undefined,
     };
     const response = await this.googleService.calendarV3.calendarList.get({
       calendarId: id,
@@ -347,7 +346,7 @@ export class CalendarController {
       payload: [],
       total: 0,
       offset: 0,
-      limit: 0, 
+      limit: 0,
     };
     const response = await this.googleService.calendarV3.acl.list({
       calendarId: id,
@@ -376,7 +375,7 @@ export class CalendarController {
     });
 
     result.payload = rulesListFiltered.map((rule) => {
-      const user = usersList.find((user) => user.email === rule.scope.value); 
+      const user = usersList.find((user) => user.email === rule.scope.value);
       return {
         email: rule.scope.value,
         firstName: user?.firstName || '',
@@ -395,7 +394,7 @@ export class CalendarController {
 
   /**
    * @see https://developers.google.com/calendar/api/v3/reference/acl/insert#request-body
-   * @param id calendar id 
+   * @param id calendar id
    */
   @UseGuards(AdminGuard)
   @ApiSecurity('admin')
@@ -426,7 +425,7 @@ export class CalendarController {
   ): Promise<RestResponseDto> {
     const result: RestResponseDto = {
       status: ResponseStatusEnum.ERROR,
-      payload: undefined, 
+      payload: undefined,
     };
     const email = await this.userService.getEmail();
     const isAllowed = this.googleService.checkCalendarAccess(id, email, 'owner');
@@ -481,7 +480,7 @@ export class CalendarController {
   ): Promise<RestResponseDto> {
     const result: RestResponseDto = {
       status: ResponseStatusEnum.ERROR,
-      payload: undefined, 
+      payload: undefined,
     };
     const email = await this.userService.getEmail();
     const isAllowed = this.googleService.checkCalendarAccess(id, email, 'owner');

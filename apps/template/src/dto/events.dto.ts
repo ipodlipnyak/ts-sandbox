@@ -3,6 +3,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { RestListResponseDto, RestResponseDto } from './rest-response.dto';
 import { UserNameDto } from './user.dto';
+import { GoogleCalendarEventDto, GoogleDateDto } from './google.dto';
+import { Field, InputType, ObjectType, ID, Float, Extensions, createUnionType } from '@nestjs/graphql';
 
 export class CalendarAclDto extends UserNameDto {
   @ApiProperty({ example: 'owner', description: 'The role assigned to the scope' })

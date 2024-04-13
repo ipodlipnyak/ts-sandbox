@@ -2,6 +2,7 @@ import { IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { RestResponseDto } from './rest-response.dto';
+import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/graphql';
 
 export class GoogleInitDto {
   @ApiProperty({
@@ -60,9 +61,12 @@ export class GoogleUserInfoDto {
   jti: string;
 }
 
+@ObjectType()
 export class GoogleDateDto {
+  @Field({ nullable: true })
   @ApiProperty({ example: '2015-05-28T09:00:00-07:00' })
   dateTime: string;
+  @Field({ nullable: true })
   @ApiProperty({ example: 'America/Los_Angeles' })
   timeZone: string;
 }
@@ -76,34 +80,57 @@ export class GoogleAttendeesDto {
  * @see https://developers.google.com/calendar/api/v3/reference/events/insert#examples
  * @see https://developers.google.com/calendar/api/v3/reference/events#resource-representations
  */
+@ObjectType()
 export class GoogleCalendarEventDto {
   @ApiProperty({ example: '12345blah@@group.calendar.google.com' })
+  @Field({ nullable: true })
   calendarId: string;
   @ApiProperty({ example: 'Google I/O 2015' })
+  @Field({ nullable: true })
   summary: string;
   @ApiProperty({ example: '800 Howard St., San Francisco, CA 94103' })
+  @Field({ nullable: true })
   location: string;
   @ApiProperty({ example: 'A chance to hear more about Google\'s developer products.' })
+  @Field({ nullable: true })
   description: string;
   @ApiProperty({ type: GoogleDateDto, isArray: false, description: 'The (inclusive) start time of the event. For a recurring event, this is the start time of the first instance' })
+  @Field({ nullable: true })
   start: GoogleDateDto;
   @ApiProperty({ type: GoogleDateDto, isArray: false, description: 'The (exclusive) end time of the event. For a recurring event, this is the end time of the first instance.' })
+  @Field({ nullable: true })
   end: GoogleDateDto;
   @ApiProperty({ type: GoogleAttendeesDto, isArray: true, description: 'The attendees of the event' })
   attendees: GoogleAttendeesDto[];
 }
 
 /**
+ * @see https://developers.google.com/calendar/api/v3/reference/events#resource-representations
+ */
+@ObjectType()
+export class GoogleCalendarEventResourceDto extends GoogleCalendarEventDto {
+  @Field()
+  htmlLink: string
+  @Field()
+  created: string
+  @Field()
+  updated: string
+}
+
+/**
  * @see https://developers.google.com/calendar/api/v3/reference/calendars#resource
  */
+@ObjectType()
 export class GoogleCalendarDto {
   @ApiProperty({ example: 'calendarSummary', description: 'Title of the calendar' })
+  @Field({ nullable: true })
   summary: string;
   @ApiProperty({
     example: 'America/Los_Angeles',
     description: 'The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.',
     required: false,
   })
+  @Field({ nullable: true })
   timeZone?: string;
 }
 
