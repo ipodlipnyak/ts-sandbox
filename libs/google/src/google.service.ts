@@ -365,8 +365,8 @@ export class GoogleService {
               orderBy: 'startTime', // ascend by default
               singleEvents: true, // return single one-off events and instances of recurring events
               maxResults: 10,
-              timeMax: (new Date(+new Date() + 1000 * 3600 * 24 * 61)).toISOString(), // two months ahead
-              timeMin: (new Date(+new Date() - 1000 * 3600 * 24 * 31)).toISOString(), // month ago
+              // timeMax: (new Date(+new Date() + 1000 * 3600 * 24 * 61)).toISOString(), // two months ahead
+              timeMin: (new Date(+new Date() - 1000 * 3600 * 24 * 2)).toISOString(), // 2 days ago
             });
             return calEventsList.data.items;
         });
@@ -400,9 +400,9 @@ export class GoogleService {
               calendarId,
               orderBy: 'startTime', // ascend by default
               singleEvents: true, // return single one-off events and instances of recurring events
-              maxResults: 10,
-              timeMax: (new Date(+new Date() + 1000 * 3600 * 24)).toISOString(), // two months ahead
-              timeMin: (new Date(+new Date() - 1000 * 3600 * 1)).toISOString(), // month ago
+              // maxResults: 10,
+              // timeMax: (new Date(+new Date() + 1000 * 3600 * 24)).toISOString(), // day ahead
+              timeMin: (new Date(+new Date() - 1000 * 3600 * 1)).toISOString(), // hour ago
             });
             const events = calEventsList.data.items;
             return {
@@ -411,17 +411,11 @@ export class GoogleService {
             }
         });
 
-        const eventsList = [];
-        await Promise.all(allPromises).then((values) => {
-            values.forEach((cal) => {
-                eventsList.push(cal);
-            })
-        });
-        eventsList.filter((el) => el?.events?.lenght > 0).sort((a, b) => {
-          return +new Date(a.event.start.dateTime) - +new Date(a.event.start.dateTime);
-        })
+        const eventsList = await Promise.all(allPromises);
+        const cal = eventsList.filter((el) => !! el?.event).sort((a, b) => {
+          return +new Date(a.event.start.dateTime) - +new Date(b.event.start.dateTime);
+        }).shift();
 
-        const cal = eventsList.shift();
         const calendarId: string = cal.calendarId;
         const event: calendar_v3.Schema$Event = cal.event;
 

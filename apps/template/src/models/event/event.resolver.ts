@@ -2,6 +2,9 @@ import { Resolver, Query, Mutation, Args, ResolveField, Parent, Info } from '@ne
 import { UserOutputDto, RestResponseDto, ResponseStatusEnum, GoogleCalendarEventDto } from "../../dto";
 import {
     BadRequestException,
+    HttpException,
+    HttpStatus,
+    NotFoundException,
     UseGuards,
 } from '@nestjs/common';
 import { GqlAdminGuard, GqlAuthGuard } from '../../guards';
@@ -11,6 +14,7 @@ import { DeepPartial } from 'typeorm';
 import { query } from 'express';
 import { UserService } from '../../services';
 import { GoogleService } from '@my/google';
+import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/graphql';
 
 const pubSub = new PubSub();
 
@@ -27,7 +31,6 @@ const pubSub = new PubSub();
 //     }
 // }
 
-
 @UseGuards(GqlAuthGuard)
 @Resolver('event')
 export class EventResolver {
@@ -37,9 +40,13 @@ export class EventResolver {
     ) { }
 
     @Query(returns => GoogleCalendarEventDto || null)
-    async eventOngoing(): Promise<GoogleCalendarEventDto | null> {
+    async eventOngoing(@Args('fuck', { nullable: true }) fuck?: string): Promise<GoogleCalendarEventDto | null> {
         const email = await this.userService.email;
         const { calendarId, event } = await this.googleService.getUserEventOngoing(email);
+        if (!event) {
+          throw new NotFoundException('No close or ongoing events had been found');
+        }
+
         const result: GoogleCalendarEventDto = {
           calendarId,
           summary: event?.summary,
