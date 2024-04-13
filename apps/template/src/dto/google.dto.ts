@@ -107,14 +107,17 @@ export class GoogleCalendarEventDto {
 /**
  * @see https://developers.google.com/calendar/api/v3/reference/calendars#resource
  */
+@ObjectType()
 export class GoogleCalendarDto {
   @ApiProperty({ example: 'calendarSummary', description: 'Title of the calendar' })
+  @Field({ nullable: true })
   summary: string;
   @ApiProperty({
     example: 'America/Los_Angeles',
     description: 'The time zone of the calendar. (Formatted as an IANA Time Zone Database name, e.g. "Europe/Zurich".) Optional.',
     required: false,
   })
+  @Field({ nullable: true })
   timeZone?: string;
 }
 

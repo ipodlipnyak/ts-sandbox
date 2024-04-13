@@ -1,5 +1,5 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent, Info } from '@nestjs/graphql'
-import { UserOutputDto, RestResponseDto, ResponseStatusEnum, GoogleCalendarEventDto } from "../../dto";
+import { UserOutputDto, RestResponseDto, ResponseStatusEnum, GoogleCalendarEventDto, GoogleCalendarDto, EventDto } from "../../dto";
 import {
     BadRequestException,
     HttpException,
@@ -15,6 +15,7 @@ import { query } from 'express';
 import { UserService } from '../../services';
 import { GoogleService } from '@my/google';
 import { Field, InputType, ObjectType, ID, Float, Extensions } from '@nestjs/graphql';
+import { calendar_v3 } from 'googleapis';
 
 const pubSub = new PubSub();
 
@@ -31,6 +32,33 @@ const pubSub = new PubSub();
 //     }
 // }
 
+function mapGoogleEventToDto(
+  event: calendar_v3.Schema$Event,
+  calendarId: string,
+  calendar: calendar_v3.Schema$CalendarListEntry
+): EventDto {
+  const result: EventDto = {
+    calendarId,
+    summary: event?.summary,
+    location: event?.location,
+    description: event?.description,
+    start: {
+      dateTime: event?.start?.dateTime,
+      timeZone: event?.start?.timeZone
+    },
+    end: {
+      dateTime: event?.end?.dateTime,
+      timeZone: event?.end?.timeZone
+    },
+    attendees: [],
+    calendar: {
+      summary: calendar?.summary,
+      timeZone: calendar?.timeZone,
+    },
+  }
+  return result;
+}
+
 @UseGuards(GqlAuthGuard)
 @Resolver('event')
 export class EventResolver {
@@ -39,29 +67,18 @@ export class EventResolver {
       private readonly googleService: GoogleService,
     ) { }
 
-    @Query(returns => GoogleCalendarEventDto || null)
-    async eventOngoing(@Args('fuck', { nullable: true }) fuck?: string): Promise<GoogleCalendarEventDto | null> {
-        const email = await this.userService.email;
+    @Query(returns => [EventDto])
+    async eventOngoing(@Args('fuck', { nullable: true }) fuck?: string): Promise<EventDto[]> {
+        const email = this.userService.email;
+        const all = await this.googleService.getUserEventOngoing(email);
+        const result = all.map((el) => mapGoogleEventToDto(el.event, el.calendarId, el.calendar));
+        return result;
+        /*
         const { calendarId, event } = await this.googleService.getUserEventOngoing(email);
         if (!event) {
           throw new NotFoundException('No close or ongoing events had been found');
         }
+        */
 
-        const result: GoogleCalendarEventDto = {
-          calendarId,
-          summary: event?.summary,
-          location: event?.location,
-          description: event?.description,
-          start: {
-            dateTime: event?.start?.dateTime,
-            timeZone: event?.start?.timeZone
-          },
-          end: {
-            dateTime: event?.end?.dateTime,
-            timeZone: event?.end?.timeZone
-          },
-          attendees: []
-        }
-        return result;
     }
 }

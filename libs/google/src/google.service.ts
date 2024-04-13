@@ -393,36 +393,35 @@ export class GoogleService {
     async getUserEventOngoing(email: string) {
         let result = null as calendar_v3.Schema$Event | null;
 
-        const calendarsList = await this.getUserCalendarsIDList(email);
+        const calendarsIdList = await this.getUserCalendarsIDList(email);
+        const calendarList = await this.getUserCalendarsList(email);
 
-        const allPromises = calendarsList.map(async (calendarId) => {
+        const allPromises = calendarsIdList.map(async (calendarId) => {
             const calEventsList = await this.calendarV3.events.list({
               calendarId,
               orderBy: 'startTime', // ascend by default
               singleEvents: true, // return single one-off events and instances of recurring events
-              // maxResults: 10,
+              maxResults: 10,
               // timeMax: (new Date(+new Date() + 1000 * 3600 * 24)).toISOString(), // day ahead
               timeMin: (new Date(+new Date() - 1000 * 3600 * 1)).toISOString(), // hour ago
             });
             const events = calEventsList.data.items;
             return {
+              calendar: calendarList.find((cal) => cal.id === calendarId),
               calendarId,
               event: events.reverse().shift()
             }
         });
 
         const eventsList = await Promise.all(allPromises);
-        const cal = eventsList.filter((el) => !! el?.event).sort((a, b) => {
+        const ongoing = eventsList.filter((el) => !! el?.event).sort((a, b) => {
           return +new Date(a.event.start.dateTime) - +new Date(b.event.start.dateTime);
-        }).shift();
+        });
 
-        const calendarId: string = cal.calendarId;
-        const event: calendar_v3.Schema$Event = cal.event;
+        // const calendarId: string = cal.calendarId;
+        // const event: calendar_v3.Schema$Event = cal.event;
 
-        return {
-          calendarId,
-          event,
-        };
+        return ongoing;
     }
 
     /**
