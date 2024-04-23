@@ -414,7 +414,7 @@ export class GoogleService {
               singleEvents: true, // return single one-off events and instances of recurring events
               maxResults: 10,
               // timeMax: (new Date(+new Date() + 1000 * 3600 * 24)).toISOString(), // day ahead
-              timeMin: (new Date(+new Date() - 1000 * 3600 * 24)).toISOString(), // hour ago
+              timeMin: (new Date(+new Date() - 1000 * 3600 * 24)).toISOString(), // a day ago
             });
             const events = calEventsList.data.items.filter((el) => +new Date(el.end.dateTime) > +new Date());
             return {
