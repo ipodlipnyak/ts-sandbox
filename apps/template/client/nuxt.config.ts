@@ -11,6 +11,17 @@ export default defineNuxtConfig({
       '/graphql': 'http://127.0.0.1:3000/graphql',
     }
   },
+  app: {
+    head: {
+      link: [
+        {
+          rel: 'icon',
+          type: 'image/svg+xml',
+          href: '/favicon.svg'
+        }
+      ],
+    },
+  },
   /*
   vite: {
     server: {
