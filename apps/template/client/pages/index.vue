@@ -30,7 +30,7 @@
         <v-col cols="12" md="6">
           <v-card
             variant="tonal"
-            color="#c5975cff"
+            color="sand"
             elevation="4"
             class="call-us mb-12"
             width="100%"
@@ -65,7 +65,7 @@
     <v-row align="center" justify="center" no-gutters>
       <v-col>
         <v-card
-          color="#c5975cff"
+          color="sand"
           :rounded="0"
           class="amoeba-wrapper overflow-hidden"
           v-intersect="onAmoebaIntersection"
@@ -83,7 +83,7 @@
                 variant="flat"
               >
                 <v-row no-gutters justify="center">
-                  <h1 class="text-black">
+                  <h1 class="text-sand">
                     Blah blag
                   </h1>
                 </v-row>
@@ -93,7 +93,7 @@
                 </v-row>
                 <v-fade-transition hide-on-leave>
 
-                  <v-row v-if="amoebaIntersectionValue < 150">
+                  <v-row v-if="amoebaIntersectionValue < amoebaContentTreshold2">
                     <v-col cols="12" md="4">
                     </v-col>
 
@@ -101,7 +101,7 @@
                       <v-card
                         height="100"
                         width="100%"
-                        color="#00074b"
+                        color="sea"
                       >
                         <v-card-title>
                           E-mail
@@ -110,7 +110,7 @@
                           <v-chip
                             variant="tonal"
                             icon-prepend="mdi-email"
-                            color="#c5975c"
+                            color="sand"
                             @click="() => {}"
                           >
                             support@test.com
@@ -140,7 +140,7 @@
                               :icon="media.icon"
                               variant="text"
                               class="mx-1 light-shadow"
-                              color="#c5975c"
+                              color="sand"
                             ></v-btn>
                             </v-row>
                           </v-col>
@@ -221,6 +221,9 @@ export default defineComponent({
     const amoebaContentTreshold = computed(() => {
       return display.mdAndUp.value ? 650 : 350;
     });
+    const amoebaContentTreshold2 = computed(() => {
+      return display.mdAndUp.value ? 450 : 250;
+    });
 
     const amoebaStyle = computed(() => {
       // const df = amoebaIntersectionValue.value < display.width.value ? amoebaIntersectionValue.value : display.width.value;
@@ -297,6 +300,7 @@ export default defineComponent({
       onScroll,
       amoebaIntersectionValue,
       amoebaContentTreshold,
+      amoebaContentTreshold2,
       socialMedia,
     };
   },

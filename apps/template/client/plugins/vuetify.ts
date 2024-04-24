@@ -17,14 +17,20 @@ export default defineNuxtPlugin((nuxtApp) => {
     */
     theme: {
       defaultTheme: 'dark',
-      // themes: {
-      //   light: {
-      //     colors: {
-      //       primary: '#1867C0',
-      //       secondary: '#5CBBF6',
-      //     },
-      //   },
-      // },
+      themes: {
+        dark: {
+          colors: {
+            sea: '#00074b',
+            sand: '#c5975c',
+          },
+        },
+        light: {
+          colors: {
+            sea: '#00074b',
+            sand: '#c5975c',
+          },
+        },
+      },
     },
   });
 
