@@ -91,25 +91,44 @@
                 <v-row no-gutters justify="center">
                     <v-chip color="green">{{ amoebaIntersectionValue }}</v-chip>
                 </v-row>
-                <v-fade-transition>
+                <v-fade-transition hide-on-leave>
 
                   <v-row v-if="amoebaIntersectionValue < 150">
                     <v-col cols="12" md="4">
-                      <v-chip color="green">{{ amoebaIntersectionValue }}</v-chip>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                      <v-chip color="red">Blah blah blah</v-chip>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                      <v-chip color="blue">Blah blah blah</v-chip>
                     </v-col>
 
-                    <v-col>
+                    <v-col cols="12" md="4">
+                      <v-card
+                        height="100"
+                        width="100%"
+                        color="#00074b"
+                      >
+                        <v-card-title>
+                          E-mail
+                        </v-card-title>
+                        <v-card-text>
+                          <v-chip
+                            variant="tonal"
+                            icon-prepend="mdi-email"
+                            color="#c5975c"
+                            @click="() => {}"
+                          >
+                            support@test.com
+                          </v-chip>
+                        </v-card-text>
+
+                      </v-card>
+                    </v-col>
+
+                    <v-col cols="12" md="4">
+                    </v-col>
+
+                    <v-col >
                       <v-sheet color="transparent" height="300">
                         <v-row class="fill-height" align="end">
                           <v-col cols="12">
                             <v-row no-gutters justify="center">
-                              <v-img src="/logo.svg" height="200"></v-img>
+                              <v-img class="light-shadow" src="/logo.svg" height="200"></v-img>
                             </v-row>
                           </v-col>
                           <v-col cols="12">
@@ -120,7 +139,8 @@
                               :href="media.link"
                               :icon="media.icon"
                               variant="text"
-                              class="mx-1"
+                              class="mx-1 light-shadow"
+                              color="#c5975c"
                             ></v-btn>
                             </v-row>
                           </v-col>
@@ -287,8 +307,9 @@ export default defineComponent({
 .call-us {
   backdrop-filter: blur(30px);
 }
-.v-sheet {
-  text-shadow: grey 1px 0 10px;
+.light-shadow {
+  text-shadow: rgba(0, 0, 0, 0.4) 0px 0 1px;
+  filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.4));
 }
 .amoeba-wrapper {
   overflow: hidden;

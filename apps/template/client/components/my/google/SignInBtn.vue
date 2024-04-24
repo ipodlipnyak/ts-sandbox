@@ -8,7 +8,7 @@
                 :prompt="false"
                 :clientId="clientId"
               >
-                <v-btn elevation="1" variant="flat" block color="#00074b" text="Login" prepend-icon="mdi-login">
+                <v-btn size="large" elevation="1" variant="flat" block color="#00074b" text="Login" prepend-icon="mdi-login">
                 </v-btn>
               </GoogleLogin>
             </v-row>
