@@ -67,6 +67,44 @@
           height="100vh"
           v-scroll="onScroll"
         >
+
+          <v-row class="fill-height" no-gutters align="center" justify="center">
+            <v-fade-transition hide-on-leave>
+              <v-card
+                v-if="amoebaIntersectionValue < amoebaContentTreshold"
+                class="v-col-6"
+                height="600"
+                color="transparent"
+                variant="flat"
+              >
+                <v-row no-gutters justify="center">
+                  <h1 class="text-black">
+                    Blah blag
+                  </h1>
+                </v-row>
+
+                <v-row no-gutters justify="center">
+                    <v-chip color="green">{{ amoebaIntersectionValue }}</v-chip>
+                </v-row>
+                <v-fade-transition>
+
+                  <v-row v-if="amoebaIntersectionValue < 90">
+                    <v-col cols="12" md="4">
+                      <v-chip color="green">{{ amoebaIntersectionValue }}</v-chip>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <v-chip color="red">Blah blah blah</v-chip>
+                    </v-col>
+                    <v-col cols="12" md="4">
+                      <v-chip color="blue">Blah blah blah</v-chip>
+                    </v-col>
+                  </v-row>
+
+                </v-fade-transition>
+              </v-card>
+            </v-fade-transition>
+          </v-row>
+
           <v-sheet
             min-width="24px"
             ref="amoeba"
@@ -131,12 +169,18 @@ export default defineComponent({
 
     const amoeba = ref(null);
     const amoebaIntersectionValue = ref(0);
+    const amoebaContentTreshold = computed(() => {
+      return display.mdAndUp.value ? 650 : 350;
+    });
 
     const amoebaStyle = computed(() => {
       // const df = amoebaIntersectionValue.value < display.width.value ? amoebaIntersectionValue.value : display.width.value;
       const iv = amoebaIntersectionValue.value;
-      const dw = display.width.value / 2;
-      const df = dw > iv ? dw - iv : 20;
+      const base = display.mdAndUp.value ? 2.5 : 0.8;
+      const dw = display.width.value / base;
+      const thr = 40; // threshold
+      const df = dw - thr > iv ? dw - iv : thr;
+      console.log(`${dw} - ${iv} = ${df}`)
       // const df = dw - iv;
 
       return {
@@ -179,6 +223,8 @@ export default defineComponent({
       isAmoebaIntersected,
       onAmoebaIntersection,
       onScroll,
+      amoebaIntersectionValue,
+      amoebaContentTreshold,
     };
   },
 })
@@ -195,6 +241,7 @@ export default defineComponent({
   overflow: hidden;
 }
 .amoeba {
+  z-index: -1;
   // aspect-ratio: 1 / 2;
   top: 80px;
   position: absolute;
