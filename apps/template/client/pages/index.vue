@@ -98,6 +98,30 @@
                     <v-col cols="12" md="4">
                       <v-chip color="blue">Blah blah blah</v-chip>
                     </v-col>
+
+                    <v-col>
+                      <v-sheet color="transparent" height="300">
+                        <v-row class="fill-height" align="end">
+                          <v-col cols="12">
+                            <v-row no-gutters justify="center">
+                              <v-img src="/logo.svg" height="200"></v-img>
+                            </v-row>
+                          </v-col>
+                          <v-col cols="12">
+                            <v-row no-gutters justify="center">
+                            <v-btn
+                              v-for="media in socialMedia"
+                              :key="media.name"
+                              :href="media.link"
+                              :icon="media.icon"
+                              variant="text"
+                              class="mx-1"
+                            ></v-btn>
+                            </v-row>
+                          </v-col>
+                        </v-row>
+                      </v-sheet>
+                    </v-col>
                   </v-row>
 
                 </v-fade-transition>
@@ -176,7 +200,7 @@ export default defineComponent({
     const amoebaStyle = computed(() => {
       // const df = amoebaIntersectionValue.value < display.width.value ? amoebaIntersectionValue.value : display.width.value;
       const iv = amoebaIntersectionValue.value;
-      const base = display.mdAndUp.value ? 2.5 : 0.8;
+      const base = display.mdAndUp.value ? 2.4 : 0.8;
       const dw = display.width.value / base;
       const thr = 40; // threshold
       const df = dw - thr > iv ? dw - iv : thr;
@@ -215,6 +239,29 @@ export default defineComponent({
       }
     };
 
+    const socialMedia = [
+      {
+        name: 'youtube',
+        icon: 'mdi-youtube',
+        link: '#',
+      },
+      {
+        name: 'instagram',
+        icon: 'mdi-instagram',
+        link: '#',
+      },
+      {
+        name: 'whatsapp',
+        icon: 'mdi-whatsapp',
+        link: '#',
+      },
+      {
+        name: 'facebook',
+        icon: 'mdi-facebook',
+        link: '#',
+      },
+    ];
+
     return {
       heightComputed,
       display,
@@ -225,6 +272,7 @@ export default defineComponent({
       onScroll,
       amoebaIntersectionValue,
       amoebaContentTreshold,
+      socialMedia,
     };
   },
 })
