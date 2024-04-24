@@ -15,9 +15,11 @@
         ></v-img>
       </template>
 
+      <!--
       <v-app-bar-title>
         Title
       </v-app-bar-title>
+      -->
 
       <template v-slot:append>
         <my-google-sign-in-btn />

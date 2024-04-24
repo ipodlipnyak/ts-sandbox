@@ -1,9 +1,5 @@
 <template>
-  <v-sheet
-    width="100%"
-    class="fill-height"
-    color="blue"
-  >
+  <div>
     <!--
     <v-img src="https://i.imgur.com/2wD3VJA.jpg" :height="heightComputed" cover>
     </v-img>
@@ -20,30 +16,46 @@
       src="/fish.svg"
     >
 
-    <v-container>
-      <v-row no-gutters justify="center" align="center">
-        <v-card color="transparent" width="600" flat height="100vh">
-          <v-card-title class="text-h3 text-uppercase mb-6 white--text">
-            blah blah
-          </v-card-title>
-
-          <v-card-subtitle class="mb-1 text-body-1 font-weight-medium white--text">
-            Eveniet culpa consequuntur natus sapiente numquam aut et ab
-          </v-card-subtitle>
-
-          <v-card-actions>
-            <v-row>
-              <v-col>
-
-              </v-col>
-            </v-row>
-          </v-card-actions>
-        </v-card>
+    <v-sheet
+      color="transparent"
+      height="calc(100vh - 64px)"
+    >
+    <v-container class="fill-height">
+      <v-row class="fill-height pb-8" align="end">
+        <v-col cols="12" md="6">
+          <v-card
+            variant="tonal"
+            color="#c5975cff"
+            elevation="4"
+            class="call-us mb-12"
+            width="100%"
+          >
+            <v-card-title>Ut repellat amet incidunt.</v-card-title>
+            <v-card-actions>
+              <v-text-field
+                prepend-inner-icon="mdi-email"
+                label="E-mail"
+                variant="solo"
+                rounded="xl"
+              >
+              <template v-slot:append-inner>
+                <v-btn rounded="xl" variant="tonal" color="green">
+                  Join us
+                </v-btn>
+              </template>
+              </v-text-field>
+            </v-card-actions>
+          </v-card>
+        </v-col>
       </v-row>
 
+
     </v-container>
+
+    </v-sheet>
     </v-parallax>
     </v-parallax>
+
 
     <v-row align="center" justify="center" no-gutters>
       <v-col>
@@ -73,7 +85,7 @@
 
     </v-row>
 
-  </v-sheet>
+  </div>
 </template>
 
 <script lang="ts">
@@ -173,6 +185,9 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
+.call-us {
+  backdrop-filter: blur(30px);
+}
 .v-sheet {
   text-shadow: grey 1px 0 10px;
 }
@@ -181,7 +196,7 @@ export default defineComponent({
 }
 .amoeba {
   // aspect-ratio: 1 / 2;
-  top: 70px;
+  top: 80px;
   position: absolute;
 }
 </style>
