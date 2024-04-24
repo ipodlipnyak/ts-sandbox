@@ -7,11 +7,20 @@
     <!--
     <v-img src="https://i.imgur.com/2wD3VJA.jpg" :height="heightComputed" cover>
     </v-img>
-    -->
     <v-parallax
       src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
     >
+    -->
+    <v-parallax
+      scale="0.2"
+      src="/sea.svg"
+    >
+    <v-parallax
+      scale="0.8"
+      src="/fish.svg"
+    >
 
+    <v-container>
       <v-row no-gutters justify="center" align="center">
         <v-card color="transparent" width="600" flat height="100vh">
           <v-card-title class="text-h3 text-uppercase mb-6 white--text">
@@ -24,34 +33,22 @@
 
           <v-card-actions>
             <v-row>
-
-              <!--
               <v-col>
-                <v-btn :size="display.smAndDown ? 'large' : 'x-large'" depressed to="/login" nuxt class="px-8" dark
-                  color="green" block>
-                  Войти
-                </v-btn>
-              </v-col>
-              -->
 
-              <v-col>
-                <!--
-                <v-btn :large="display.smAndDown" :x-large="display.mdAndUp" depressed
-                  to="/signup" nuxt class="px-8" color="orange" dark block>
-                  Зарегистрироваться
-                </v-btn>
-                -->
-                <my-google-sign-in-btn />
               </v-col>
             </v-row>
           </v-card-actions>
         </v-card>
       </v-row>
+
+    </v-container>
+    </v-parallax>
     </v-parallax>
 
     <v-row align="center" justify="center" no-gutters>
       <v-col>
         <v-card
+          color="#c5975cff"
           :rounded="0"
           class="amoeba-wrapper overflow-hidden"
           v-intersect="onAmoebaIntersection"
