@@ -12,7 +12,7 @@
       src="/sea.svg"
     >
     <v-parallax
-      scale="0.8"
+      scale="0.7"
       src="/fish.svg"
     >
 
@@ -22,6 +22,11 @@
     >
     <v-container class="fill-height">
       <v-row class="fill-height pb-8" align="end">
+        <v-col cols="12">
+          <v-row no-gutters justify="end">
+            <my-youtube-iframe />
+          </v-row>
+        </v-col>
         <v-col cols="12" md="6">
           <v-card
             variant="tonal"
@@ -64,15 +69,15 @@
           :rounded="0"
           class="amoeba-wrapper overflow-hidden"
           v-intersect="onAmoebaIntersection"
-          height="100vh"
+          height="calc(100vh - 64px)"
           v-scroll="onScroll"
         >
 
-          <v-row class="fill-height" no-gutters align="center" justify="center">
+          <v-row class="fill-height py-12" no-gutters align="center" justify="center">
             <v-fade-transition hide-on-leave>
               <v-card
                 v-if="amoebaIntersectionValue < amoebaContentTreshold"
-                class="v-col-6"
+                class="v-col-6 mt-12"
                 height="600"
                 color="transparent"
                 variant="flat"
@@ -88,7 +93,7 @@
                 </v-row>
                 <v-fade-transition>
 
-                  <v-row v-if="amoebaIntersectionValue < 90">
+                  <v-row v-if="amoebaIntersectionValue < 150">
                     <v-col cols="12" md="4">
                       <v-chip color="green">{{ amoebaIntersectionValue }}</v-chip>
                     </v-col>
@@ -200,7 +205,7 @@ export default defineComponent({
     const amoebaStyle = computed(() => {
       // const df = amoebaIntersectionValue.value < display.width.value ? amoebaIntersectionValue.value : display.width.value;
       const iv = amoebaIntersectionValue.value;
-      const base = display.mdAndUp.value ? 2.4 : 0.8;
+      const base = display.mdAndUp.value ? 2.4 : 0.7;
       const dw = display.width.value / base;
       const thr = 40; // threshold
       const df = dw - thr > iv ? dw - iv : thr;
