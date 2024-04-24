@@ -5,7 +5,7 @@
       scroll-behavior="fade-image"
       name="header"
       app
-      color="#c5975cff"
+      color="sand"
     >
       <template v-slot:prepend>
         <v-img
