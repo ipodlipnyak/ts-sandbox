@@ -8,9 +8,11 @@
                 :prompt="false"
                 :clientId="clientId"
               >
+              </GoogleLogin>
+              <!--
                 <v-btn size="large" elevation="1" variant="flat" block color="#00074b" text="Login" prepend-icon="mdi-login">
                 </v-btn>
-              </GoogleLogin>
+              -->
             </v-row>
         </v-sheet>
     </v-theme-provider>
