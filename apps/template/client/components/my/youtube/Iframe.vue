@@ -1,6 +1,6 @@
 <template>
   <v-card
-    height="400"
+    :height="display.mdAndUp.value ? 400 : 300"
     class="pa-8 v-col-12 v-col-md-8"
     variant="tonal"
     color="#c5975cff"
