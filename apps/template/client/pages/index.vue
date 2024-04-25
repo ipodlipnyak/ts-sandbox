@@ -7,6 +7,11 @@
       src="https://cdn.vuetifyjs.com/images/parallax/material.jpg"
     >
     -->
+
+    <v-sheet
+      color="sea"
+      min-height="calc(100vh - 64px)"
+    >
     <v-parallax
       scale="0.2"
       src="/sea.svg"
@@ -15,51 +20,84 @@
       scale="0.7"
       src="/fish.svg"
     >
+      <v-container>
 
-    <v-sheet
-      color="transparent"
-      height="calc(100vh - 64px)"
-    >
-    <v-container class="fill-height">
-      <v-row class="fill-height pb-8" align="end">
-        <v-col cols="12">
+        <v-sheet class="d-flex flex-column pt-8" min-height="calc(90vh - 64px)" width="100%" color="transparent">
           <v-row no-gutters justify="end">
             <my-youtube-iframe />
           </v-row>
-        </v-col>
-        <v-col cols="12" md="6">
-          <v-card
-            variant="tonal"
-            color="sand"
-            elevation="4"
-            class="call-us mb-12"
-            width="100%"
-          >
-            <v-card-title>Ut repellat amet incidunt.</v-card-title>
-            <v-card-actions>
-              <v-text-field
-                prepend-inner-icon="mdi-email"
-                label="E-mail"
-                variant="solo"
-                rounded="xl"
+
+          <v-row align="end">
+            <v-col cols="12" md="6">
+              <v-card
+                variant="tonal"
+                color="sand"
+                elevation="4"
+                class="call-us mb-12"
+                width="100%"
               >
-              <template v-slot:append-inner>
-                <v-btn rounded="xl" variant="tonal" color="green">
-                  Join us
-                </v-btn>
-              </template>
-              </v-text-field>
-            </v-card-actions>
-          </v-card>
-        </v-col>
-      </v-row>
+                <v-card-title>Ut repellat amet incidunt.</v-card-title>
+                <v-card-actions>
+                  <v-text-field
+                    prepend-inner-icon="mdi-email"
+                    label="E-mail"
+                    variant="solo"
+                    rounded="xl"
+                  >
+                  <template v-slot:append-inner>
+                    <v-btn rounded="xl" variant="tonal" color="green">
+                      Join us
+                    </v-btn>
+                  </template>
+                  </v-text-field>
+                </v-card-actions>
+              </v-card>
+            </v-col>
+
+          </v-row>
+        </v-sheet>
 
 
-    </v-container>
+          <!--
+        <v-row no-gutters justify="end" align="stretch">
+          <v-col cols="12">
+            <v-row no-gutters justify="end">
+              <my-youtube-iframe />
+            </v-row>
+          </v-col>
+          <v-col cols="12" md="6">
+            <v-card
+              variant="tonal"
+              color="sand"
+              elevation="4"
+              class="call-us mb-12"
+              width="100%"
+            >
+              <v-card-title>Ut repellat amet incidunt.</v-card-title>
+              <v-card-actions>
+                <v-text-field
+                  prepend-inner-icon="mdi-email"
+                  label="E-mail"
+                  variant="solo"
+                  rounded="xl"
+                >
+                <template v-slot:append-inner>
+                  <v-btn rounded="xl" variant="tonal" color="green">
+                    Join us
+                  </v-btn>
+                </template>
+                </v-text-field>
+              </v-card-actions>
+            </v-card>
+          </v-col>
+        </v-row>
+          -->
 
+      </v-container>
+    </v-parallax>
+    </v-parallax>
     </v-sheet>
-    </v-parallax>
-    </v-parallax>
+
 
 
     <v-row align="center" justify="center" no-gutters>
@@ -69,7 +107,7 @@
           :rounded="0"
           class="amoeba-wrapper overflow-hidden"
           v-intersect="onAmoebaIntersection"
-          height="calc(100vh - 64px)"
+          min-height="calc(100vh - 64px)"
           v-scroll="onScroll"
         >
 
@@ -88,9 +126,6 @@
                   </h1>
                 </v-row>
 
-                <v-row no-gutters justify="center">
-                    <v-chip color="green">{{ amoebaIntersectionValue }}</v-chip>
-                </v-row>
                 <v-fade-transition hide-on-leave>
 
                   <v-row v-if="amoebaIntersectionValue < amoebaContentTreshold2">
@@ -160,7 +195,7 @@
             rounded="pill"
             color="white"
             class="amoeba"
-            height="80vh"
+            height="100%"
             :style="amoebaStyle"
           >
 
@@ -236,8 +271,8 @@ export default defineComponent({
       // const df = dw - iv;
 
       return {
-        left: `calc(50% - ${df}px)`,
-        right: `calc(50% - ${df}px)`
+        left: `calc(50% - ${df ** 1.1}px)`,
+        right: `calc(50% - ${df ** 1.1}px)`
       };
     });
 

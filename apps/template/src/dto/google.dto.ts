@@ -24,6 +24,13 @@ export class JWTInputDto {
   readonly credential: string;
 }
 
+export class AuthTokenInputDto {
+  @IsString()
+  @ApiProperty({ example: '1haWwuY29tIi...GTdHbV2', description: 'Very long token' })
+  @Transform(({ value }) => value.trim())
+  readonly accessToken: string;
+}
+
 /**
  * @see https://developers.google.com/identity/gsi/web/reference/js-reference#credential
  */
