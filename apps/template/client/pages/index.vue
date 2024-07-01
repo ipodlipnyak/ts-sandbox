@@ -36,7 +36,8 @@
                 class="call-us mb-12"
                 width="100%"
               >
-                <v-card-title>Ut repellat amet incidunt.</v-card-title>
+                <v-card-title>Share with me your e-mail</v-card-title>
+                <v-card-subtitle>and join the playground</v-card-subtitle>
                 <v-card-actions>
                   <v-text-field
                     prepend-inner-icon="mdi-email"
@@ -46,7 +47,7 @@
                   >
                   <template v-slot:append-inner>
                     <v-btn rounded="xl" variant="tonal" color="green">
-                      Join us
+                      Join
                     </v-btn>
                   </template>
                   </v-text-field>
@@ -122,8 +123,13 @@
               >
                 <v-row no-gutters justify="center">
                   <h1 class="text-sand">
-                    Blah blag
+                    Ivan Podlipniak
                   </h1>
+                </v-row>
+                <v-row no-gutters justify="center">
+                  <span class="text-sand">
+                    Web developer and software engeneer
+                  </span>
                 </v-row>
 
                 <v-fade-transition hide-on-leave>
@@ -148,7 +154,7 @@
                             color="sand"
                             @click="() => {}"
                           >
-                            support@test.com
+                            {{ supportMail }}
                           </v-chip>
                         </v-card-text>
 
@@ -302,7 +308,15 @@ export default defineComponent({
       }
     };
 
+    const supportMail = 'support@cyphroclerk.com';
+
     const socialMedia = [
+      {
+        name: 'github',
+        icon: 'mdi-github',
+        link: 'https://github.com/ipodlipnyak/'
+      },
+      /*
       {
         name: 'youtube',
         icon: 'mdi-youtube',
@@ -323,6 +337,7 @@ export default defineComponent({
         icon: 'mdi-facebook',
         link: '#',
       },
+      */
     ];
 
     return {
@@ -337,6 +352,7 @@ export default defineComponent({
       amoebaContentTreshold,
       amoebaContentTreshold2,
       socialMedia,
+      supportMail,
     };
   },
 })
