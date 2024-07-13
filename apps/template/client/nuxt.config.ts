@@ -13,6 +13,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
+      title: "cyphroclerk",
       link: [
         {
           rel: 'icon',
