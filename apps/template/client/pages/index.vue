@@ -116,8 +116,8 @@
             <v-fade-transition hide-on-leave>
               <v-card
                 v-if="amoebaIntersectionValue < amoebaContentTreshold"
-                class="v-col-6 mt-12"
-                height="600"
+                class="v-col-8 v-col-md-6 mt-12"
+                height="630"
                 color="transparent"
                 variant="flat"
               >
@@ -152,7 +152,7 @@
                             variant="tonal"
                             icon-prepend="mdi-email"
                             color="sand"
-                            @click="() => {}"
+                            :href="`mailto:${supportMail}`"
                           >
                             {{ supportMail }}
                           </v-chip>
@@ -315,6 +315,11 @@ export default defineComponent({
         name: 'github',
         icon: 'mdi-github',
         link: 'https://github.com/ipodlipnyak/'
+      },
+      {
+        name: 'linkedin',
+        icon: 'mdi-linkedin',
+        link: 'https://www.linkedin.com/in/ivan-podlipnyak-257b7932'
       },
       /*
       {
