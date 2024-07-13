@@ -128,7 +128,7 @@
                 </v-row>
                 <v-row no-gutters justify="center">
                   <span class="text-sand">
-                    Web developer and software engeneer
+                    Web developer and software engineer
                   </span>
                 </v-row>
 
