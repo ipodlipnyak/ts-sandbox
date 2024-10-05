@@ -3,7 +3,7 @@
     height="200"
     max-width="400"
     class="my-mc-status"
-    image="https://upload.wikimedia.org/wikipedia/en/5/51/Minecraft_cover.png"
+    image="https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Minecraft_pig_%2815735062557%29.jpg/320px-Minecraft_pig_%2815735062557%29.jpg"
   >
     <v-toolbar color="transparent">
       <template v-slot:prepend>
@@ -37,15 +37,15 @@
       color="white"
       class="mt-4"
       size="large"
-      variant="flat"      
+      variant="flat"
       elevation="2"
       prepend-icon="mdi-content-copy"
       @click="copyToClipboard(mcStore.mcIpGetter)"
      >
       {{ mcStore.mcIpGetter }}
-     </v-chip> 
+     </v-chip>
     </v-card-item>
-    
+
     <v-card-actions>
       <v-switch
         class="ml-2"
@@ -97,7 +97,7 @@ export default defineComponent({
 
       return switchIndeterminate.value;
     });
-    
+
     const switchColor = computed((): string => {
       let color = 'green';
       if (!mcStore.isPlayerHaveAccess) {
@@ -105,7 +105,7 @@ export default defineComponent({
       }
       return color;
     });
-    
+
     watch(
       () => mcStore.mcStatus,
       () => {
