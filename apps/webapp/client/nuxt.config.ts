@@ -3,14 +3,18 @@ import vuetify from 'vite-plugin-vuetify';
 
 // https://v3.nuxtjs.org/api/configuration/nuxt.config
 export default defineNuxtConfig({
-  target: 'static', // default is 'server'
+  // default is 'server'
+  target: 'static',
+
   ssr: false,
+
   nitro: {
     devProxy: {
       '/api': 'http://127.0.0.1:3000/api',
       '/graphql': 'http://127.0.0.1:3000/graphql',
     }
   },
+
   app: {
     head: {
       title: "cyphroclerk",
@@ -23,6 +27,7 @@ export default defineNuxtConfig({
       ],
     },
   },
+
   /*
   vite: {
     server: {
@@ -54,13 +59,14 @@ export default defineNuxtConfig({
       nuxt.hooks.hook('vite:extendConfig', (config) => config.plugins.push(vuetify()));
     },
   ],
+
   apollo: {
     clients: {
       default: {
         httpEndpoint: '/graphql'
       }
     },
-  },
+  }
   /*
   css: ['vuetify/styles'], // vuetify ships precompiled css, no need to import sass
   vite: {
@@ -76,5 +82,7 @@ export default defineNuxtConfig({
       nuxt.hooks.hook('vite:extendConfig', (config) => config.plugins.push(vuetify()));
     },
   ],
-  */
+  */,
+
+  compatibilityDate: '2024-11-17'
 });

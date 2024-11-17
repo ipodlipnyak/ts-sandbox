@@ -8,7 +8,7 @@ import {
     Scope,
     Logger,
 } from '@nestjs/common';
-import { GoogleCalendarAclDto, GoogleCalendarEventDto } from 'apps/template/src/dto';
+import { GoogleCalendarAclDto, GoogleCalendarEventDto } from 'apps/webapp/src/dto';
 import { randomUUID } from 'crypto';
 import { OAuth2Client, OAuth2ClientOptions, GoogleAuth } from 'google-auth-library';
 import { google, Auth, calendar_v3 } from 'googleapis';

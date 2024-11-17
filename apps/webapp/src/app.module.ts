@@ -72,8 +72,9 @@ import { LLMModule } from '@my/llm';
     }),
     ServeStaticModule.forRoot({
       // rootPath: join(__dirname, '../..', 'client/dist'),
-      // rootPath: join(__dirname, '../..', 'apps/template/client'),
-      rootPath: join(__dirname, '../', 'client'),
+      // rootPath: join(__dirname, '../..', 'apps/webapp/client'),
+      // rootPath: join(__dirname, '../', 'client'),
+      rootPath: join(__dirname, '../../../../apps/webapp/', 'client/dist'),
     }),
     HttpModule,
     TypeOrmModule.forRootAsync({

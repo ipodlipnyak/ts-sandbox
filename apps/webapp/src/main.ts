@@ -44,10 +44,10 @@ async function bootstrap() {
   /** Swagger */
   if (DEBUG) {
     const docConfig = new DocumentBuilder()
-      .setTitle('Template app')
+      .setTitle('Cyphroclerk app')
       .setDescription('Simple api')
       .setVersion('1.0')
-      .addTag('template')
+      .addTag('cyphroclerk')
       .addCookieAuth('connect.sid', undefined, 'user')
       .addCookieAuth('connect.sid', undefined, 'admin')
       .addServer('/api')

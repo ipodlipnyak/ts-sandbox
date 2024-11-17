@@ -1,7 +1,7 @@
 import { Module, DynamicModule } from '@nestjs/common';
 import { GoogleService } from './google.service';
 import { CACHE_MANAGER, CacheModule } from '@nestjs/cache-manager';
-import { AppModule } from 'apps/template/src/app.module';
+// import { AppModule } from 'apps/webapp/src/app.module';
 import { ConfigService } from '@nestjs/config';
 import * as redisStore from 'cache-manager-redis-store';
 
