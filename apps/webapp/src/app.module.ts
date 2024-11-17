@@ -23,8 +23,7 @@ import { LLMModule } from '@my/llm';
 // import { SentryModule, HttpLoggerMiddleware } from '@cg/sentry';
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
 
-@Module({
-  imports: [
+let imports = [
     ConfigModule.forRoot({
       isGlobal: true,
       load,
@@ -70,12 +69,6 @@ import { LLMModule } from '@my/llm';
       playground: !!process.env?.DEBUG,
       // plugins: [ApolloServerPluginLandingPageLocalDefault()],
     }),
-    ServeStaticModule.forRoot({
-      // rootPath: join(__dirname, '../..', 'client/dist'),
-      // rootPath: join(__dirname, '../..', 'apps/webapp/client'),
-      // rootPath: join(__dirname, '../', 'client'),
-      rootPath: join(__dirname, '../../../../apps/webapp/', 'client/dist'),
-    }),
     HttpModule,
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
@@ -83,10 +76,34 @@ import { LLMModule } from '@my/llm';
         ...configService.get('db'),
       }),
     }),
-  ],
+  ];
+
+  /**
+   * In development we are running client as separate application,
+   * which routing its calls to webapp api.
+   * And no static files will be compiled in dist folder.
+   * So if we will keep this module running in this environment,
+   * we will recieve errors about empty dist folder.
+   * So lets just keep it down until we need it.
+  */
+
+  if (process.env?.NODE_ENV !== 'development') {
+    imports = [
+      ...imports,
+      ServeStaticModule.forRoot({
+        // rootPath: join(__dirname, '../..', 'client/dist'),
+        // rootPath: join(__dirname, '../..', 'apps/webapp/client'),
+        // rootPath: join(__dirname, '../', 'client'),
+        rootPath: join(__dirname, '../../../../apps/webapp/', 'client/dist'),
+      }),
+    ];
+  }
+@Module({
+  imports,
   controllers,
   providers: [...services, ...commands, ...resolvers, Logger],
 })
+
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(HttpLoggerMiddleware).forRoutes({ path: '*', method: RequestMethod.ALL });
