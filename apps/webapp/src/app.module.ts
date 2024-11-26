@@ -94,7 +94,8 @@ let imports = [
         // rootPath: join(__dirname, '../..', 'client/dist'),
         // rootPath: join(__dirname, '../..', 'apps/webapp/client'),
         // rootPath: join(__dirname, '../', 'client'),
-        rootPath: join(__dirname, '../../../../apps/webapp/', 'client/dist'),
+        // rootPath: join(__dirname, '../../../../apps/webapp/', 'client/dist'),
+        rootPath: join(__dirname, '../', 'client'),
       }),
     ];
   }

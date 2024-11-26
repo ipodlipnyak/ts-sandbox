@@ -1,14 +1,14 @@
-FROM node:18 as backend-build-stage
+FROM node:22 as backend-build-stage
 WORKDIR /app
 COPY ./ .
 # ENV NODE_ENV=production
 COPY package.json .
-RUN npm i -g @nestjs/cli
+#RUN npm i -g @nestjs/cli
 RUN yarn install
 RUN npm run build
 
 
-FROM node:18 as frontend-build-stage
+FROM node:22 as frontend-build-stage
 
 ARG MY_REGISTRY_TOKEN
 
@@ -18,7 +18,7 @@ COPY ./apps/webapp/client/ .
 RUN yarn install 
 RUN npm run generate
 
-FROM node:18 as prod
+FROM node:22-slim as prod
 WORKDIR /app
 # COPY package.json .
 # ENV NODE_ENV=production
@@ -36,4 +36,4 @@ COPY --from=backend-build-stage /app/apps/webapp/client/.output/public ./dist/ap
 
 # WORKDIR /app
 
-CMD npm run start:prod
+CMD node --run start:prod
