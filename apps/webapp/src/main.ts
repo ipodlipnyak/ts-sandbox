@@ -44,10 +44,10 @@ async function bootstrap() {
   /** Swagger */
   if (DEBUG) {
     const docConfig = new DocumentBuilder()
-      .setTitle('Template app')
+      .setTitle('Cyphroclerk app')
       .setDescription('Simple api')
       .setVersion('1.0')
-      .addTag('template')
+      .addTag('cyphroclerk')
       .addCookieAuth('connect.sid', undefined, 'user')
       .addCookieAuth('connect.sid', undefined, 'admin')
       .addServer('/api')
@@ -80,7 +80,7 @@ async function bootstrap() {
       proxy: true,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24,
-        domain: configService.get('web.domain'),
+        // domain: configService.get('web.domain'),
         sameSite: !isDev,
         secure: configService.get('web.protocol') === 'https', // require HTTPS in production
       },

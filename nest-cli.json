@@ -1,12 +1,12 @@
 {
   "$schema": "https://json.schemastore.org/nest-cli",
   "collection": "@nestjs/schematics",
-  "sourceRoot": "apps/template/src",
+  "sourceRoot": "apps/webapp/src",
   "monorepo": true,
-  "root": "apps/template",
+  "root": "apps/webapp",
   "compilerOptions": {
     "webpack": true,
-    "tsConfigPath": "apps/template/tsconfig.app.json"
+    "tsConfigPath": "apps/webapp/tsconfig.app.json"
   },
   "projects": {
     "sentry": {
@@ -54,22 +54,22 @@
         "tsConfigPath": "libs/users/tsconfig.lib.json"
       }
     },
-    "template": {
+    "webapp": {
       "type": "application",
-      "root": "apps/template",
+      "root": "apps/webapp",
       "entryFile": "main",
-      "sourceRoot": "apps/template/src",
+      "sourceRoot": "apps/webapp/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/template/tsconfig.app.json"
+        "tsConfigPath": "apps/webapp/tsconfig.app.json"
       }
     },
-    "bubbles": {
+    "bot-tg": {
       "type": "application",
-      "root": "apps/bubbles",
+      "root": "apps/bot-tg",
       "entryFile": "main",
-      "sourceRoot": "apps/bubbles/src",
+      "sourceRoot": "apps/bot-tg/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/bubbles/tsconfig.app.json"
+        "tsConfigPath": "apps/bot-tg/tsconfig.app.json"
       }
     }
   }

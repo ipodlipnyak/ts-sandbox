@@ -20,22 +20,22 @@ services:
     networks:
       - main
 
-  app-template:
-    container_name: "app-template"
+  webapp:
+    container_name: "template-webapp"
     build:
       context: ./
-      dockerfile: apps/template/Dockerfile
+      dockerfile: apps/webapp/Dockerfile
       args:
         - GH_REGISTRY_TOKEN
     # image: my/template-server:staging
-    profiles: ["template"]
+    profiles: ["webapp"]
     ports:
       - 3000:3000
     links:
       - "redis"
       - "db"
     env_file:
-      - apps/template/docker.env
+      - apps/webapp/docker.env
         # restart:
         #   unless-stopped
     command: /bin/bash -c "npm run start:prod"
@@ -45,29 +45,29 @@ services:
    # environment:
    #   - VIRTUAL_HOST=test.com
 
-  app-bubbles:
-    container_name: "app-bubbles"
-    build:
-      context: ./
-      dockerfile: apps/bubbles/Dockerfile
-      args:
-        - GH_REGISTRY_TOKEN
-    # image: my/bubbles-server:staging
-    profiles: ["bubbles"]
-    ports:
-      - 3000:3000
-    links:
-      - "redis"
-      - "db"
-    env_file:
-      - apps/bubbles/docker.env
-    restart:
-      unless-stopped
-    command: /bin/bash -c "npm run app:bubbles:prod"
-    networks:
-      - main
-   # environment:
-   #   - VIRTUAL_HOST=test.com
+  #app-bubbles:
+  #  container_name: "app-bubbles"
+  #  build:
+  #    context: ./
+  #    dockerfile: apps/bubbles/Dockerfile
+  #    args:
+  #      - GH_REGISTRY_TOKEN
+  #  # image: my/bubbles-server:staging
+  #  profiles: ["bubbles"]
+  #  ports:
+  #    - 3000:3000
+  #  links:
+  #    - "redis"
+  #    - "db"
+  #  env_file:
+  #    - apps/bubbles/docker.env
+  #  restart:
+  #    unless-stopped
+  #  command: /bin/bash -c "npm run app:bubbles:prod"
+  #  networks:
+  #    - main
+  # # environment:
+  # #   - VIRTUAL_HOST=test.com
 
 volumes:
   database:

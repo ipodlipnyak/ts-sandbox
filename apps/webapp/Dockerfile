@@ -14,7 +14,7 @@ ARG MY_REGISTRY_TOKEN
 
 RUN echo "//npm.pkg.github.com/:_authToken=${MY_REGISTRY_TOKEN}" > ~/.npmrc
 WORKDIR /app
-COPY ./apps/template/client/ .
+COPY ./apps/webapp/client/ .
 RUN yarn install 
 RUN npm run generate
 
@@ -26,13 +26,13 @@ WORKDIR /app
 
 COPY --from=backend-build-stage /app/package* ./
 COPY --from=backend-build-stage /app/node_modules ./node_modules/
-COPY --from=backend-build-stage /app/apps/template/fixtures ./apps/template/fixtures/
+COPY --from=backend-build-stage /app/apps/webapp/fixtures ./apps/webapp/fixtures/
 
 COPY --from=backend-build-stage /app/dist ./dist/
 #COPY --from=backend-build-stage /app/dist/apps/template ./dist/
 #COPY --from=backend-build-stage /app/dist/apps/template/apps/template/src ./dist/apps/template/
 
-COPY --from=backend-build-stage /app/apps/template/client/.output/public ./dist/apps/template/client/
+COPY --from=backend-build-stage /app/apps/webapp/client/.output/public ./dist/apps/webapp/client/
 
 # WORKDIR /app
 
