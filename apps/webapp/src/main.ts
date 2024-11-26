@@ -80,7 +80,7 @@ async function bootstrap() {
       proxy: true,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24,
-        domain: configService.get('web.domain'),
+        // domain: configService.get('web.domain'),
         sameSite: !isDev,
         secure: configService.get('web.protocol') === 'https', // require HTTPS in production
       },
