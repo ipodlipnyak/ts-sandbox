@@ -108,6 +108,7 @@ async function bootstrap() {
      * For authentication or any other means.
      * So for this we will pass domain name for Set-Cookie response.
      */
+    debugger
     return session({
       store: new RedisStore({ client: redisClient as any }),
       secret: configService.get('sessions.secret'),
@@ -118,7 +119,7 @@ async function bootstrap() {
         maxAge: 1000 * 60 * 60 * 24,
         // domain,
         // domain: configService.get('web.domain'),
-        domain: req.hostname ?? undefined,
+        domain: req.get('origin') || req.hostname || undefined,
         sameSite: !isDev,
         secure: configService.get('web.protocol') === 'https', // require HTTPS in production
       },
