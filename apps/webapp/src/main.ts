@@ -108,7 +108,16 @@ async function bootstrap() {
      * For authentication or any other means.
      * So for this we will pass domain name for Set-Cookie response.
      */
-    debugger
+    const domain = req.get('origin') || req.hostname || undefined;
+    console.log('ORIGIN>>>');
+    console.log(req.get('origin'));
+    console.log('HOSTNAME>>>');
+    console.log(req.hostname);
+    console.log('HEADERS>>>');
+    console.log(JSON.stringify(req.headers));
+    console.log('DOMAIN COMPUTED>>>>');
+    console.log(domain);
+    console.log('<<<<<END')
     return session({
       store: new RedisStore({ client: redisClient as any }),
       secret: configService.get('sessions.secret'),
