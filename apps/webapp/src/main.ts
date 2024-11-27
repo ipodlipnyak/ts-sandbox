@@ -108,16 +108,8 @@ async function bootstrap() {
      * For authentication or any other means.
      * So for this we will pass domain name for Set-Cookie response.
      */
-    const domain = req.get('origin') || req.hostname || undefined;
-    console.log('ORIGIN>>>');
-    console.log(req.get('origin'));
-    console.log('HOSTNAME>>>');
-    console.log(req.hostname);
-    console.log('HEADERS>>>');
-    console.log(JSON.stringify(req.headers));
-    console.log('DOMAIN COMPUTED>>>>');
-    console.log(domain);
-    console.log('<<<<<END')
+    const domain = req.get('x-forwarded-host') || req.hostname || undefined;
+
     return session({
       store: new RedisStore({ client: redisClient as any }),
       secret: configService.get('sessions.secret'),
@@ -128,7 +120,7 @@ async function bootstrap() {
         maxAge: 1000 * 60 * 60 * 24,
         // domain,
         // domain: configService.get('web.domain'),
-        domain: req.get('origin') || req.hostname || undefined,
+        domain,
         sameSite: !isDev,
         secure: configService.get('web.protocol') === 'https', // require HTTPS in production
       },
