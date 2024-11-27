@@ -71,7 +71,17 @@ async function bootstrap() {
   );
   redisClient.on('connect', () => logger.verbose('Connected to redis successfully'));
 
-  app.use(
+  /*
+  app.use((req, res, next) => {
+    // const domainsListString: string = configService.get('web.domains.list');
+    // const domainsList = domainsListString?.split(',').map(el => el.trim()) || [];
+    // const origin = req.hostname;
+    // const originMatch = domainsList.find(origin);
+    // const domain = originMatch ?? undefined;
+
+    const origin = req.hostname;
+    const domain = origin ?? undefined;
+
     session({
       store: new RedisStore({ client: redisClient as any }),
       secret: configService.get('sessions.secret'),
@@ -80,12 +90,40 @@ async function bootstrap() {
       proxy: true,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24,
+        domain,
         // domain: configService.get('web.domain'),
         sameSite: !isDev,
         secure: configService.get('web.protocol') === 'https', // require HTTPS in production
       },
-    }),
+    });
+
+    next();
+  }
   );
+  */
+  app.use((req, res, next) =>{
+    /**
+     * So the idea is simple.
+     * I need to allow for subdomains the use same cookies.
+     * For authentication or any other means.
+     * So for this we will pass domain name for Set-Cookie response.
+     */
+    return session({
+      store: new RedisStore({ client: redisClient as any }),
+      secret: configService.get('sessions.secret'),
+      resave: false,
+      saveUninitialized: false, // allow start empty session on first http request and store it
+      proxy: true,
+      cookie: {
+        maxAge: 1000 * 60 * 60 * 24,
+        // domain,
+        // domain: configService.get('web.domain'),
+        domain: req.hostname ?? undefined,
+        sameSite: !isDev,
+        secure: configService.get('web.protocol') === 'https', // require HTTPS in production
+      },
+    })(req, res, next);
+  });
 
   /** App start */
   await app.listen(3000);
