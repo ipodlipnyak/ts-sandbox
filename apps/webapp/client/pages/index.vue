@@ -29,15 +29,13 @@ export default defineComponent({
   },
   setup() {
     const defaultHomePath = '/';
+    const mySub = 'my';
 
     const homePath = computed(() => {
       let result = defaultHomePath;
 
-      const mySub = 'my';
-      const hostname = useRequestURL().hostname;
-      const isMySub = hostname.startsWith(`${mySub}.`);
-
-      if (isMySub) {
+      if (isMySub.value) {
+        const hostname = useRequestURL().hostname;
         const toHost = hostname.slice(`${mySub}.`.length);
         result = `https://${toHost}`;
       }
@@ -45,9 +43,15 @@ export default defineComponent({
       return result;
     });
 
-    const isHomePathExternal = computed(() => {
-      homePath.value === defaultHomePath;
+    const isMySub = computed(() => {
+      const hostname = useRequestURL().hostname;
+      return hostname.startsWith(`${mySub}.`);
     });
+
+    const isHomePathExternal = computed(() => {
+      return isMySub.value;
+    })
+
     return {
       homePath,
       isHomePathExternal
