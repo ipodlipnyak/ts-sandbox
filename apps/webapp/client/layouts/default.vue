@@ -1,5 +1,6 @@
 <template>
   <v-app light>
+    <!--
     <v-app-bar
       class="py-1"
       scroll-behavior="fade-image"
@@ -15,20 +16,17 @@
         ></v-img>
       </template>
 
-      <!--
       <v-app-bar-title>
         Title
       </v-app-bar-title>
-      -->
 
       <template v-slot:append>
         <my-google-sign-in-btn />
       </template>
 
-      <!--
       <v-btn v-if="loggedIn" @click.stop="logout" color="primary">Logout</v-btn>
-      -->
     </v-app-bar>
+    -->
 
     <v-main>
       <slot />

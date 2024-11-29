@@ -106,9 +106,10 @@ async function bootstrap() {
      * So the idea is simple.
      * I need to allow for subdomains the use same cookies.
      * For authentication or any other means.
-     * So for this we will pass domain name for Set-Cookie response.
+     * So for this we will pass second level domain name for Set-Cookie response.
      */
-    const domain = req.get('x-forwarded-host') || req.hostname || undefined;
+    const hostname = req.get('x-forwarded-host') || req.hostname || undefined;
+    const domain = hostname.split('.').slice(-2).join('.');
 
     return session({
       store: new RedisStore({ client: redisClient as any }),

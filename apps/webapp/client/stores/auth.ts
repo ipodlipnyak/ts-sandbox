@@ -24,9 +24,23 @@ export const useAuthStore = defineStore('auth', {
       const router = useRouter();
       router.replace({ name: 'my' })
     },
+
     async logout() {
       await useFetch('/api/auth/logout', { method: 'post' });
       this.$reset();
+
+      const hostname = useRequestURL().hostname;
+      const mySub = 'my';
+      const isMySub = hostname.startsWith(`${mySub}.`);
+
+      if (isMySub) {
+        const toHost = hostname.slice(`${mySub}.`.length);
+        await navigateTo(`https://${toHost}`, {
+          external: true
+        });
+        return;
+      }
+
       const router = useRouter();
       router.replace({ name: 'index' })
     },
