@@ -1,0 +1,27 @@
+entity: Users
+items:
+  user1:
+    active: true
+    role: 200
+    firstName: '{{name.firstName}}'
+    middleName: '{{name.middleName}}'
+    lastName: '{{name.lastName}}'
+    email: 'test@test.com'
+    track: '@track*'
+    pictureUrl: 'https://loremflickr.com/96/96/cats?random=($current)'
+  users{2..51}:
+    active: true
+    firstName: '{{name.firstName}}'
+    middleName: '{{name.middleName}}'
+    lastName: '{{name.lastName}}'
+    email: '{{internet.email}}'
+    track: '@track*'
+    pictureUrl: 'https://loremflickr.com/96/96/cats?random=($current)'
+  users{52..100}:
+    active: false
+    firstName: '{{name.firstName}}'
+    middleName: '{{name.middleName}}'
+    lastName: '{{name.lastName}}'
+    email: '{{internet.email}}'
+    track: '@track*'
+    pictureUrl: 'https://loremflickr.com/96/96/cats?random=($current)'

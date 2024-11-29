@@ -1,17 +1,35 @@
 ## Creds for test
 
-[admin](https://staging-baikal-backend.center-game.com/admin/): `test`
+[admin](https://#): `test`
 
 ## DB
 
 ```mermaid
 erDiagram
-    USER ||--|{ SESSION : "Authorisation over sessions"
+    USER {
+        email string
+        password string
+        role number
+    }
+    EVENT {
+        start dateFormat
+        end dateFormat
+    }
+    EVENT-USER {
+        eventId int
+        userId int
+    }
+    SESSION {
+        sid int
+    }
+    USER 1--0+ SESSION : "Authorisation over sessions"
+    USER 1--0+ EVENT-USER : "participate"
+    EVENT 1--1+ EVENT-USER : "participants"
 ```
 
 ## CI/CD
 
-[Admin panel](https://staging-baikal-backend.center-game.com/admin/) password are stored inside github secret
+[Admin panel](https://#): password are stored inside github secret
 
 ```bash
 # Environments and secrets
