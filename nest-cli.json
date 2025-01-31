@@ -71,6 +71,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/bot-tg/tsconfig.app.json"
       }
+    },
+    "messenger": {
+      "type": "library",
+      "root": "libs/messenger",
+      "entryFile": "index",
+      "sourceRoot": "libs/messenger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/messenger/tsconfig.lib.json"
+      }
     }
   }
 }
