@@ -1,5 +1,14 @@
 version: "3.8"
 services:
+  rabbit:
+    container_name: "rabbit"
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - main
+
   db:
     # container_name: "db"
     image: postgres:14
@@ -20,11 +29,27 @@ services:
     networks:
       - main
 
-  webapp:
-    container_name: "template-webapp"
+  tg-bot:
+    container_name: "tg-bot"
     build:
       context: ./
-      dockerfile: apps/webapp/Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "3002:3000"
+    env_file:
+        - tgbot.env
+    links:
+      - "db"
+      - "rabbit"
+    networks:
+      - main
+    command: /bin/bash -c "npm run bot:start:prod"
+
+  webapp:
+    container_name: "webapp"
+    build:
+      context: ./
+      dockerfile: Dockerfile
       args:
         - GH_REGISTRY_TOKEN
     # image: my/template-server:staging
@@ -34,8 +59,9 @@ services:
     links:
       - "redis"
       - "db"
+      - "rabbit"
     env_file:
-      - apps/webapp/docker.env
+      - webapp.env
         # restart:
         #   unless-stopped
     command: /bin/bash -c "npm run start:prod"

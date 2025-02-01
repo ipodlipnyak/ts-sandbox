@@ -18,6 +18,7 @@ export class LLMService {
         private readonly httpService: HttpService,
         @Inject('MY_LLM_OPTIONS') readonly opts: LLMConfig,
     ) {}
+
     async query(input: GPTApiRequestDTO): Promise<GPTApiResponseDTO> {
         const path = `${this.opts.apiUrl}?text=${input.text}`;
         const { data } = await firstValueFrom(

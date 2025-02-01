@@ -17,6 +17,7 @@ import { CommonModule } from '@my/common';
 import { ConfigService } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { MessengerModule } from '@my/messenger';
 // import { consoleSandbox } from '@sentry/utils';
 // import { SentryModule, HttpLoggerMiddleware } from '@my/sentry';
 // import { ApolloServerPluginLandingPageLocalDefault } from 'apollo-server-core';
@@ -33,6 +34,7 @@ let imports = [
     }),
   }),
   CommonModule,
+  MessengerModule,
   GoogleModule.forRootAsync({
     inject: [ConfigService],
     useFactory: async (configService: ConfigService) => ({ ...configService.get('google') }),

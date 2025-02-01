@@ -1,8 +1,35 @@
 import { Module } from '@nestjs/common';
-import { MessengerService } from './messenger.service';
+import { ConsumerService } from './consumer.service';
+import { ProducerService } from './producer.service';
+import { EventsGateway } from './events.gateway';
+import { MessengerController } from './messenger.controller';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
-  providers: [MessengerService],
-  exports: [MessengerService],
+  imports: [
+    ClientsModule.registerAsync({
+      clients: [
+        {
+          name: 'tg-rmq-client',
+          inject: [ConfigService],
+          useFactory: async (configService: ConfigService) => ({
+            transport: Transport.RMQ,
+            options: {
+              urls: [
+                await configService.get('rabbitmq.url') as string,
+              ],
+              queue: await configService.get('rabbitmq.queueTg'),
+            }
+          }),
+        }
+      ]
+    }),
+  ],
+  controllers: [
+    MessengerController,
+  ],
+  providers: [ConsumerService, ProducerService, EventsGateway],
+  exports: [ConsumerService, ProducerService, EventsGateway],
 })
-export class MessengerModule {}
+export class MessengerModule { }
