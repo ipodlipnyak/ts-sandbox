@@ -7,6 +7,8 @@ import web from './web.config';
 import google from './google.config';
 import llm from './llm.config';
 import minecraft from './minecraft.config';
+import rabbit from './rabbitmq.config';
+import telegram from './telegram.config';
 
 export default {
   db,
@@ -16,6 +18,8 @@ export default {
   google,
   llm,
   minecraft,
+  rabbit,
+  telegram,
 };
 
-export const load = [db, sessions, cache, web, google, llm, minecraft];
+export const load = [db, sessions, cache, web, google, llm, minecraft, rabbit, telegram];

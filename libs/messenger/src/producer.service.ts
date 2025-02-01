@@ -40,7 +40,7 @@ export class ProducerService {
       try {
         await lastValueFrom(this.client.send('reply', payload));
       } catch (e) {
-        //
+        this.logger.debug(`Can't deliver message: ${ message.text }`)
       }
 
       this.logger.debug(`Sended message: ${ message.text }`);
