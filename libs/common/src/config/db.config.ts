@@ -22,7 +22,9 @@ export const options: DataSourceOptions = {
   // entities: ['src/**/*.entity.ts'],
   entities,
   // migrations: ['src/migrations/*{.ts,.js}'],
-  migrations: [join(__dirname, '../migrations/*.{ts,js}')],
+  // migrations: [join(__dirname, '../migrations/*.{ts,js}')],
+  migrations: [join(__dirname, '../../../../apps/webapp/src/migrations/*.{ts,js}')],
+  // migrations: ['apps/webapp/src/migrations/*.{ts,js}'],
   // subscribers: ['src/subscriber/**/*{.ts,.js}'],
 };
 
