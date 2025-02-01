@@ -61,6 +61,7 @@
     "@nestjs/swagger": "^6.0.0",
     "@nestjs/typeorm": "^9.0.0",
     "@sentry/node": "^7.10.0",
+    "@types/amqplib": "^0.10.6",
     "@types/express-session": "^1.17.4",
     "@types/node-telegram-bot-api": "^0.64.7",
     "amqp-connection-manager": "^4.1.14",
