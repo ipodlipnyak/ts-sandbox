@@ -6,7 +6,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import * as createRedisStore from 'connect-redis';
 import { createClient } from 'redis';
 import { ConfigService } from '@nestjs/config';
-import { SessionDto } from './dto';
+import { SessionDto } from '@my/common/dto';
 import * as Sentry from "@sentry/node";
 
 

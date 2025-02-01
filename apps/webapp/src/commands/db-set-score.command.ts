@@ -1,7 +1,7 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Users, TransactionCodeEnum } from './../models';
+import { Users, TransactionCodeEnum } from '@my/common/models';
 
 @Command({
   name: 'db-set-score',

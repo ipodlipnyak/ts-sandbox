@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { ResponseStatusEnum, RestListResponseDto, TrackReponseDto } from '../dto';
-import { Track } from './../models';
+import { ResponseStatusEnum, RestListResponseDto, TrackReponseDto } from '@my/common/dto';
+import { Track } from '@my/common/models';
 
 @Controller('tracks')
 export class TrackController {

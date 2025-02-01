@@ -13,7 +13,7 @@ import { DbSetScoreRunner } from './db-set-score.command';
 export const commands = [
   DBResetRunner,
   DevSetPassword,
-  ProdInitRunner,
+  // ProdInitRunner,
   DbToggleUserRunner,
   DbSetScoreRunner,
 ];

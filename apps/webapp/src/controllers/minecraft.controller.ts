@@ -20,11 +20,11 @@ import {
   JWTInputDto,
   MinecraftStatusReponseDto,
   MinecraftPlayerDto,
-} from '../dto';
+} from '@my/common/dto';
 import { AuthGuard } from './../guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
-import { UserService } from '../services';
+import { UserService } from '@my/common/services';
 import { CloudflareService } from '@my/cloudflare';
 
 @Controller('minecraft')
@@ -55,7 +55,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip: this.cloudflareService.getVisitorIp(), 
+        ip: this.cloudflareService.getVisitorIp(),
       };
 
       const url = this.configService.get('minecraft.statusUrl');
@@ -87,7 +87,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip: this.cloudflareService.getVisitorIp(), 
+        ip: this.cloudflareService.getVisitorIp(),
       };
 
       const url = this.configService.get('minecraft.startUrl');
@@ -118,7 +118,7 @@ export class MinecraftController {
       const email = (await this.userService.getUser()).email;
       const data: MinecraftPlayerDto = {
         email,
-        ip: this.cloudflareService.getVisitorIp(), 
+        ip: this.cloudflareService.getVisitorIp(),
       };
 
       const url = this.configService.get('minecraft.stopUrl');

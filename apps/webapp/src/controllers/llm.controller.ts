@@ -16,10 +16,10 @@ import {
   RestResponseDto,
   JWTInputDto,
   LLMQueryReponseDto,
-} from '../dto';
+} from '@my/common/dto';
 import { AuthGuard } from './../guards';
 import { UsersService } from '@my/users';
-import { UserService } from '../services';
+import { UserService } from '@my/common/services';
 import { LLMService } from '@my/llm';
 import { GPTApiRequestDTO } from '@my/llm';
 

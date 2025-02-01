@@ -142,7 +142,8 @@
       "^@my/cloudflare(|/.*)$": "<rootDir>/libs/cloudflare/src/$1",
       "^@my/users(|/.*)$": "<rootDir>/libs/users/src/$1",
       "^@my/llm(|/.*)$": "<rootDir>/libs/llm/src/$1",
-      "^@my/messenger(|/.*)$": "<rootDir>/libs/messenger/src/$1"
+      "^@my/messenger(|/.*)$": "<rootDir>/libs/messenger/src/$1",
+      "^@my/common(|/.*)$": "<rootDir>/libs/common/src/$1"
     }
   },
   "workspaces": [

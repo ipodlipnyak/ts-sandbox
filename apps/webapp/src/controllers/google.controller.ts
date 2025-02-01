@@ -18,11 +18,11 @@ import {
   JWTInputDto,
   AuthTokenInputDto,
   GoogleUserInfoDto,
-} from '../dto';
+} from '@my/common/dto';
 import { AuthGuard } from './../guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
-import { UserService } from '../services';
+import { UserService } from '@my/common/services';
 
 @Controller('google')
 export class GoogleController {

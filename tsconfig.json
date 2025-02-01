@@ -58,6 +58,12 @@
       ],
       "@my/messenger/*": [
         "libs/messenger/src/*"
+      ],
+      "@my/common": [
+        "libs/common/src"
+      ],
+      "@my/common/*": [
+        "libs/common/src/*"
       ]
     }
   }

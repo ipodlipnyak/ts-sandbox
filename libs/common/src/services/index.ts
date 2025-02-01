@@ -11,9 +11,9 @@ import { FixturesService } from './fixtures.service';
 // import { EventsService } from './event.service';
 
 export const services = [
-    ExampleService, 
-    UserService, 
-    RatingService, 
-    FixturesService, 
+    ExampleService,
+    UserService,
+    RatingService,
+    FixturesService,
     //EventsService
 ];

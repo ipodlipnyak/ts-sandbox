@@ -6,10 +6,10 @@ import {
   RestListResponseDto,
   ProductsUploadDto,
   PurhcasedReponseDto,
-} from '../dto';
+} from '@my/common/dto';
 import { AdminGuard, AuthGuard } from './../guards';
-import { Product, Purchase } from './../models';
-import { UserService } from './../services';
+import { Product, Purchase } from '@my/common/models';
+import { UserService } from '@my/common/services';
 
 @Controller('products')
 export class ProductsController {

@@ -1,10 +1,10 @@
 import { Resolver, Query, ResolveField, Parent } from '@nestjs/graphql'
-import { GoogleCalendarEventDto, GoogleCalendarDto, GoogleCalendarEventResourceDto } from "../../dto";
+import { GoogleCalendarEventDto, GoogleCalendarDto, GoogleCalendarEventResourceDto } from "@my/common/dto";
 import {
     UseGuards,
 } from '@nestjs/common';
-import { GqlAdminGuard, GqlAuthGuard } from '../../guards';
-import { UserService } from '../../services';
+import { GqlAdminGuard, GqlAuthGuard } from './../guards';
+import { UserService } from '@my/common/services';
 import { GoogleService } from '@my/google';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { calendar_v3 } from 'googleapis';

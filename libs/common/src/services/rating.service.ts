@@ -1,4 +1,5 @@
-import { Injectable, Scope, Inject, CACHE_MANAGER } from '@nestjs/common';
+import { Injectable, Scope, Inject} from '@nestjs/common';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Cache } from 'cache-manager';
 import { Users, Track } from './../models';
 import { RatingItemCachedDto, UserCachedDto, RatingCategoryCachedDto } from './../dto';

@@ -1,16 +1,16 @@
 import { Resolver, Query, Mutation, Args, ResolveField, Parent, Info } from '@nestjs/graphql'
-import { Users, UserRole } from './users.entity'
-import { UserOutputDto, UserInputDto, RestResponseDto, ResponseStatusEnum } from "../../dto";
+import { Users, UserRole } from '@my/common/models'
+import { UserOutputDto, UserInputDto, RestResponseDto, ResponseStatusEnum } from "@my/common/dto";
 import {
     BadRequestException,
     UseGuards,
 } from '@nestjs/common';
-import { GqlAdminGuard, GqlAuthGuard } from '../../guards';
+import { GqlAdminGuard, GqlAuthGuard } from './../guards';
 import { Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { DeepPartial } from 'typeorm';
 import { query } from 'express';
-import { UserService } from '../../services';
+import { UserService } from '@my/common/services';
 
 const pubSub = new PubSub();
 

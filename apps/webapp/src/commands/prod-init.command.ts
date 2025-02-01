@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { Logger } from '@nestjs/common';
-import { Track } from './../models';
-import { FixturesService } from './../services';
+import { Track } from '@my/common/models';
+import { FixturesService } from '@my/common/services';
 
 @Command({
   name: 'prod-init',

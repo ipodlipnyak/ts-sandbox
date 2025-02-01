@@ -1,10 +1,9 @@
 import { Injectable, Scope, Inject } from '@nestjs/common';
-import { Users, UserRole, UsersResolver } from './../models';
+import { Users, UserRole } from './../models';
 import { REQUEST } from '@nestjs/core';
 import { Request } from 'express';
 import { RatingService } from './rating.service';
 import { MyRatingItemDto, SessionDto, UserNameDto } from './../dto';
-import { IncomingMessage } from 'http';
 
 @Injectable({ scope: Scope.REQUEST })
 export class UserService {

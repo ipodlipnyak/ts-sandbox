@@ -16,10 +16,10 @@ import {
   CartDto,
   PurhcasedReponseDto,
   PurhcaseHistoryReponseDto,
-} from '../dto';
+} from '@my/common/dto';
 import { AdminGuard, AuthGuard } from './../guards';
-import { Users, Balance, ERROR_NSF, ERROR_EMPTY_CART } from './../models';
-import { UserService } from './../services';
+import { Users, Balance, ERROR_NSF, ERROR_EMPTY_CART } from '@my/common/models';
+import { UserService } from '@my/common/services';
 
 @Controller('purchases')
 export class PurchasesController {
