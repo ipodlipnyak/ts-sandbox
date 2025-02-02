@@ -39,11 +39,12 @@ services:
     env_file:
         - tgbot.env
     links:
+      - "redis"
       - "db"
       - "rabbit"
     networks:
       - main
-    command: /bin/bash -c "npm run bot:start:prod"
+    command: /bin/bash -c "npm run tgbot:start:prod"
 
   webapp:
     container_name: "webapp"
@@ -64,7 +65,7 @@ services:
       - webapp.env
         # restart:
         #   unless-stopped
-    command: /bin/bash -c "npm run start:prod"
+    command: /bin/bash -c "npm run webapp:start:prod"
     networks:
       - main
         #- traefik-hub
