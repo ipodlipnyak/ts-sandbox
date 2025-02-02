@@ -28,5 +28,6 @@ import * as redisStore from 'cache-manager-redis-store';
     }),
   ],
   providers: [...services, Logger],
+  exports: [...services, Logger],
 })
 export class CommonModule { }

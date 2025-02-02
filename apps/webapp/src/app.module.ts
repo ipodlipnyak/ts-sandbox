@@ -95,7 +95,7 @@ if (process.env?.NODE_ENV !== 'development') {
 @Module({
   imports,
   controllers,
-  providers: [...services, ...commands, ...resolvers, Logger],
+  providers: [...commands, ...resolvers],
 })
 
 export class AppModule {
