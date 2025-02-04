@@ -6,7 +6,7 @@ import {
   RatingReponseDto,
   RatingCategoryDto,
 } from '@my/common/dto';
-import { AuthGuard } from './../guards';
+import { AuthGuard } from '@my/common/guards';
 import { RatingService } from '@my/common/services';
 
 @Controller('rating')

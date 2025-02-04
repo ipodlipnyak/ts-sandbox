@@ -1,9 +1,11 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { MessagesListResponseDto, ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
 import { Message } from '@my/common/models';
 import { ProducerService } from './producer.service';
 import { ConfigService } from '@nestjs/config';
+import { TelegramGuard } from './telegram.guard';
+import { AdminGuard } from '@my/common/guards';
 
 @Controller('tg')
 export class MessengerController {
@@ -16,6 +18,7 @@ export class MessengerController {
 
   @ApiOperation({ summary: 'Get saved messages list' })
   @ApiResponse({ status: 200, type: MessagesListResponseDto })
+  @UseGuards(AdminGuard)
   @Get('')
   async getMessages(): Promise<MessagesListResponseDto> {
     const result: MessagesListResponseDto = {
@@ -48,6 +51,7 @@ export class MessengerController {
 
   @ApiOperation({ summary: '' })
   @ApiResponse({ status: 200, type: RestResponseDto })
+  @UseGuards(TelegramGuard)
   @Post('/message')
   newMessage(
     @Body() input: TelegramEventMessageInputDto,

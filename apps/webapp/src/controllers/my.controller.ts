@@ -24,7 +24,7 @@ import {
   AddScoreDto,
   UserNameDto,
 } from '@my/common/dto';
-import { AuthGuard } from './../guards';
+import { AuthGuard } from '@my/common/guards';
 
 @Controller('my')
 export class MyController {

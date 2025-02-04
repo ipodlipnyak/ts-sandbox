@@ -26,7 +26,7 @@ import {
 GoogleCalendarDto,
 CalendarAclListResponseDto,
 } from '@my/common/dto';
-import { AuthGuard, AdminGuard } from './../guards';
+import { AuthGuard, AdminGuard } from '@my/common/guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
 import { /* EventsService,*/ UserService } from '@my/common/services';

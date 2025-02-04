@@ -22,7 +22,7 @@ import {
   UserResponseDto,
   AddScoreDto,
 } from '@my/common/dto';
-import { AdminGuard } from './../guards';
+import { AdminGuard } from '@my/common/guards';
 import { Users } from '@my/common/models';
 
 @Controller('admin')

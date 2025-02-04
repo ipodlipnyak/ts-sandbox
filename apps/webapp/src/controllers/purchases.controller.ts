@@ -17,7 +17,7 @@ import {
   PurhcasedReponseDto,
   PurhcaseHistoryReponseDto,
 } from '@my/common/dto';
-import { AdminGuard, AuthGuard } from './../guards';
+import { AdminGuard, AuthGuard } from '@my/common/guards';
 import { Users, Balance, ERROR_NSF, ERROR_EMPTY_CART } from '@my/common/models';
 import { UserService } from '@my/common/services';
 

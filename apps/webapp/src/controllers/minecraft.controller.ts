@@ -21,7 +21,7 @@ import {
   MinecraftStatusReponseDto,
   MinecraftPlayerDto,
 } from '@my/common/dto';
-import { AuthGuard } from './../guards';
+import { AuthGuard } from '@my/common/guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
 import { UserService } from '@my/common/services';
