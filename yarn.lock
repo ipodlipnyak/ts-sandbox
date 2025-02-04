@@ -2622,6 +2622,11 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-5.1.2.tgz#07508b45797cb81ec3f273011b054cd0755eddca"
   integrity sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==
 
+"@types/netmask@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/netmask/-/netmask-2.0.5.tgz#8eeedf87a08e993c14d70fae9c17837c868f4ca3"
+  integrity sha512-9Q5iw9+pHZBVLDG700dlQSWWHTYvOb8KfPjfQTNckCYky4IyjV2xh81+RgC1CCwqv92bYLpz1cVKyJav0B88uQ==
+
 "@types/node-telegram-bot-api@^0.64.7":
   version "0.64.7"
   resolved "https://registry.yarnpkg.com/@types/node-telegram-bot-api/-/node-telegram-bot-api-0.64.7.tgz#d24158dcb0754eff0b2d49141ab630fbff18a230"
