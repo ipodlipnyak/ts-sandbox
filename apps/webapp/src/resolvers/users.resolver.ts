@@ -5,7 +5,7 @@ import {
     BadRequestException,
     UseGuards,
 } from '@nestjs/common';
-import { GqlAdminGuard, GqlAuthGuard } from './../guards';
+import { GqlAdminGuard, GqlAuthGuard } from '@my/common/guards';
 import { Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { DeepPartial } from 'typeorm';

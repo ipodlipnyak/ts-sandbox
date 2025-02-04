@@ -3,7 +3,7 @@ import { GoogleCalendarEventDto, GoogleCalendarDto, GoogleCalendarEventResourceD
 import {
     UseGuards,
 } from '@nestjs/common';
-import { GqlAdminGuard, GqlAuthGuard } from './../guards';
+import { GqlAdminGuard, GqlAuthGuard } from '@my/common/guards';
 import { UserService } from '@my/common/services';
 import { GoogleService } from '@my/google';
 import { Field, ObjectType } from '@nestjs/graphql';
