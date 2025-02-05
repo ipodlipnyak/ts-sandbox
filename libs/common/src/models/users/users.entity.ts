@@ -19,6 +19,7 @@ import { Friendsheep } from './friendsheep.entity';
 import { Field, ObjectType } from '@nestjs/graphql';
 import { ID } from 'type-graphql';
 import { randomUUID } from 'crypto';
+import { TelegramUsers } from './telegramUsers.entity';
 // import { EventUser } from './../event';
 
 export class UserExistError extends Error {
@@ -101,6 +102,9 @@ export class Users extends BaseEntity {
   // @Field(type => Users)
   @OneToMany(() => Friendsheep, (friendsheep) => friendsheep.user, { eager: false })
   friends: Friendsheep[];
+
+  @OneToMany(() => TelegramUsers, (telegramUsers) => telegramUsers.user, { eager: false })
+  telegramUsers: TelegramUsers[];
 
   /*
   @ManyToOne(() => EventUser, (event) => event.user, {

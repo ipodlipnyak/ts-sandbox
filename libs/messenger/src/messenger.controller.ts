@@ -56,6 +56,7 @@ export class MessengerController {
       status: ResponseStatusEnum.ERROR,
     };
 
+    this.logger.log(input);
     const text = input?.message?.text;
 
     if (!text) {

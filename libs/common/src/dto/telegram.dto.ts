@@ -14,6 +14,9 @@ export class TelegramChatDto {
   type: string;
 }
 
+/**
+ * @see https://core.telegram.org/bots/api#user
+ */
 export class TelegramUserDto {
   @ApiProperty({ example: '1111111' })
   id: string;
@@ -25,6 +28,9 @@ export class TelegramUserDto {
   first_name: string;
 }
 
+/**
+ * @see https://core.telegram.org/bots/api#message
+ */
 export class TelegramMessageDto {
   @ApiProperty({ example: '1441645532', description: 'Unicode time stamp' })
   date: string;

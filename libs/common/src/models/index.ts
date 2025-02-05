@@ -1,4 +1,4 @@
-import { Friendsheep, Users } from './users';
+import { Friendsheep, Users, TelegramUsers } from './users';
 import { Balance, TransactionCodeEnum } from './balance';
 import { Purchase } from './purchase';
 import { Product, ProductTypeEnum } from './product';
@@ -14,11 +14,12 @@ export * from './track';
 
 export const entities = {
   Users,
+  Friendsheep,
+  TelegramUsers,
   Balance,
   Purchase,
   Product,
   Track,
-  Friendsheep,
   // Event,
   // EventUser,
 };
