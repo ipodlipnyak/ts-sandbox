@@ -1,4 +1,4 @@
-import { Message, TelegramMessageDto } from '@my/common';
+import { TelegramMessageDto } from '@my/common';
 import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { TelegramService } from './telegram.service';
@@ -18,14 +18,6 @@ export class BotController {
       }
 
       const message = JSON.parse(data) as TelegramMessageDto;
-      try {
-        const messageModel = new Message();
-        messageModel.content = message.text;
-        messageModel.chatid = message.chat.id;
-        messageModel.save();
-      } catch(e) {
-        this.logger.debug(e);
-      }
 
       try {
         this.telegramService.reply(message.chat.id, `Simon says ${ message.text }`);
