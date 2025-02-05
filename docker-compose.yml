@@ -29,22 +29,22 @@ services:
     networks:
       - main
 
-  tg-bot:
-    container_name: "tg-bot"
+  bot:
+    container_name: "bot"
     build:
       context: ./
       dockerfile: Dockerfile
     ports:
       - "3002:3000"
     env_file:
-        - tgbot.env
+        - bot.env
     links:
       - "redis"
       - "db"
       - "rabbit"
     networks:
       - main
-    command: /bin/bash -c "npm run tgbot:start:prod"
+    command: /bin/bash -c "npm run bot:start:prod"
 
   webapp:
     container_name: "webapp"

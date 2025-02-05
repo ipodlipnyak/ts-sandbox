@@ -5,9 +5,11 @@ import { EventsGateway } from './events.gateway';
 import { MessengerController } from './messenger.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
+import { CloudflareModule } from '@my/cloudflare';
 
 @Module({
   imports: [
+    CloudflareModule,
     ClientsModule.registerAsync({
       clients: [
         {

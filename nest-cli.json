@@ -72,13 +72,13 @@
         "tsConfigPath": "libs/messenger/tsconfig.lib.json"
       }
     },
-    "tg-bot": {
+    "bot": {
       "type": "application",
-      "root": "apps/tg-bot",
+      "root": "apps/bot",
       "entryFile": "main",
-      "sourceRoot": "apps/tg-bot/src",
+      "sourceRoot": "apps/bot/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/tg-bot/tsconfig.app.json"
+        "tsConfigPath": "apps/bot/tsconfig.app.json"
       }
     },
     "common": {
