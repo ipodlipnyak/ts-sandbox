@@ -6,9 +6,13 @@ import { MessengerController } from './messenger.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigService } from '@nestjs/config';
 import { CloudflareModule } from '@my/cloudflare';
+import { TelegramService } from './telegram.service';
+import { HttpModule } from '@nestjs/axios';
+import { commands } from './commands';
 
 @Module({
   imports: [
+    HttpModule,
     CloudflareModule,
     ClientsModule.registerAsync({
       clients: [
@@ -31,7 +35,7 @@ import { CloudflareModule } from '@my/cloudflare';
   controllers: [
     MessengerController,
   ],
-  providers: [ConsumerService, ProducerService, EventsGateway],
-  exports: [ConsumerService, ProducerService, EventsGateway],
+  providers: [ConsumerService, ProducerService, EventsGateway, TelegramService, ...commands],
+  exports: [ConsumerService, ProducerService, EventsGateway, TelegramService, ...commands],
 })
 export class MessengerModule { }

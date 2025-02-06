@@ -1,7 +1,7 @@
 import { TelegramMessageDto } from '@my/common';
+import { TelegramService } from '@my/messenger/telegram.service';
 import { Controller, Logger } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
-import { TelegramService } from './telegram.service';
 
 @Controller()
 export class BotController {

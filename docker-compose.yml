@@ -2,7 +2,8 @@ version: "3.8"
 services:
   rabbit:
     container_name: "rabbit"
-    image: rabbitmq:3-management
+    #image: rabbitmq:4-management
+    image: rabbitmq:4
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -34,8 +35,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-    ports:
-      - "3002:3000"
+        #ports:
+        #  - "3002:3000"
     env_file:
         - bot.env
     links:
@@ -51,8 +52,8 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
-      args:
-        - GH_REGISTRY_TOKEN
+    #  args:
+    #    - GH_REGISTRY_TOKEN
     # image: my/template-server:staging
     profiles: ["webapp"]
     ports:
