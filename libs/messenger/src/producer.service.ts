@@ -5,6 +5,8 @@ import { ConfigService } from '@nestjs/config';
 import { TelegramMessageDto } from '@my/common/dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
+import { ActionsTypes } from './messenger.dto';
+
 
 @Injectable()
 export class ProducerService {
@@ -26,7 +28,7 @@ export class ProducerService {
     });
   }
 
-  async addToQueue(message: TelegramMessageDto) {
+  async addToQueue(message: TelegramMessageDto, action: ActionsTypes = 'reply') {
     try {
       const payload = JSON.stringify(message);
       const buffer = Buffer.from(payload);
@@ -38,7 +40,7 @@ export class ProducerService {
       );
 
       try {
-        await lastValueFrom(this.client.send('reply', payload));
+        await lastValueFrom(this.client.send(action, payload));
       } catch (e) {
         // this.logger.debug(`Can't deliver message: ${ message.text }`)
       }

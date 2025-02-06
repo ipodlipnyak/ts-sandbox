@@ -5,24 +5,69 @@ import { TelegramService } from './telegram.service';
 
 @Controller()
 export class BotController {
-    private readonly logger = new Logger(BotController.name);
+  private readonly logger = new Logger(BotController.name);
 
-    constructor(
-      private telegramService: TelegramService,
-    ) {}
+  constructor(
+    private telegramService: TelegramService,
+  ) { }
 
-    @MessagePattern('reply')
-    replyTg(data: string) {
-      if (!data) {
-        this.logger.warn('No data provided');
-      }
-
-      const message = JSON.parse(data) as TelegramMessageDto;
-
-      try {
-        this.telegramService.reply(message.chat.id, `Simon says ${ message.text }`);
-      } catch (e) {
-        this.logger.debug(e);
-      }
+  @MessagePattern('reply')
+  reply(data: string) {
+    if (!data) {
+      this.logger.warn('No data provided');
     }
+
+    const message = JSON.parse(data) as TelegramMessageDto;
+
+    try {
+      this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
+    } catch (e) {
+      this.logger.debug(e);
+    }
+  }
+
+  // @MessagePattern('authorise')
+  // authorise(data: string) {
+  //   if (!data) {
+  //     this.logger.warn('No data provided');
+  //   }
+
+  //   const message = JSON.parse(data) as TelegramMessageDto;
+
+  //   try {
+  //     this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
+  //   } catch (e) {
+  //     this.logger.debug(e);
+  //   }
+  // }
+
+  // @MessagePattern('list_waiting_room')
+  // listWaitingRoom(data: string) {
+  //   if (!data) {
+  //     this.logger.warn('No data provided');
+  //   }
+
+  //   const message = JSON.parse(data) as TelegramMessageDto;
+
+  //   try {
+  //     this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
+  //   } catch (e) {
+  //     this.logger.debug(e);
+  //   }
+  // }
+
+  // @MessagePattern('let_me_in')
+  // letMeIn(data: string) {
+  //   if (!data) {
+  //     this.logger.warn('No data provided');
+  //   }
+
+  //   const message = JSON.parse(data) as TelegramMessageDto;
+
+  //   try {
+  //     this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
+  //   } catch (e) {
+  //     this.logger.debug(e);
+  //   }
+  // }
 }
