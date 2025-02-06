@@ -1,5 +1,5 @@
 import * as session from 'express-session';
-import { Logger, ValidationPipe } from '@nestjs/common';
+import { Logger, LogLevel, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
@@ -23,8 +23,17 @@ const isDev = process.env.NODE_ENV !== 'production';
 const DEBUG = !!process.env?.DEBUG;
 
 async function bootstrap() {
-  const logger = new Logger();
-  const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
+
+  /**
+   * Here we are limiting logger levels to display
+   *
+   * @see https://docs.nestjs.com/techniques/logger#basic-customization
+   */
+  const loggerLevels = (process.env.LOGGER_LEVELS?.split(',') || ['log', 'error', 'warn', 'debug', 'verbose']) as LogLevel[];
+  const app = await NestFactory.create(AppModule, {
+    logger: loggerLevels,
+  });
   const configService = app.get(ConfigService);
 
   /** @see https://docs.sentry.io/platforms/node/guides/express/ */
@@ -101,7 +110,7 @@ async function bootstrap() {
   }
   );
   */
-  app.use((req, res, next) =>{
+  app.use((req, res, next) => {
     /**
      * So the idea is simple.
      * I need to allow for subdomains the use same cookies.
