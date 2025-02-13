@@ -102,6 +102,10 @@ export class GoogleController {
     const isLoggedIn = await this.userService.loginByEmail(payload.email);
     const user = await this.userService.getUser();
 
+    if (!user) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
+
     // update user name
     let isdirty = false;
     if (!user.firstName) {
@@ -177,6 +181,10 @@ export class GoogleController {
 
     const isLoggedIn = await this.userService.loginByEmail(userInfo.email);
     const user = await this.userService.getUser();
+
+    if (!user) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
 
     // update user name
     let isdirty = false;
