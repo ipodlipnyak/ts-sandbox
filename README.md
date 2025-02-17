@@ -71,7 +71,7 @@ docker network create -d overlay --attachable swarm-overlay-network
 
 Now join other workers or managers nodes. Remember to advertise to swarm an address from which they can be accessible:
 ```bash
-docker swarm join --advertise-addr 10.14.14.2 --token <swarm token provide after its initiation> 10.8.8.2:2377
+docker swarm join --advertise-addr 10.8.8.3 --token <swarm token provide after its initiation> 10.8.8.2:2377
 ```
 
 Now deploy the stack with and have fun:
