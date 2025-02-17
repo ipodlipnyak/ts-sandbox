@@ -12,7 +12,7 @@ services:
 
   db:
     # container_name: "db"
-    image: postgres:14
+    image: postgres:16.6-bookworm
     volumes:
       - database:/var/lib/postgresql/data
     env_file:

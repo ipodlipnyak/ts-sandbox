@@ -5,7 +5,8 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   Column,
-  PrimaryColumn,
+  PrimaryGeneratedColumn,
+  Index,
 } from 'typeorm';
 import { Users } from './users.entity';
 import { Field } from '@nestjs/graphql';
@@ -18,14 +19,28 @@ import { ID } from 'type-graphql';
 @Entity()
 export class TelegramUsers extends BaseEntity {
   @Field(() => ID)
-  @PrimaryColumn()
-  id: number;
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
 
   @ManyToOne(() => Users, (user) => user.id, {
     onDelete: 'CASCADE',
     eager: false,
   })
   user: Users;
+
+  @Column({
+    nullable: true,
+    // length: 64
+  })
+  @Index({unique: true})
+  tgUserId: string;
+
+  @Column({
+    nullable: true,
+    // length: 64
+  })
+  @Index({unique: true})
+  tgChatId: string;
 
   @Column({
     nullable: true,
