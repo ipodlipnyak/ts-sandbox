@@ -62,7 +62,24 @@ sudo ufw allow in on wg to any port 4789 proto udp
 
 On manager node initiate swarm and create overlay network accessible from every node.
 ```bash
+## initiate and tell to swarm from where manager node is accesible
+docker swarm init --advertise-addr=10.8.8.2
+
+## now create overlay network to which services from different nodes can attache themself
 docker network create -d overlay --attachable swarm-overlay-network
+```
+
+Now join other workers or managers nodes. Remember to advertise to swarm an address from which they can be accessible:
+```bash
+docker swarm join --advertise-addr 10.14.14.2 --token <swarm token provide after its initiation> 10.8.8.2:2377
+```
+
+Now deploy the stack with and have fun:
+```bash
+## --prune to clean old services not mentioned in stack,
+## -d to detach
+## -c to specify configuration file with stack services description
+docker stack deploy --prune -d -c stack-configuration.yml
 ```
 
 ## Creds for test
