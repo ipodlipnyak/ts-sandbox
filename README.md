@@ -44,7 +44,7 @@ PrivateKey = <client private key>
 PublicKey = <server public key>
 # Wireguard server endpoint to connect
 Endpoint = 66.66.666.666:51820
-AllowedIPs = 10.14.14.0/24
+AllowedIPs = 10.8.8.0/24
 ```
 
 ### Docker swarm
