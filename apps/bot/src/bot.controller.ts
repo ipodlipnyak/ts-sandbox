@@ -26,6 +26,27 @@ export class BotController {
     }
   }
 
+  /**
+   * Generate a link that will bind telegram id to user's email profile authorised to use site
+   *
+   * @param data
+   */
+  @MessagePattern('get-link-to-bind-email')
+  async getLinkToBindEmail(data: string) {
+    if (!data) {
+      this.logger.warn('No data provided');
+    }
+
+    const message = JSON.parse(data) as TelegramMessageDto;
+
+    try {
+      const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
+
+      this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
+    } catch (e) {
+      this.logger.debug(e);
+    }
+  }
   // @MessagePattern('authorise')
   // authorise(data: string) {
   //   if (!data) {

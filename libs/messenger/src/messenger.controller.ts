@@ -1,8 +1,10 @@
-import { Body, Controller, HttpException, HttpStatus, Logger, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
 import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
 import { ProducerService } from './producer.service';
 import { TelegramGuard } from './telegram.guard';
+import { AuthGuard } from '@my/common/guards';
+import { TelegramService } from './telegram.service';
 
 @Controller('tg')
 export class MessengerController {
@@ -10,6 +12,7 @@ export class MessengerController {
 
   constructor(
     private producerService: ProducerService,
+    private telegramService: TelegramService,
   ) {}
 
   // @ApiOperation({ summary: 'Get saved messages list' })
@@ -72,5 +75,18 @@ export class MessengerController {
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;
+  }
+
+  @ApiParam({
+    name: 'token',
+    example: 'fuck'
+  })
+  @Get('/bind/:token')
+  // @UseGuards(AuthGuard)
+  async bind(
+    @Param('token') token: string
+  ) {
+    return await this.telegramService.executeBindToken(token);
+    // return await this.telegramService.encrypt(token);
   }
 }

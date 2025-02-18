@@ -24,7 +24,7 @@ export class TelegramUsers extends BaseEntity {
 
   @ManyToOne(() => Users, (user) => user.id, {
     onDelete: 'CASCADE',
-    eager: false,
+    eager: true,
   })
   user: Users;
 
