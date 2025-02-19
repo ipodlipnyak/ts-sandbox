@@ -9,7 +9,7 @@ export const options: DataSourceOptions = {
   name: 'default',
   migrationsTableName: 'migrations',
 
-  logging: true,
+  logging: !! env?.DB_LOG,
   synchronize: false,
   // synchronize: process.env.MODE === "dev",
 

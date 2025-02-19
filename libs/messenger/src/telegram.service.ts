@@ -1,14 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as TelegramBot from 'node-telegram-bot-api';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TelegramMessageDto, TelegramUsers, Users } from '@my/common';
-import { createCipheriv, createDecipheriv, randomBytes, scrypt, scryptSync } from 'crypto';
-import { promisify } from 'util';
 import { CryptoService } from '@my/common/services';
 import { BindTelegramToEmailDTO } from './messenger.dto';
+import { Repository } from 'typeorm';
+import { DI_TOKENS } from '@my/common/constants';
 
 
 const TELEGRAM_API_URL = 'https://api.telegram.org';
@@ -22,6 +22,11 @@ export class TelegramService {
     private configService: ConfigService,
     private readonly httpService: HttpService,
     private cryptoService: CryptoService,
+
+    @Inject(DI_TOKENS.DATA_SOURCE.DEFAULT.REPOSITORIES.USERS)
+    private usersRepository: Repository<Users>,
+    @Inject(DI_TOKENS.DATA_SOURCE.DEFAULT.REPOSITORIES.TELEGRAM_USERS)
+    private telegramUsersRepository: Repository<TelegramUsers>,
   ) {
     this.bot = new TelegramBot(
       configService.get('telegram.apikey')
@@ -90,14 +95,14 @@ export class TelegramService {
     return tgUser;
   }
 
-  async generateBindToken(message: TelegramMessageDto, user: Users) {
+  async generateBindToken(message: TelegramMessageDto, email: string) {
     const payload: BindTelegramToEmailDTO = {
       tgChatId: message.chat.id,
       tgUserId: message.from.id,
       username: message.from.username,
       firstName: message.from.first_name,
       lastName: message.from.last_name,
-      email: user.email,
+      email,
     };
 
     return this.cryptoService.encrypt(JSON.stringify(payload));
@@ -120,7 +125,7 @@ export class TelegramService {
    * @returns
    */
   async bindTelegramUserIdToEmail(data: BindTelegramToEmailDTO) {
-    const user = await Users.findOneBy({
+    const user = await this.usersRepository.findOneBy({
       email: data.email
     });
 
@@ -130,7 +135,7 @@ export class TelegramService {
     }
 
     try {
-      const newTgUser = TelegramUsers.create({
+      const newTgUser = this.telegramUsersRepository.create({
         tgChatId: data.tgChatId,
         tgUserId: data.tgUserId,
         firstName: data.firstName,

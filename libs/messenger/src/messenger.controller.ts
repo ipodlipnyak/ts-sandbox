@@ -79,14 +79,13 @@ export class MessengerController {
 
   @ApiParam({
     name: 'token',
-    example: 'fuck'
+    example: 'test'
   })
   @Get('/bind/:token')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async bind(
     @Param('token') token: string
   ) {
     return await this.telegramService.executeBindToken(token);
-    // return await this.telegramService.encrypt(token);
   }
 }

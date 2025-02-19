@@ -8426,6 +8426,11 @@ mlly@^1.3.0, mlly@^1.4.2, mlly@^1.6.1, mlly@^1.7.1, mlly@^1.7.2, mlly@^1.7.3:
     pkg-types "^1.2.1"
     ufo "^1.5.4"
 
+mock-typeorm@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/mock-typeorm/-/mock-typeorm-1.0.2.tgz#df2a029b14bbb683cf7e5f6934519c292fd1699e"
+  integrity sha512-ibRs/2v/PDbsRY1LNg+HbmKx9red4cNQ8yCh4WngiA1p6PH5OiFQ+e/t9KW6pTvvUb9IaqZniIUl1on80S9j+A==
+
 mri@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mri/-/mri-1.2.0.tgz#6721480fec2a11a4889861115a48b6cbe7cc8f0b"
