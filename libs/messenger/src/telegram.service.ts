@@ -113,7 +113,7 @@ export class TelegramService {
    * @param token
    */
   async executeBindToken(token: string) {
-    const payload = JSON.parse(await this.cryptoService.decrypt(token)) as BindTelegramToEmailDTO;
+    const payload = JSON.parse(await this.cryptoService.decrypt(token));
     this.bindTelegramUserIdToEmail(payload);
   }
 
@@ -125,6 +125,12 @@ export class TelegramService {
    * @returns
    */
   async bindTelegramUserIdToEmail(data: BindTelegramToEmailDTO) {
+    debugger
+    if (!data?.tgChatId || !data?.email) {
+      this.logger.error('Wrong data passed: no chat id or users email');
+      return null;
+    }
+
     const user = await this.usersRepository.findOneBy({
       email: data.email
     });

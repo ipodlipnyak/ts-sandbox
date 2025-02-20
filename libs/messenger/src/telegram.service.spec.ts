@@ -3,16 +3,27 @@ import { TelegramService } from './telegram.service';
 import { HttpService } from '@nestjs/axios';
 import { CryptoService } from '@my/common/services';
 import { ConfigService } from '@nestjs/config';
-import { CommonModule, entities, TelegramMessageDto, TelegramUsers, Users } from '@my/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { TelegramMessageDto, TelegramUsers, Users } from '@my/common';
 import { MockTypeORM } from 'mock-typeorm';
 import {dataSource} from '@my/common';
-import { optionsTest } from '@my/common/config/db.config';
 import { Repository } from 'typeorm';
 import * as sinon from 'sinon';
 
 describe('TelegramService', () => {
   let service: TelegramService;
+
+  let typeorm: MockTypeORM;
+  let usersRepository: Repository<Users>;
+  let telegramUsersRepository: Repository<TelegramUsers>;
+
+  let configService: ConfigService;
+  let httpService: HttpService;
+  let cryptoSerivce: CryptoService;
+
+  let testUser = {
+    email: 'test@email.com',
+  };
+
   let testMessage: TelegramMessageDto = {
     date: '1441645532',
     message_id: '42424242',
@@ -31,18 +42,6 @@ describe('TelegramService', () => {
       type: 'test chat type'
     }
   };
-  let mockUser = {
-    firstName: 'test user first name',
-    lastName: 'test user last name',
-    email: 'test@email.com',
-  };
-  let typeorm: MockTypeORM;
-  let usersRepository: Repository<Users>;
-  let telegramUsersRepository: Repository<TelegramUsers>;
-
-  let configService: ConfigService;
-  let httpService: HttpService;
-  let cryptoSerivce: CryptoService;
 
   afterEach(() => {
     typeorm.restore();
@@ -54,22 +53,11 @@ describe('TelegramService', () => {
     telegramUsersRepository = dataSource.getRepository(TelegramUsers);
 
     configService = sinon.createStubInstance(ConfigService, {
-      get: () => 'test config',
+      get: sinon.stub().returns('test-config-value'),
     });
     httpService = sinon.createStubInstance(HttpService);
 
-    cryptoSerivce = sinon.createStubInstance(CryptoService, {
-      encrypt: new Promise((resolve) => {
-        setTimeout(() => {
-          resolve('test encrypt');
-        });
-      }),
-      decrypt: new Promise((resolve) => {
-        setTimeout(() => {
-          resolve(JSON.stringify(testMessage));
-        });
-      }),
-    });
+    cryptoSerivce = new CryptoService(configService);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -85,16 +73,14 @@ describe('TelegramService', () => {
     service = await module.resolve(TelegramService);
   });
 
-  // it('should be defined', () => {
-  //   expect(service).toBeDefined();
-  // });
+  it(('generate and execute token'), async () => {
+    const testToken = await service.generateBindToken(testMessage, testUser.email);
+    await service.executeBindToken(testToken);
 
-  it(('generate token'), async () => {
-    const token = await service.generateBindToken(testMessage, mockUser.email);
-    console.log(token);
-  });
+    const createCalledOnce = (telegramUsersRepository.create as sinon.SinonSpy).calledOnce;
+    expect(createCalledOnce).toBeTruthy();
 
-  it(('execute token'), async () => {
-    await service.executeBindToken('test');
+    const calledWithData = (telegramUsersRepository.create as sinon.SinonSpy).calledWithMatch(sinon.match({tgChatId: testMessage.chat.id}));
+    expect(calledWithData).toBeTruthy();
   });
 });

@@ -32,7 +32,7 @@ export class CryptoService {
 
     const cipher = createCipheriv(this.cryptoMethod, key, iv);
     const encryptedText = Buffer.from(
-      cipher.update(JSON.stringify(payload), 'utf-8', 'hex') + cipher.final('hex')
+      cipher.update(payload, 'utf-8', 'hex') + cipher.final('hex')
     ).toString('base64');
 
     return encryptedText;
