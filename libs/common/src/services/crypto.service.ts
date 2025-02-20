@@ -18,7 +18,6 @@ export class CryptoService {
 
   get cryptoKey() {
     const secret = this.configService.get('sessions.secret');
-    console.log(secret);
     return scryptSync(secret, 'salt', 24);
   }
 
