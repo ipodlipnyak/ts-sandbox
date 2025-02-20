@@ -44,12 +44,16 @@ import { useTelegramUsersStore } from '@/stores';
 export default defineComponent({
   setup(props, ctx) {
     const route = useRoute();
+    const router = useRouter();
     const telegramUsersStore = useTelegramUsersStore();
     telegramUsersStore.fetchAll();
 
     const token = route.query?.token as string;
     if (token) {
+      // retrive token from url query
       telegramUsersStore.token = token;
+      // clean this token from url by pushing on the same page without query
+      router.push(route.path);
     }
 
     const headers = [

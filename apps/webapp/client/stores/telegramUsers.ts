@@ -33,8 +33,8 @@ export const useTelegramUsersStore = defineStore('telegramUsers', {
 
           const response = data.value as RestListResponseDto;
           if (response?.status === 'success') {
-            this.token = '';
             await this.fetchAll();
+            this.token = '';
           }
 
           this.pending = false;

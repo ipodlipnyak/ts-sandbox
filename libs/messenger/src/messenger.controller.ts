@@ -114,7 +114,7 @@ export class MessengerController {
       await this.telegramService.executeBindToken(input.token, email);
       result.status = ResponseStatusEnum.SUCCESS;
     } catch (err) {
-      //
+      this.logger.error(err);
     }
 
     return result
