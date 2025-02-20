@@ -1,11 +1,12 @@
 import { Body, Controller, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
+import { ApiOperation, ApiParam, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto, TelegramUserDto } from '@my/common/dto';
 import { ProducerService } from './producer.service';
 import { TelegramGuard } from './telegram.guard';
 import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
 import { UserService } from '@my/common/services';
+import { TelegramUsersListResponseDto } from './messenger.dto';
 
 @Controller('tg')
 export class MessengerController {
@@ -17,42 +18,35 @@ export class MessengerController {
     private userSerivce: UserService,
   ) {}
 
-  // @ApiOperation({ summary: 'Get saved messages list' })
-  // @ApiResponse({ status: 200, type: MessagesListResponseDto })
-  // @UseGuards(AdminGuard)
-  // @Get('')
-  // async getMessages(): Promise<MessagesListResponseDto> {
-  //   const result: MessagesListResponseDto = {
-  //     status: ResponseStatusEnum.ERROR,
-  //     payload: [],
-  //     total: 0,
-  //     offset: 0,
-  //     limit: 0
-  //   };
+  @ApiOperation({ summary: 'Get telegram chats list authorised by a user' })
+  @ApiResponse({ status: 200, type: TelegramUsersListResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
+  @Get('')
+  async getMessages(): Promise<TelegramUsersListResponseDto> {
+    const result: TelegramUsersListResponseDto = {
+      status: ResponseStatusEnum.ERROR,
+      payload: [],
+      total: 0,
+      offset: 0,
+      limit: 0
+    };
 
-  //   const messagesList = await Message.find({
-  //     order: {
-  //       'created': 'DESC',
-  //       'id': 'ASC',
-  //     },
-  //     take: 10,
-  //   });
+    const email = this.userSerivce.email;
+    const payload = await this.telegramService.getTelegramUsersListByEmail(email);
 
-  //   result.payload = messagesList.map((msg) => ({
-  //     id: `${ msg.id }`,
-  //     text: msg.content,
-  //     chat_id: msg.chatid,
-  //   }));
-  //   result.total = result.payload.length;
-  //   result.limit = result.payload.length;
-  //   result.status = ResponseStatusEnum.SUCCESS;
+    result.payload = payload;
+    result.total = result.payload.length;
+    result.limit = result.payload.length;
+    result.status = ResponseStatusEnum.SUCCESS;
 
-  //   return result;
-  // }
+    return result;
+  }
 
+  @UseGuards(TelegramGuard)
+  @ApiSecurity('telegram')
   @ApiOperation({ summary: '' })
   @ApiResponse({ status: 200, type: RestResponseDto })
-  @UseGuards(TelegramGuard)
   @Post('/message')
   newMessage(
     @Body() input: TelegramEventMessageInputDto,
@@ -79,13 +73,15 @@ export class MessengerController {
     return result;
   }
 
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
+  @ApiOperation({ summary: 'Authorise specific telegram chat to work in users context' })
   @ApiParam({
     description: 'Token allowing to authorise telegram profile as a user',
     name: 'token',
     example: 'blahBlahBlah'
   })
   @Get('/bind/:token')
-  @UseGuards(AuthGuard)
   async bind(
     @Param('token') token: string
   ) {

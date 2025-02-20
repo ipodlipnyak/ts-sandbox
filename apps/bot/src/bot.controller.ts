@@ -49,7 +49,7 @@ export class BotController {
       }
 
       const token = this.telegramService.generateBindToken(message);
-      const url = `${this.configService.get('web.url')}/my/tg?token=${token}`;
+      const url = `${this.configService.get('web.url')}/my/settings?tg-token=${token}`;
 
       this.telegramService.reply(message.chat.id, `Go to your [page](${url}) to authorise this user`);
     } catch (e) {
