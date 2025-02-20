@@ -95,14 +95,13 @@ export class TelegramService {
     return tgUser;
   }
 
-  async generateBindToken(message: TelegramMessageDto, email: string) {
+  async generateBindToken(message: TelegramMessageDto) {
     const payload: BindTelegramToEmailDTO = {
       tgChatId: message.chat.id,
       tgUserId: message.from.id,
       username: message.from.username,
       firstName: message.from.first_name,
       lastName: message.from.last_name,
-      email,
     };
 
     return this.cryptoService.encrypt(JSON.stringify(payload));
@@ -112,9 +111,9 @@ export class TelegramService {
    * Extract payload from token and execute it;
    * @param token
    */
-  async executeBindToken(token: string) {
-    const payload = JSON.parse(await this.cryptoService.decrypt(token));
-    this.bindTelegramUserIdToEmail(payload);
+  async executeBindToken(token: string, email: string) {
+    const payload = JSON.parse(await this.cryptoService.decrypt(token)) as BindTelegramToEmailDTO;
+    this.bindTelegramUserIdToEmail(payload, email);
   }
 
   /**
@@ -124,19 +123,18 @@ export class TelegramService {
    * @param user
    * @returns
    */
-  async bindTelegramUserIdToEmail(data: BindTelegramToEmailDTO) {
-    debugger
-    if (!data?.tgChatId || !data?.email) {
-      this.logger.error('Wrong data passed: no chat id or users email');
+  async bindTelegramUserIdToEmail(data: BindTelegramToEmailDTO, email: string) {
+    if (!data?.tgChatId) {
+      this.logger.error('Wrong data passed: no chat id');
       return null;
     }
 
     const user = await this.usersRepository.findOneBy({
-      email: data.email
+      email: email
     });
 
     if (!user) {
-      this.logger.debug(`User with email ${data.email} not authorised`);
+      this.logger.debug(`User with email ${email} not authorised`);
       return null;
     }
 

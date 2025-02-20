@@ -5,6 +5,7 @@ import { ProducerService } from './producer.service';
 import { TelegramGuard } from './telegram.guard';
 import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
+import { UserService } from '@my/common/services';
 
 @Controller('tg')
 export class MessengerController {
@@ -13,6 +14,7 @@ export class MessengerController {
   constructor(
     private producerService: ProducerService,
     private telegramService: TelegramService,
+    private userSerivce: UserService,
   ) {}
 
   // @ApiOperation({ summary: 'Get saved messages list' })
@@ -78,14 +80,27 @@ export class MessengerController {
   }
 
   @ApiParam({
+    description: 'Token allowing to authorise telegram profile as a user',
     name: 'token',
-    example: 'test'
+    example: 'blahBlahBlah'
   })
   @Get('/bind/:token')
   @UseGuards(AuthGuard)
   async bind(
     @Param('token') token: string
   ) {
-    return await this.telegramService.executeBindToken(token);
+    const result = {
+      status: ResponseStatusEnum.ERROR,
+    };
+
+    try {
+      const email = this.userSerivce.email;
+      await this.telegramService.executeBindToken(token, email);
+      result.status = ResponseStatusEnum.SUCCESS;
+    } catch (err) {
+      //
+    }
+
+    return result
   }
 }

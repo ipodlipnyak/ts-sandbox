@@ -44,6 +44,9 @@ describe('TelegramService', () => {
   };
 
   afterEach(() => {
+    /**
+     * @see https://mock-typeorm-docs.vercel.app/docs/core-concepts/advanced-mocking
+     */
     typeorm.restore();
   });
 
@@ -74,8 +77,8 @@ describe('TelegramService', () => {
   });
 
   it(('generate and execute token'), async () => {
-    const testToken = await service.generateBindToken(testMessage, testUser.email);
-    await service.executeBindToken(testToken);
+    const testToken = await service.generateBindToken(testMessage);
+    await service.executeBindToken(testToken, testUser.email);
 
     const createCalledOnce = (telegramUsersRepository.create as sinon.SinonSpy).calledOnce;
     expect(createCalledOnce).toBeTruthy();
