@@ -59,9 +59,6 @@ export default defineComponent({
     const headers = [
       {
         title: 'Chat ID',
-        // title: 'Dessert (100g serving)',
-        // align: 'start',
-        // sortable: false,
         key: 'tgChatId',
       },
       {
@@ -69,12 +66,16 @@ export default defineComponent({
         key: 'tgUserId',
       },
       {
-        title: 'Username',
-        key: 'username',
+        title: 'First Name',
+        key: 'firstName',
       },
       {
         title: 'Last Name',
         key: 'lastName',
+      },
+      {
+        title: 'Username',
+        key: 'username',
       },
       { title: 'Delete', key: 'actions', sortable: false },
     ];
