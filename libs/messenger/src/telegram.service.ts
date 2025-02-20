@@ -6,7 +6,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TelegramMessageDto, TelegramUsers, Users } from '@my/common';
 import { CryptoService } from '@my/common/services';
-import { BindTelegramToEmailDTO } from './messenger.dto';
+import { BindTelegramToEmailDTO, TelegramUsersFormattedResponseDto } from './messenger.dto';
 import { Repository } from 'typeorm';
 import { DI_TOKENS } from '@my/common/constants';
 
@@ -105,6 +105,32 @@ export class TelegramService {
     };
 
     return this.cryptoService.encrypt(JSON.stringify(payload));
+  }
+
+  /**
+   * Find telegram users by user email
+   *
+   * @param email
+   * @returns
+   */
+  async getTelegramUsersListByEmail(email: string) {
+    const list = await this.telegramUsersRepository.find({where: {
+      user: {
+        email
+      }
+    }});
+    const result: TelegramUsersFormattedResponseDto[] = list.map((telegramUser) => {
+      const userFormatted: TelegramUsersFormattedResponseDto = {
+        id: telegramUser.id,
+        tgUserId: telegramUser.tgUserId,
+        tgChatId: telegramUser.tgChatId,
+        firstName: telegramUser.firstName,
+        lastName: telegramUser.lastName,
+        username: telegramUser.username,
+      };
+      return userFormatted;
+    });
+    return result;
   }
 
   /**
