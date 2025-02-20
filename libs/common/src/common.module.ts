@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { services } from './services';
 import { CacheModule } from '@nestjs/cache-manager';
 import * as redisStore from 'cache-manager-redis-store';
+import { commands } from './commands';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import * as redisStore from 'cache-manager-redis-store';
       }),
     }),
   ],
-  providers: [...services, Logger],
-  exports: [...services, Logger],
+  providers: [...services, Logger, ...commands],
+  exports: [...services, Logger, ...commands],
 })
 export class CommonModule { }
