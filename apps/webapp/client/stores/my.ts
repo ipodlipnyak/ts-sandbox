@@ -1,7 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import { UserOutputDto, type RestResponseDto } from '../../src/dto';
 import { useAuthStore } from './auth';
-import { UserNameDto } from './../../src/dto/user.dto';
+import { UserOutputDto, type RestResponseDto, UserNameDto } from '../../../../libs/common/src/dto';
 
 /**
  * For personal space configuration
@@ -19,7 +18,7 @@ export const useMyStore = defineStore('my', {
         async fetchMyFriends() {
             this.friendsPending = true;
 
-            const query = gql`{whoami{
+            const query = gql`{whoamiUserOutputDto, type RestResponseDto {
               friends{email, firstName, middleName, lastName, pictureUrl}
             }}`;
             const {data} = await useAsyncQuery(query);

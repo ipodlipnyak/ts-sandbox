@@ -6,7 +6,7 @@ import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { TelegramMessageDto, TelegramUsers, Users } from '@my/common';
 import { CryptoService } from '@my/common/services';
-import { BindTelegramToEmailDTO, TelegramUsersFormattedResponseDto } from './messenger.dto';
+import { BindTelegramToEmailDTO, TelegramUsersOutputDto } from './dto';
 import { Repository } from 'typeorm';
 import { DI_TOKENS } from '@my/common/constants';
 
@@ -119,8 +119,8 @@ export class TelegramService {
         email
       }
     }});
-    const result: TelegramUsersFormattedResponseDto[] = list.map((telegramUser) => {
-      const userFormatted: TelegramUsersFormattedResponseDto = {
+    const result: TelegramUsersOutputDto[] = list.map((telegramUser) => {
+      const userFormatted: TelegramUsersOutputDto = {
         id: telegramUser.id,
         tgUserId: telegramUser.tgUserId,
         tgChatId: telegramUser.tgChatId,
@@ -140,6 +140,16 @@ export class TelegramService {
   async executeBindToken(token: string, email: string) {
     const payload = JSON.parse(await this.cryptoService.decrypt(token)) as BindTelegramToEmailDTO;
     this.bindTelegramUserIdToEmail(payload, email);
+  }
+
+  /**
+   * Delete telegram chat from authorised by user
+   *
+   * @param id telegram to user relation id (TelegramUsers)
+   * @returns
+   */
+  async unbindTelegramUser(id: string) {
+    return await this.telegramUsersRepository.delete(id);
   }
 
   /**

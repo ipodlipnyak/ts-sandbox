@@ -5,7 +5,7 @@ import { ConfigService } from '@nestjs/config';
 import { TelegramMessageDto } from '@my/common/dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
-import { ActionsTypes } from './messenger.dto';
+import { ActionsTypes } from './dto';
 
 
 @Injectable()

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiResponse, ApiSecurity } from '@nestjs/swagger';
 import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto, TelegramUserDto } from '@my/common/dto';
 import { ProducerService } from './producer.service';
@@ -6,7 +6,7 @@ import { TelegramGuard } from './telegram.guard';
 import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
 import { UserService } from '@my/common/services';
-import { TelegramUsersListResponseDto } from './messenger.dto';
+import { TelegramBindInputDto, TelegramUsersListResponseDto } from './dto';
 
 @Controller('tg')
 export class MessengerController {
@@ -39,6 +39,31 @@ export class MessengerController {
     result.total = result.payload.length;
     result.limit = result.payload.length;
     result.status = ResponseStatusEnum.SUCCESS;
+
+    return result;
+  }
+
+  @ApiOperation({ summary: 'Remove this telegram chat from user authorised' })
+  @ApiResponse({ status: 200, type: RestResponseDto })
+  @UseGuards(AuthGuard)
+  @ApiSecurity('user')
+  @Delete('/:id')
+  async unbind(
+    @Param('id') id: string
+  ): Promise<RestResponseDto> {
+    const result: RestResponseDto = {
+      status: ResponseStatusEnum.SUCCESS,
+    };
+
+    // check for ownership before delete
+    const email = this.userSerivce.email;
+    const list = await this.telegramService.getTelegramUsersListByEmail(email);
+    const match = list.find(item => item.id === id);
+
+    if (match) {
+      // he owns this chat so now we will delete this ownership
+      this.telegramService.unbindTelegramUser(id);
+    }
 
     return result;
   }
@@ -76,14 +101,9 @@ export class MessengerController {
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
   @ApiOperation({ summary: 'Authorise specific telegram chat to work in users context' })
-  @ApiParam({
-    description: 'Token allowing to authorise telegram profile as a user',
-    name: 'token',
-    example: 'blahBlahBlah'
-  })
-  @Get('/bind/:token')
+  @Post('/')
   async bind(
-    @Param('token') token: string
+    @Body() input: TelegramBindInputDto,
   ) {
     const result = {
       status: ResponseStatusEnum.ERROR,
@@ -91,7 +111,7 @@ export class MessengerController {
 
     try {
       const email = this.userSerivce.email;
-      await this.telegramService.executeBindToken(token, email);
+      await this.telegramService.executeBindToken(input.token, email);
       result.status = ResponseStatusEnum.SUCCESS;
     } catch (err) {
       //

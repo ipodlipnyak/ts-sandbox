@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { RestListResponseDto } from '@my/common';
+import { IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 // import { Field, ID } from '@nestjs/graphql';
 
 export type ActionsTypes = 'reply' | 'command';
@@ -15,7 +17,7 @@ export class BindTelegramToEmailDTO {
   readonly lastName!: string;
 }
 
-export class TelegramUsersFormattedResponseDto {
+export class TelegramUsersOutputDto {
   // @Field(type => ID)
   @ApiProperty({ example: '123', description: 'User to telegram chat relation id' })
   id: string
@@ -37,6 +39,13 @@ export class TelegramUsersFormattedResponseDto {
 }
 
 export class TelegramUsersListResponseDto extends RestListResponseDto {
-  @ApiProperty({ type: TelegramUsersFormattedResponseDto, isArray: true, description: 'Telegram users list' })
-  payload: TelegramUsersFormattedResponseDto[];
+  @ApiProperty({ type: TelegramUsersOutputDto, isArray: true, description: 'Telegram users list' })
+  payload: TelegramUsersOutputDto[];
+}
+
+export class TelegramBindInputDto {
+  @IsString()
+  @ApiProperty({ example: '1haWwuY29tIi...GTdHbV2', description: 'Very long token' })
+  @Transform(({ value }) => value.trim())
+  readonly token: string;
 }
