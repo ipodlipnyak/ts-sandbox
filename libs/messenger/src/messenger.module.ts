@@ -9,12 +9,12 @@ import { CloudflareModule } from '@my/cloudflare';
 import { TelegramService } from './telegram.service';
 import { HttpModule } from '@nestjs/axios';
 import { commands } from './commands';
-import { CryptoService } from '@my/common/services';
-import { telegramUsersProvider, usersProvider } from '@my/common';
+import { CommonModule, telegramUsersProvider, usersProvider } from '@my/common';
 import { dataSourceProvider } from '@my/common/models/dataSource.providers';
 
 @Module({
   imports: [
+    CommonModule,
     HttpModule,
     CloudflareModule,
     ClientsModule.registerAsync({
@@ -38,7 +38,7 @@ import { dataSourceProvider } from '@my/common/models/dataSource.providers';
   controllers: [
     MessengerController,
   ],
-  providers: [CryptoService, ConsumerService, ProducerService, EventsGateway, TelegramService, ...commands, ...telegramUsersProvider, ...usersProvider, ...dataSourceProvider],
+  providers: [ConsumerService, ProducerService, EventsGateway, TelegramService, ...commands, ...telegramUsersProvider, ...usersProvider, ...dataSourceProvider],
   exports: [ConsumerService, ProducerService, EventsGateway, TelegramService, ...commands],
 })
 export class MessengerModule { }

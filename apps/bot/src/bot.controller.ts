@@ -1,6 +1,7 @@
 import { TelegramMessageDto } from '@my/common';
 import { TelegramService } from '@my/messenger/telegram.service';
 import { Controller, Logger } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { MessagePattern } from '@nestjs/microservices';
 
 @Controller()
@@ -9,6 +10,7 @@ export class BotController {
 
   constructor(
     private telegramService: TelegramService,
+    private configService: ConfigService,
   ) { }
 
   @MessagePattern('reply')
@@ -41,8 +43,15 @@ export class BotController {
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
+      if (tgUser) {
+        this.telegramService.reply(message.chat.id, `Nope, no can do. Duck off. You already a duck.`);
+        return;
+      }
 
-      this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
+      const token = this.telegramService.generateBindToken(message);
+      const url = `${this.configService.get('web.url')}/my/tg?token=${token}`;
+
+      this.telegramService.reply(message.chat.id, `Go to your [page](${url}) to authorise this user`);
     } catch (e) {
       this.logger.debug(e);
     }
