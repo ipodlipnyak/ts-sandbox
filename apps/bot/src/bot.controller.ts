@@ -87,8 +87,8 @@ export class BotController {
         return;
       }
 
-      const url = `${this.configService.get('web.urlmy')}/my/`;
-      this.telegramService.reply(message.chat.id, `Oh I know you. You are good and ready. Just do whatever you want. Or check your profile in <a href="${url})">here</a>`);
+      const url = `${this.configService.get('web.urlmy')}`;
+      this.telegramService.reply(message.chat.id, `Oh I know you. You are good and ready. Just do whatever you want. Or check your profile in <a href="${url}">here</a>`);
     } catch (e) {
       this.logger.debug(e);
     }
@@ -105,7 +105,7 @@ export class BotController {
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
-      if (tgUser) {
+      if (!tgUser) {
         this.telegramService.reply(message.chat.id, `New here? Try to authorise by /${BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME} command`);
         return;
       }
