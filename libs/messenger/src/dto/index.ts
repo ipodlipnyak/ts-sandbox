@@ -1,2 +1,2 @@
 export * from './messenger.dto';
-export * from './telegram.dto';
+export * as TelegramApiDTO from './telegram.dto';
