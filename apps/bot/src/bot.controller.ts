@@ -63,9 +63,9 @@ export class BotController {
       }
 
       const token = await this.telegramService.generateBindToken(message);
-      const url = `${this.configService.get('web.url')}/my/settings?tg-token=${token}`;
+      const url = `${this.configService.get('web.urlmy')}/my/settings?tg-token=${token}`;
 
-      this.telegramService.reply(message.chat.id, `Go to your [page](${url}) to authorise this user`);
+      this.telegramService.reply(message.chat.id, `Go to your <a href="${url}">page</a> to authorise this user`);
     } catch (e) {
       this.logger.debug(e);
     }
@@ -83,12 +83,12 @@ export class BotController {
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
       if (!tgUser) {
-        this.telegramService.reply(message.chat.id, `New here? Try to authorise by \`/${BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME}\` command`);
+        this.telegramService.reply(message.chat.id, `New here? Try to authorise by /${BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME} command`);
         return;
       }
 
-      const url = `${this.configService.get('web.url')}/my/`;
-      this.telegramService.reply(message.chat.id, `Oh I know you. You are good and ready. Just do whatever you want. Or check your profile in [here](${url})`);
+      const url = `${this.configService.get('web.urlmy')}/my/`;
+      this.telegramService.reply(message.chat.id, `Oh I know you. You are good and ready. Just do whatever you want. Or check your profile in <a href="${url})">here</a>`);
     } catch (e) {
       this.logger.debug(e);
     }
@@ -106,13 +106,13 @@ export class BotController {
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
       if (tgUser) {
-        this.telegramService.reply(message.chat.id, `New here? Try to authorise by \`/${BOT_COMMANDS.GENERATE_BIND_TOKEN}\` command`);
+        this.telegramService.reply(message.chat.id, `New here? Try to authorise by /${BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME} command`);
         return;
       }
 
       this.telegramService.reply(message.chat.id, `
-        ## Settings:
-        -**email**: \`${tgUser.user.email}\`
+        <b>Settings</b>
+          <b>email:</b> <code>${tgUser.user.email}</code>
         `);
     } catch (e) {
       this.logger.debug(e);

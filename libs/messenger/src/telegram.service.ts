@@ -222,7 +222,7 @@ export class TelegramService {
       chat_id: chatId,
       text,
       /** @see https://core.telegram.org/bots/api#formatting-options */
-      parse_mode: 'MarkdownV2',
+      parse_mode: 'HTML',
     });
   }
 

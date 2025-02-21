@@ -9,5 +9,8 @@ export default registerAs('web', () => {
     get url() {
       return `${this.protocol}://${this.domain}`;
     },
+    get urlmy() {
+      return `${this.protocol}://my.${this.domain}`;
+    },
   };
 });
