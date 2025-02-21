@@ -1,4 +1,5 @@
-import { TelegramMessageDto } from '@my/common';
+import { BotQueuePayloadDTO, TelegramMessageDto } from '@my/common';
+import { BOT_COMMANDS } from '@my/messenger/constants';
 import { TelegramService } from '@my/messenger/telegram.service';
 import { Controller, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -13,13 +14,24 @@ export class BotController {
     private configService: ConfigService,
   ) { }
 
-  @MessagePattern('reply')
+  /**
+   * Helper function to extract json object from posted to queue message
+   *
+   * @param data message taken from queue
+   * @returns
+   */
+  parseQueuePayload(data: string) {
+    return JSON.parse(data) as BotQueuePayloadDTO;
+  }
+
+  @MessagePattern(BOT_COMMANDS.TALK.NAME)
   reply(data: string) {
     if (!data) {
       this.logger.warn('No data provided');
     }
 
-    const message = JSON.parse(data) as TelegramMessageDto;
+    const payload = this.parseQueuePayload(data);
+    const message = payload.message;
 
     try {
       this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
@@ -33,13 +45,14 @@ export class BotController {
    *
    * @param data
    */
-  @MessagePattern('get-link-to-bind-email')
+  @MessagePattern(BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME)
   async getLinkToBindEmail(data: string) {
     if (!data) {
       this.logger.warn('No data provided');
     }
 
-    const message = JSON.parse(data) as TelegramMessageDto;
+    const payload = JSON.parse(data) as BotQueuePayloadDTO;
+    const message = payload.message;
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);

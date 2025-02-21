@@ -64,3 +64,8 @@ export class MessagesListResponseDto extends RestListResponseDto {
   @ApiProperty({ type: MessageDto, isArray: true, description: 'List of recieved messages' })
   payload: MessageDto[];
 }
+
+export class BotQueuePayloadDTO {
+  arguments: string[];
+  message: TelegramMessageDto;
+}

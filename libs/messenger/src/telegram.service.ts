@@ -4,11 +4,13 @@ import * as TelegramBot from 'node-telegram-bot-api';
 import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
-import { TelegramMessageDto, TelegramUsers, Users } from '@my/common';
+import { BotQueuePayloadDTO, TelegramMessageDto, TelegramUsers, Users } from '@my/common';
 import { CryptoService } from '@my/common/services';
-import { BindTelegramToEmailDTO, TelegramUsersOutputDto } from './dto';
+import { BindTelegramToEmailDTO, TelegramApiDTO, TelegramUsersOutputDto } from './dto';
 import { Repository } from 'typeorm';
 import { DI_TOKENS } from '@my/common/constants';
+import { ProducerService } from './producer.service';
+import { BOT_COMMANDS } from './constants';
 
 
 const TELEGRAM_API_URL = 'https://api.telegram.org';
@@ -22,6 +24,7 @@ export class TelegramService {
     private configService: ConfigService,
     private readonly httpService: HttpService,
     private cryptoService: CryptoService,
+    private producerService: ProducerService,
 
     @Inject(DI_TOKENS.DATA_SOURCE.DEFAULT.REPOSITORIES.USERS)
     private usersRepository: Repository<Users>,
@@ -46,7 +49,17 @@ export class TelegramService {
    * @see https://core.telegram.org/bots/api#available-methods
    * @returns
    */
-  private async post(method:string, params?: any) {
+  /** @see https://core.telegram.org/bots/api#getwebhookinfo */
+  private async post(method: 'getWebhookInfo', params?: any): Promise<TelegramApiDTO.Response<TelegramApiDTO.WebhookInfo>>
+  /** @see https://core.telegram.org/bots/api#setwebhook */
+  private async post(method: 'setWebhook', params: { url: string, secret_token: string }): Promise<TelegramApiDTO.Response>
+  /** @see https://core.telegram.org/bots/api#setmycommands */
+  private async post(method: 'setMyCommands', params?: { commands: { command: string, description: string }[] }): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand>>
+  /** @see https://core.telegram.org/bots/api#getmycommands */
+  private async post(method: 'getMyCommands', params?: any): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand>>
+  /** @see https://core.telegram.org/bots/api#sendmessage */
+  private async post(method: 'sendMessage', params: { chat_id: string, text: string }): Promise<TelegramApiDTO.Response<TelegramApiDTO.Message>>
+  private async post(method: string, params?: any): Promise<TelegramApiDTO.Response<any>> {
     try {
       const { data } = await firstValueFrom(
         this.httpService.post(`${this.apiUrl}/${method}`, params).pipe(
@@ -55,8 +68,9 @@ export class TelegramService {
           }),
         ),
       );
-      return data;
-    } catch(e) {
+      /** @see https://core.telegram.org/bots/api#making-requests */
+      return data as TelegramApiDTO.Response;
+    } catch (e) {
       this.logger.debug(e.response.data);
     }
   }
@@ -114,11 +128,13 @@ export class TelegramService {
    * @returns
    */
   async getTelegramUsersListByEmail(email: string) {
-    const list = await this.telegramUsersRepository.find({where: {
-      user: {
-        email
+    const list = await this.telegramUsersRepository.find({
+      where: {
+        user: {
+          email
+        }
       }
-    }});
+    });
     const result: TelegramUsersOutputDto[] = list.map((telegramUser) => {
       const userFormatted: TelegramUsersOutputDto = {
         id: telegramUser.id,
@@ -204,8 +220,95 @@ export class TelegramService {
    */
   async reply(chatId: string, text: string) {
     return await this.post('sendMessage', {
-          chat_id: chatId,
-          text,
+      chat_id: chatId,
+      text,
+    });
+  }
+
+  /**
+   * Post message text to related to its command queue to process it
+   *
+   * @param message
+   */
+  async processIncomingMessage(message: TelegramMessageDto) {
+    let action = {
+      command: BOT_COMMANDS.TALK.NAME,
+      arguments: [message.text],
+    }
+
+    if (message.text.startsWith('/')) {
+      action = this.extractCommandFromIncomingMessage(message);
+    }
+
+    const payload: BotQueuePayloadDTO = {
+      message,
+      arguments: action.arguments,
+    };
+    const queue = action.command;
+
+    this.producerService.addToQueue(payload, queue);
+  }
+
+
+  /**
+   * Extract command name and related to it arguments from message text
+   *
+   * @param message
+   * @returns
+   */
+  extractCommandFromIncomingMessage(message: TelegramMessageDto) {
+    // split text into commands with slash symbol and words
+    const commandWithArgumentsRegexp = /[\/,\s][\w,\-]+/g;
+
+    const commandArguments = message.text.match(commandWithArgumentsRegexp);
+
+    // get command name (it is always the first element) and clean it from first slash symbol '/'
+    const command = commandArguments.shift().slice();
+    return {
+      command,
+      arguments: commandArguments,
+    }
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#getmycommands
+   * @returns
+   */
+  async getMyCommandsList() {
+    const response = await this.post('getMyCommands');
+    if (response.ok === 'true') {
+      const commandsList = response.result;
+    }
+  }
+
+  /**
+   * @see https://core.telegram.org/bots/api#setmycommands
+   */
+  async updateBotCommandsList() {
+    const commands: { command: string, description: string }[] = [
+      {
+        command: BOT_COMMANDS.START.NAME,
+        description: BOT_COMMANDS.START.DESCRIPTION,
+      },
+      {
+        command: BOT_COMMANDS.HELP.NAME,
+        description: BOT_COMMANDS.HELP.DESCRIPTION,
+      },
+      {
+        command: BOT_COMMANDS.SETTINGS.NAME,
+        description: BOT_COMMANDS.SETTINGS.DESCRIPTION,
+      },
+      {
+        command: BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME,
+        description: BOT_COMMANDS.GENERATE_BIND_TOKEN.DESCRIPTION,
+      },
+      {
+        command: BOT_COMMANDS.TALK.NAME,
+        description: BOT_COMMANDS.TALK.DESCRIPTION,
+      }
+    ];
+    return await this.post('setMyCommands', {
+      commands
     });
   }
 }

@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiOperation, ApiParam, ApiResponse, ApiSecurity } from '@nestjs/swagger';
-import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto, TelegramUserDto } from '@my/common/dto';
-import { ProducerService } from './producer.service';
+import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
+import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
 import { TelegramGuard } from './telegram.guard';
 import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
@@ -13,7 +12,6 @@ export class MessengerController {
   private readonly logger = new Logger(MessengerController.name)
 
   constructor(
-    private producerService: ProducerService,
     private telegramService: TelegramService,
     private userSerivce: UserService,
   ) {}
@@ -88,11 +86,10 @@ export class MessengerController {
     }
 
     try {
-      this.producerService.addToQueue(input.message);
+      this.telegramService.processIncomingMessage(input.message);
     } catch (e) {
       this.logger.debug(e);
     }
-
 
     result.status = ResponseStatusEnum.SUCCESS;
     return result;

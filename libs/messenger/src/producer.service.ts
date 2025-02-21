@@ -2,7 +2,7 @@ import { HttpException, HttpStatus, Inject, Injectable, Logger } from '@nestjs/c
 import amqp, { ChannelWrapper } from 'amqp-connection-manager';
 import { Channel } from 'amqplib';
 import { ConfigService } from '@nestjs/config';
-import { TelegramMessageDto } from '@my/common/dto';
+import { BotQueuePayloadDTO, TelegramMessageDto } from '@my/common/dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { ActionsTypes } from './dto';
@@ -28,10 +28,10 @@ export class ProducerService {
     });
   }
 
-  async addToQueue(message: TelegramMessageDto, action: ActionsTypes = 'reply') {
+  async addToQueue(payload: BotQueuePayloadDTO, queue: string) {
     try {
-      const payload = JSON.stringify(message);
-      const buffer = Buffer.from(payload);
+      const payloadString = JSON.stringify(payload);
+      const buffer = Buffer.from(payloadString);
 
       const wsQueue = this.configService.get('rabbitmq.queue');
       await this.channelWrapper.sendToQueue(
@@ -40,12 +40,12 @@ export class ProducerService {
       );
 
       try {
-        await lastValueFrom(this.client.send(action, payload));
+        await lastValueFrom(this.client.send(queue, payloadString));
       } catch (e) {
-        // this.logger.debug(`Can't deliver message: ${ message.text }`)
+        // this.logger.debug(`Can't reach broker to post payload: ${ payload }`)
       }
 
-      this.logger.debug(`Sended message: ${ message.text }`);
+      this.logger.debug(`Payload posted to queue ${queue}: ${ payloadString }`);
 
     } catch (e) {
       this.logger.warn(e);
