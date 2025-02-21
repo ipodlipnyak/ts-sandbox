@@ -57,7 +57,7 @@ export class TelegramService {
   /** @see https://core.telegram.org/bots/api#getmycommands */
   private async post(method: 'getMyCommands', params?: any): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand>>
   /** @see https://core.telegram.org/bots/api#sendmessage */
-  private async post(method: 'sendMessage', params: { chat_id: string, text: string }): Promise<TelegramApiDTO.Response<TelegramApiDTO.Message>>
+  private async post(method: 'sendMessage', params: { chat_id: string, text: string, parse_mode: 'MarkdownV2' | 'HTML' }): Promise<TelegramApiDTO.Response<TelegramApiDTO.Message>>
   private async post(method: string, params?: any): Promise<TelegramApiDTO.Response<any>> {
     try {
       const { data } = await firstValueFrom(
@@ -221,6 +221,8 @@ export class TelegramService {
     return await this.post('sendMessage', {
       chat_id: chatId,
       text,
+      /** @see https://core.telegram.org/bots/api#formatting-options */
+      parse_mode: 'MarkdownV2',
     });
   }
 

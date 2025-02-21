@@ -44,6 +44,7 @@ export class BotController {
    * Generate a link that will bind telegram id to user's email profile authorised to use site
    *
    * @param data
+   * @see https://core.telegram.org/bots/api#formatting-options
    */
   @MessagePattern(BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME)
   async getLinkToBindEmail(data: string) {
@@ -61,7 +62,7 @@ export class BotController {
         return;
       }
 
-      const token = this.telegramService.generateBindToken(message);
+      const token = await this.telegramService.generateBindToken(message);
       const url = `${this.configService.get('web.url')}/my/settings?tg-token=${token}`;
 
       this.telegramService.reply(message.chat.id, `Go to your [page](${url}) to authorise this user`);
@@ -82,7 +83,7 @@ export class BotController {
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
       if (!tgUser) {
-        this.telegramService.reply(message.chat.id, `New here? Try to authorise by \`/${BOT_COMMANDS.GENERATE_BIND_TOKEN}\` command`);
+        this.telegramService.reply(message.chat.id, `New here? Try to authorise by \`/${BOT_COMMANDS.GENERATE_BIND_TOKEN.NAME}\` command`);
         return;
       }
 
