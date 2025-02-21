@@ -267,7 +267,7 @@ export class TelegramService {
     const commandArguments = message.text.match(commandWithArgumentsRegexp);
 
     // get command name (it is always the first element) and clean it from first slash symbol '/'
-    const command = commandArguments.shift().slice();
+    const command = commandArguments.shift().slice(1);
     return {
       command,
       arguments: commandArguments,
@@ -282,6 +282,7 @@ export class TelegramService {
     const response = await this.post('getMyCommands');
     if (response.ok === 'true') {
       const commandsList = response.result;
+      return commandsList;
     }
   }
 

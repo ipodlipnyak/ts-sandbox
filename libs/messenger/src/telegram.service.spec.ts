@@ -24,10 +24,12 @@ describe('TelegramService', () => {
     email: 'test@email.com',
   };
 
+  let testCommand = 'test-command_blah';
+
   let testMessage: TelegramMessageDto = {
     date: '1441645532',
     message_id: '42424242',
-    text: 'test message content',
+    text: `/${testCommand} test message content`,
     from: {
       id: '123',
       username: 'testUsername',
@@ -85,5 +87,10 @@ describe('TelegramService', () => {
 
     const calledWithData = (telegramUsersRepository.create as sinon.SinonSpy).calledWithMatch(sinon.match({tgChatId: testMessage.chat.id}));
     expect(calledWithData).toBeTruthy();
+  });
+
+  it (('extract command from message'), async () => {
+    const processedMessage = service.processIncomingMessage(testMessage);
+    expect(processedMessage.queue).toBe(testCommand);
   });
 });
