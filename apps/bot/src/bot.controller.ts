@@ -51,13 +51,13 @@ export class BotController {
       this.logger.warn('No data provided');
     }
 
-    const payload = JSON.parse(data) as BotQueuePayloadDTO;
+    const payload = this.parseQueuePayload(data);
     const message = payload.message;
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
       if (tgUser) {
-        this.telegramService.reply(message.chat.id, `Nope, no can do. Duck off. You already a duck.`);
+        this.telegramService.reply(message.chat.id, `Nope, no can do. Duck off. You are already a duck.`);
         return;
       }
 
@@ -65,6 +65,54 @@ export class BotController {
       const url = `${this.configService.get('web.url')}/my/settings?tg-token=${token}`;
 
       this.telegramService.reply(message.chat.id, `Go to your [page](${url}) to authorise this user`);
+    } catch (e) {
+      this.logger.debug(e);
+    }
+  }
+
+  @MessagePattern(BOT_COMMANDS.START.NAME)
+  async start(data: string) {
+    if (!data) {
+      this.logger.warn('No data provided');
+    }
+
+    const payload = this.parseQueuePayload(data);
+    const message = payload.message;
+
+    try {
+      const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
+      if (!tgUser) {
+        this.telegramService.reply(message.chat.id, `New here? Try to authorise by \`/${BOT_COMMANDS.GENERATE_BIND_TOKEN}\` command`);
+        return;
+      }
+
+      const url = `${this.configService.get('web.url')}/my/`;
+      this.telegramService.reply(message.chat.id, `Oh I know you. You are good and ready. Just do whatever you want. Or check your profile in [here](${url})`);
+    } catch (e) {
+      this.logger.debug(e);
+    }
+  }
+
+  @MessagePattern(BOT_COMMANDS.SETTINGS.NAME)
+  async settings(data: string) {
+    if (!data) {
+      this.logger.warn('No data provided');
+    }
+
+    const payload = this.parseQueuePayload(data);
+    const message = payload.message;
+
+    try {
+      const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
+      if (tgUser) {
+        this.telegramService.reply(message.chat.id, `New here? Try to authorise by \`/${BOT_COMMANDS.GENERATE_BIND_TOKEN}\` command`);
+        return;
+      }
+
+      this.telegramService.reply(message.chat.id, `
+        ## Settings:
+        -**email**: \`${tgUser.user.email}\`
+        `);
     } catch (e) {
       this.logger.debug(e);
     }
