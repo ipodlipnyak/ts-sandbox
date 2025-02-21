@@ -8,7 +8,6 @@ import { MockTypeORM } from 'mock-typeorm';
 import {dataSource} from '@my/common';
 import { Repository } from 'typeorm';
 import * as sinon from 'sinon';
-import { ProducerService } from './producer.service';
 
 describe('TelegramService', () => {
   let service: TelegramService;
@@ -20,7 +19,6 @@ describe('TelegramService', () => {
   let configService: ConfigService;
   let httpService: HttpService;
   let cryptoSerivce: CryptoService;
-  let producerService: ProducerService;
 
   let testUser = {
     email: 'test@email.com',
@@ -63,14 +61,13 @@ describe('TelegramService', () => {
     httpService = sinon.createStubInstance(HttpService);
 
     cryptoSerivce = new CryptoService(configService);
-    producerService = sinon.createStubInstance(ProducerService, {});
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: TelegramService,
           useFactory: () => {
-            return new TelegramService(configService, httpService, cryptoSerivce, producerService, usersRepository, telegramUsersRepository);
+            return new TelegramService(configService, httpService, cryptoSerivce, usersRepository, telegramUsersRepository);
           },
         },
       ],

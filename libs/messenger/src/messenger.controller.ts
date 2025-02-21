@@ -6,6 +6,7 @@ import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
 import { UserService } from '@my/common/services';
 import { TelegramBindInputDto, TelegramUsersListResponseDto } from './dto';
+import { ProducerService } from './producer.service';
 
 @Controller('tg')
 export class MessengerController {
@@ -14,6 +15,7 @@ export class MessengerController {
   constructor(
     private telegramService: TelegramService,
     private userSerivce: UserService,
+    private producerService: ProducerService,
   ) {}
 
   @ApiOperation({ summary: 'Get telegram chats list authorised by a user' })
@@ -86,7 +88,8 @@ export class MessengerController {
     }
 
     try {
-      this.telegramService.processIncomingMessage(input.message);
+      const {payload, queue} = this.telegramService.processIncomingMessage(input.message);
+      this.producerService.addToQueue(payload, queue);
     } catch (e) {
       this.logger.debug(e);
     }

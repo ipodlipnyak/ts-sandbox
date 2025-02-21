@@ -9,7 +9,7 @@ import { CryptoService } from '@my/common/services';
 import { BindTelegramToEmailDTO, TelegramApiDTO, TelegramUsersOutputDto } from './dto';
 import { Repository } from 'typeorm';
 import { DI_TOKENS } from '@my/common/constants';
-import { ProducerService } from './producer.service';
+// import { ProducerService } from './producer.service';
 import { BOT_COMMANDS } from './constants';
 
 
@@ -24,7 +24,6 @@ export class TelegramService {
     private configService: ConfigService,
     private readonly httpService: HttpService,
     private cryptoService: CryptoService,
-    private producerService: ProducerService,
 
     @Inject(DI_TOKENS.DATA_SOURCE.DEFAULT.REPOSITORIES.USERS)
     private usersRepository: Repository<Users>,
@@ -226,11 +225,11 @@ export class TelegramService {
   }
 
   /**
-   * Post message text to related to its command queue to process it
+   * Prepare telegram message to be posted in brocker queue
    *
    * @param message
    */
-  async processIncomingMessage(message: TelegramMessageDto) {
+  processIncomingMessage(message: TelegramMessageDto) {
     let action = {
       command: BOT_COMMANDS.TALK.NAME,
       arguments: [message.text],
@@ -244,9 +243,14 @@ export class TelegramService {
       message,
       arguments: action.arguments,
     };
-    const queue = action.command;
 
-    this.producerService.addToQueue(payload, queue);
+    const queue = action.command;
+    return {
+      payload,
+      queue
+    }
+
+    // this.producerService.addToQueue(payload, queue);
   }
 
 
