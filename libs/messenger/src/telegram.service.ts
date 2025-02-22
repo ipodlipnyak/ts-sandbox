@@ -5,13 +5,11 @@ import { HttpService } from '@nestjs/axios';
 import { catchError, firstValueFrom } from 'rxjs';
 import { AxiosError } from 'axios';
 import { BotQueuePayloadDTO, TelegramMessageDto, TelegramUsers, Users } from '@my/common';
-import { CryptoService } from '@my/common/services';
+import { CacheService, CryptoService } from '@my/common/services';
 import { BindTelegramToEmailDTO, TelegramApiDTO, TelegramUsersOutputDto } from './dto';
 import { Repository } from 'typeorm';
 import { DI_TOKENS } from '@my/common/constants';
 import { BOT_COMMANDS } from './constants';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
-import { Cache } from 'cache-manager';
 
 const TELEGRAM_API_URL = 'https://api.telegram.org';
 
@@ -26,9 +24,7 @@ export class TelegramService {
     private configService: ConfigService,
     private readonly httpService: HttpService,
     private cryptoService: CryptoService,
-
-    @Inject(CACHE_MANAGER)
-    private cacheManager: Cache,
+    private cacheService: CacheService,
 
     @Inject(DI_TOKENS.DATA_SOURCE.DEFAULT.REPOSITORIES.USERS)
     private usersRepository: Repository<Users>,
@@ -54,11 +50,7 @@ export class TelegramService {
   async setCache(key: string, value: any) {
     const cacheKeyFull = `${this.cacheKey}.${key}`;
     try {
-      await this.cacheManager.set(cacheKeyFull, value, {
-        // ttl: 86400, // 24h
-        // ttl: 3600 // 1h
-        ttl: 60, // 1m
-      });
+      await this.cacheService.set(cacheKeyFull, value);
     } catch(err) {
       this.logger.error(err);
     }
@@ -73,7 +65,7 @@ export class TelegramService {
   async getCache(key: string) {
     const cacheKeyFull = `${this.cacheKey}.${key}`;
     try {
-      const value = await this.cacheManager.get(cacheKeyFull);
+      const value = await this.cacheService.get(cacheKeyFull);
       return value;
     } catch(err) {
       this.logger.error(err);
@@ -88,8 +80,12 @@ export class TelegramService {
    * @see https://redis.io/docs/latest/commands/del/
    */
   async cleanCache(key?: string) {
-    const cacheKeyFull = key ? `${this.cacheKey}.${key}` : `${this.cacheKey}.*`;
-    await this.cacheManager.del(cacheKeyFull);
+    if (!key) {
+      return await this.cacheService.del();
+    }
+
+    const cacheKeyFull = `${this.cacheKey}.${key}`;
+    return await this.cacheService.del(cacheKeyFull);
   }
 
   /**

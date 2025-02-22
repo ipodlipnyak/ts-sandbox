@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TelegramService } from './telegram.service';
 import { HttpService } from '@nestjs/axios';
-import { CryptoService } from '@my/common/services';
+import { CacheService, CryptoService } from '@my/common/services';
 import { ConfigService } from '@nestjs/config';
 import { TelegramMessageDto, TelegramUsers, Users } from '@my/common';
 import { MockTypeORM } from 'mock-typeorm';
@@ -19,6 +19,7 @@ describe('TelegramService', () => {
   let configService: ConfigService;
   let httpService: HttpService;
   let cryptoSerivce: CryptoService;
+  let cacheService: CacheService;
 
   let testUser = {
     email: 'test@email.com',
@@ -63,13 +64,14 @@ describe('TelegramService', () => {
     httpService = sinon.createStubInstance(HttpService);
 
     cryptoSerivce = new CryptoService(configService);
+    cacheService = sinon.createStubInstance(CacheService);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         {
           provide: TelegramService,
           useFactory: () => {
-            return new TelegramService(configService, httpService, cryptoSerivce, usersRepository, telegramUsersRepository);
+            return new TelegramService(configService, httpService, cryptoSerivce, cacheService, usersRepository, telegramUsersRepository);
           },
         },
       ],

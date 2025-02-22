@@ -19,14 +19,6 @@ import * as redisStore from 'cache-manager-redis-store';
     CommonModule,
     HttpModule,
     CloudflareModule,
-    CacheModule.registerAsync({
-      inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        ...configService.get('cache'),
-        isGlobal: true,
-        store: redisStore,
-      }),
-    }),
     ClientsModule.registerAsync({
       clients: [
         {
