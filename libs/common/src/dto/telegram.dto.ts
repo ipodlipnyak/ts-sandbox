@@ -1,6 +1,23 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { RestListResponseDto, RestResponseDto } from "./rest-response.dto";
 
+export class TelegramUserAuthoriseDto {
+  @ApiProperty({ example: '1111111' })
+  id: string;
+  @ApiProperty({ example: 'Testusername' })
+  username: string;
+  @ApiProperty({ example: 'Test Lastname' })
+  last_name: string;
+  @ApiProperty({ example: 'Test Firstname' })
+  first_name: string;
+  @ApiProperty({ example: 'url' })
+  photo_url: string;
+  @ApiProperty({ example: '123456' })
+  auth_date: string;
+  @ApiProperty({ example: '3k23j423bk...234kmk2l3m4' })
+  hash: string;
+}
+
 export class TelegramConfigDto {
   @ApiProperty({ example: 'botato', description: 'Telegram chat bot name' })
   botName: string;

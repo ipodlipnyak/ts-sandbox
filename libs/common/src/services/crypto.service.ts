@@ -1,7 +1,7 @@
 
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createCipheriv, createDecipheriv, scryptSync } from 'crypto';
+import { createCipheriv, createDecipheriv, scryptSync, createHmac } from 'crypto';
 
 @Injectable()
 export class CryptoService {
@@ -49,4 +49,17 @@ export class CryptoService {
     );
   }
 
+  /**
+   * Generate hash
+   *
+   * @param payload
+   * @param secretKey
+   * @param algorithm
+   * @param digest
+   * @returns
+   */
+  generateHash(payload: string, secretKey: string, algorithm: string = 'sha256', digest: 'hex' | 'base64' = 'hex') {
+    const hmac = createHmac(algorithm, secretKey);
+    return hmac.update(payload).digest(digest);
+  }
 }

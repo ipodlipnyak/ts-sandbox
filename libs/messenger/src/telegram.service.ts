@@ -46,6 +46,13 @@ export class TelegramService {
     return `${TELEGRAM_API_URL}/bot${apikey}`;
   }
 
+  generateAuthenticationHash(input: {auth_date: string, first_name: string, id: string, username: string}) {
+    const payload = `auth_date=${input.auth_date}\nfirst_name=${input.first_name}\nid=${input.id}\nusername=${input.username}`;
+    const secretKey = this.configService.get('telegram.apiKey');
+    const hash = this.cryptoService.generateHash(payload, secretKey);
+    return hash;
+  }
+
   /**
    * Set cached value
    *
@@ -171,6 +178,20 @@ export class TelegramService {
     });
 
     return tgUser;
+  }
+
+  /**
+   * Find email for this telegram user
+   *
+   * @param telegramUserId
+   * @returns
+   */
+  async getEmailByTelegramId(telegramUserId: string) {
+    const telegramUser = await this.telegramUsersRepository.findOneBy({
+      tgUserId: telegramUserId,
+    });
+
+    return telegramUser.user.email;
   }
 
   async generateBindToken(message: TelegramMessageDto) {

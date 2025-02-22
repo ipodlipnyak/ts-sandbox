@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
-import { ResponseStatusEnum, RestResponseDto, TelegramConfigResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
+import { ResponseStatusEnum, RestResponseDto, TelegramConfigResponseDto, TelegramEventMessageInputDto, TelegramUserAuthoriseDto } from '@my/common/dto';
 import { TelegramGuard } from './telegram.guard';
 import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
@@ -14,9 +14,73 @@ export class MessengerController {
 
   constructor(
     private telegramService: TelegramService,
-    private userSerivce: UserService,
+    private userService: UserService,
     private producerService: ProducerService,
   ) {}
+
+  /**
+   * Check request and authorise
+   *
+   * @see https://core.telegram.org/widgets/login#checking-authorization
+   * @see https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
+   * @param input
+   * @returns
+   */
+  @ApiOperation({ summary: 'Authorise user by telegram' })
+  @Post('auth')
+  async authorise(
+    @Body() input: TelegramUserAuthoriseDto,
+  ): Promise<RestResponseDto> {
+    const result = {
+      status: ResponseStatusEnum.ERROR,
+      payload: undefined,
+    };
+
+    const hash = this.telegramService.generateAuthenticationHash({
+      auth_date: input.auth_date,
+      first_name: input.first_name,
+      id: input.id,
+      username: input.username,
+    });
+    if (hash !== input.hash) {
+      this.logger.debug(`Cant login this man: ${input}`);
+      this.logger.debug(`${hash} !== ${input.hash}`);
+      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+    }
+
+    const email = await this.telegramService.getEmailByTelegramId(input.id);
+
+    const isLoggedIn = await this.userService.loginByEmail(email);
+    const user = await this.userService.getUser();
+
+    if (!user) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
+
+    let isdirty = false;
+    if (!user.firstName) {
+      user.firstName = input.first_name;
+      isdirty = true;
+    }
+    if (!user.lastName) {
+      user.lastName = input.last_name;
+      isdirty = true;
+    }
+    if (!user.pictureUrl) {
+      user.pictureUrl = input.photo_url;
+      isdirty = true;
+    }
+    if (isdirty) {
+      user.save();
+    }
+
+    if (!isLoggedIn) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
+
+    result.status = ResponseStatusEnum.SUCCESS;
+    return result;
+  }
 
   @ApiOperation({ summary: 'Get telegram configs' })
   @ApiResponse({ status: 200, type: TelegramConfigResponseDto })
@@ -46,7 +110,7 @@ export class MessengerController {
       limit: 0
     };
 
-    const email = this.userSerivce.email;
+    const email = this.userService.email;
     const payload = await this.telegramService.getTelegramUsersListByEmail(email);
 
     result.payload = payload;
@@ -70,7 +134,7 @@ export class MessengerController {
     };
 
     // check for ownership before delete
-    const email = this.userSerivce.email;
+    const email = this.userService.email;
     const list = await this.telegramService.getTelegramUsersListByEmail(email);
     const match = list.find(item => item.id === id);
 
@@ -124,7 +188,7 @@ export class MessengerController {
     };
 
     try {
-      const email = this.userSerivce.email;
+      const email = this.userService.email;
       await this.telegramService.executeBindToken(input.token, email);
       result.status = ResponseStatusEnum.SUCCESS;
     } catch (err) {

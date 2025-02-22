@@ -24,12 +24,13 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-  (e: 'callback', user: TelegramUserType): void,
+  // (e: 'callback', user: TelegramUserType): void,
   (e: 'loaded'): void,
 }>();
 
 const onTelegramAuth = (user: TelegramUserType) => {
-  emit('callback', user);
+  // emit('callback', user);
+  telegramUsersStore.auth(user);
 }
 
 const telegramButtonRef = ref();

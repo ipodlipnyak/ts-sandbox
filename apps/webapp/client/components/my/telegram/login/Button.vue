@@ -1,5 +1,5 @@
 <template>
-  <MyTelegramLoginIframe v-if="telegramUsersStore.botName" :bot-name="telegramUsersStore.botName" />
+  <MyTelegramLoginIframe v-if="telegramUsersStore.botName" :bot-name="telegramUsersStore.botName"/>
 </template>
 
 <script setup lang="ts">
