@@ -4,13 +4,13 @@
 export type Response<T = any> = ReposnseError | ReposnseSuccess<T>;
 
 class ReposnseSuccess<T> {
-  ok!: 'true';
+  ok!: true;
   result?: T;
   description?: string;
 }
 
 class ReposnseError {
-  ok!: 'false';
+  ok!: false;
   migrate_to_chat_id?: string;
   retry_after?: string;
 }
@@ -69,3 +69,18 @@ export class Message {
   from: User;
   chat: Chat;
 }
+
+/**
+ * @see https://core.telegram.org/bots/api#sendchataction
+ * Type of action to broadcast.
+ * Choose one, depending on what the user is about to receive:
+ * - typing for text messages,
+ * - upload_photo for photos,
+ * - record_video or upload_video for videos,
+ * - record_voice or upload_voice for voice notes,
+ * - upload_document for general files,
+ * - choose_sticker for stickers,
+ * - find_location for location data,
+ * - record_video_note or upload_video_note for video notes.
+ */
+export type ChatAction = 'typing' | 'upload_photo' | 'record_video' | 'record_voice' | 'upload_document' | 'choose_sticker' | 'find_location' | 'record_video_note' | 'upload_video_note';

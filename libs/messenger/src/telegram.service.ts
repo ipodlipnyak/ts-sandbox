@@ -9,9 +9,9 @@ import { CryptoService } from '@my/common/services';
 import { BindTelegramToEmailDTO, TelegramApiDTO, TelegramUsersOutputDto } from './dto';
 import { Repository } from 'typeorm';
 import { DI_TOKENS } from '@my/common/constants';
-// import { ProducerService } from './producer.service';
 import { BOT_COMMANDS } from './constants';
-
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { Cache } from 'cache-manager';
 
 const TELEGRAM_API_URL = 'https://api.telegram.org';
 
@@ -20,10 +20,15 @@ export class TelegramService {
   private readonly logger = new Logger(TelegramService.name);
   private bot = null;
 
+  private cacheKey = 'telegram';
+
   constructor(
     private configService: ConfigService,
     private readonly httpService: HttpService,
     private cryptoService: CryptoService,
+
+    @Inject(CACHE_MANAGER)
+    private cacheManager: Cache,
 
     @Inject(DI_TOKENS.DATA_SOURCE.DEFAULT.REPOSITORIES.USERS)
     private usersRepository: Repository<Users>,
@@ -41,26 +46,82 @@ export class TelegramService {
   }
 
   /**
+   * Set cached value
+   *
+   * @param key
+   * @param value
+   */
+  async setCache(key: string, value: any) {
+    const cacheKeyFull = `${this.cacheKey}.${key}`;
+    try {
+      await this.cacheManager.set(cacheKeyFull, value, {
+        // ttl: 86400, // 24h
+        // ttl: 3600 // 1h
+        ttl: 60, // 1m
+      });
+    } catch(err) {
+      this.logger.error(err);
+    }
+  }
+
+  /**
+   * Get cached value
+   *
+   * @param key
+   * @returns
+   */
+  async getCache(key: string) {
+    const cacheKeyFull = `${this.cacheKey}.${key}`;
+    try {
+      const value = await this.cacheManager.get(cacheKeyFull);
+      return value;
+    } catch(err) {
+      this.logger.error(err);
+    }
+  }
+
+  /**
+   * Clean cached values.
+   * If key not provided will attempt to delete all related keys.
+   *
+   * @param key
+   * @see https://redis.io/docs/latest/commands/del/
+   */
+  async cleanCache(key?: string) {
+    const cacheKeyFull = key ? `${this.cacheKey}.${key}` : `${this.cacheKey}.*`;
+    await this.cacheManager.del(cacheKeyFull);
+  }
+
+  /**
    * Simple way to communicate with telegram api over post methods
    *
    * @param method telegram method
    * @param params method's parameters
+   * @param force ignore cached data and force request
    * @see https://core.telegram.org/bots/api#available-methods
    * @returns
    */
   /** @see https://core.telegram.org/bots/api#getwebhookinfo */
-  private async post(method: 'getWebhookInfo', params?: any): Promise<TelegramApiDTO.Response<TelegramApiDTO.WebhookInfo>>
+  private async post(method: 'getWebhookInfo', params?: any, cached?: boolean): Promise<TelegramApiDTO.Response<TelegramApiDTO.WebhookInfo>>
   /** @see https://core.telegram.org/bots/api#setwebhook */
-  private async post(method: 'setWebhook', params: { url: string, secret_token: string }): Promise<TelegramApiDTO.Response>
+  private async post(method: 'setWebhook', params: { url: string, secret_token: string }, cached?: boolean): Promise<TelegramApiDTO.Response>
   /** @see https://core.telegram.org/bots/api#setmycommands */
-  private async post(method: 'setMyCommands', params?: { commands: { command: string, description: string }[] }): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand>>
+  private async post(method: 'setMyCommands', params: { commands: TelegramApiDTO.BotCommand[] }): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand>>
   /** @see https://core.telegram.org/bots/api#getmycommands */
-  private async post(method: 'getMyCommands', params?: any): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand>>
+  private async post(method: 'getMyCommands', params?: any, cached?: boolean): Promise<TelegramApiDTO.Response<TelegramApiDTO.BotCommand[]>>
   /** @see https://core.telegram.org/bots/api#sendmessage */
   private async post(method: 'sendMessage', params: { chat_id: string, text: string, parse_mode: 'MarkdownV2' | 'HTML' }): Promise<TelegramApiDTO.Response<TelegramApiDTO.Message>>
-  private async post(method: string, params?: any): Promise<TelegramApiDTO.Response<any>> {
+  private async post(method: 'sendChatAction', params: { chat_id: string, action: TelegramApiDTO.ChatAction }): Promise<TelegramApiDTO.Response<TelegramApiDTO.Message>>
+  private async post(method: string, params?: any, cached: boolean = false): Promise<TelegramApiDTO.Response<any>> {
+    if (cached) {
+      const cachedValue = await this.getCache(method);
+      if (cachedValue) {
+        return cachedValue as TelegramApiDTO.Response;
+      }
+    }
+
     try {
-      const { data } = await firstValueFrom(
+      const { data }: { data: TelegramApiDTO.Response } = await firstValueFrom(
         this.httpService.post(`${this.apiUrl}/${method}`, params).pipe(
           catchError((err: AxiosError) => {
             throw err;
@@ -68,7 +129,10 @@ export class TelegramService {
         ),
       );
       /** @see https://core.telegram.org/bots/api#making-requests */
-      return data as TelegramApiDTO.Response;
+      if (cached) {
+        this.setCache(method, data);
+      }
+      return data;
     } catch (e) {
       this.logger.debug(e.response.data);
     }
@@ -88,7 +152,7 @@ export class TelegramService {
   }
 
   async getWebhookInfo() {
-    return await this.post('getWebhookInfo');
+    return await this.post('getWebhookInfo', {}, true);
   }
 
   /**
@@ -227,6 +291,21 @@ export class TelegramService {
   }
 
   /**
+   * Use this method when you need to tell the user that something is happening on the bot's side
+   *
+   * @see https://core.telegram.org/bots/api#sendchataction
+   * @param chatId
+   * @param action
+   * @returns
+   */
+  async sendChatAction(chatId: string, action: TelegramApiDTO.ChatAction = 'typing') {
+    return await this.post('sendChatAction', {
+      chat_id: chatId,
+      action,
+    })
+  }
+
+  /**
    * Prepare telegram message to be posted in brocker queue
    *
    * @param message
@@ -281,8 +360,9 @@ export class TelegramService {
    * @returns
    */
   async getMyCommandsList() {
-    const response = await this.post('getMyCommands');
-    if (response.ok === 'true') {
+    const response = await this.post('getMyCommands', {}, true);
+
+    if (response.ok === true) {
       const commandsList = response.result;
       return commandsList;
     }
@@ -292,7 +372,7 @@ export class TelegramService {
    * @see https://core.telegram.org/bots/api#setmycommands
    */
   async updateBotCommandsList() {
-    const commands: { command: string, description: string }[] = [
+    const commands: TelegramApiDTO.BotCommand[] = [
       {
         command: BOT_COMMANDS.START.NAME,
         description: BOT_COMMANDS.START.DESCRIPTION,

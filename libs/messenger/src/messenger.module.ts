@@ -11,12 +11,22 @@ import { HttpModule } from '@nestjs/axios';
 import { commands } from './commands';
 import { CommonModule, telegramUsersProvider, usersProvider } from '@my/common';
 import { dataSourceProvider } from '@my/common/models/dataSource.providers';
+import { CacheModule } from '@nestjs/cache-manager';
+import * as redisStore from 'cache-manager-redis-store';
 
 @Module({
   imports: [
     CommonModule,
     HttpModule,
     CloudflareModule,
+    CacheModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        ...configService.get('cache'),
+        isGlobal: true,
+        store: redisStore,
+      }),
+    }),
     ClientsModule.registerAsync({
       clients: [
         {

@@ -54,6 +54,7 @@ export class BotController {
 
     const payload = this.parseQueuePayload(data);
     const message = payload.message;
+    this.telegramService.sendChatAction(message.chat.id);
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
@@ -79,6 +80,7 @@ export class BotController {
 
     const payload = this.parseQueuePayload(data);
     const message = payload.message;
+    this.telegramService.sendChatAction(message.chat.id);
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
@@ -102,6 +104,7 @@ export class BotController {
 
     const payload = this.parseQueuePayload(data);
     const message = payload.message;
+    this.telegramService.sendChatAction(message.chat.id);
 
     try {
       const tgUser = await this.telegramService.getTelegramUserByTelegramMessage(message);
@@ -114,6 +117,30 @@ export class BotController {
         <b>Settings</b>
           <b>email:</b> <code>${tgUser.user.email}</code>
         `);
+    } catch (e) {
+      this.logger.debug(e);
+    }
+  }
+
+  @MessagePattern(BOT_COMMANDS.HELP.NAME)
+  async help(data: string) {
+    if (!data) {
+      this.logger.warn('No data provided');
+    }
+
+    const payload = this.parseQueuePayload(data);
+    const message = payload.message;
+    this.telegramService.sendChatAction(message.chat.id);
+
+    try {
+      const commandList = await this.telegramService.getMyCommandsList();
+      let reply = '<b>Settings</b>\n<blockquote expandable>';
+      commandList.forEach((command) => {
+        reply = `${reply}${command.command}: ${command.description}\n`;
+      });
+      reply = `${reply}</blockquote expandable>`
+
+      this.telegramService.reply(message.chat.id, reply);
     } catch (e) {
       this.logger.debug(e);
     }
