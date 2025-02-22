@@ -1,4 +1,4 @@
-import type { RestListResponseDto } from '../../../../libs/common/src/dto';
+import { TelegramConfigDto, type RestListResponseDto, type TelegramConfigResponseDto } from '../../../../libs/common/src/dto';
 import { defineStore, acceptHMRUpdate } from 'pinia';
 
 export const useTelegramUsersStore = defineStore('telegramUsers', {
@@ -6,13 +6,22 @@ export const useTelegramUsersStore = defineStore('telegramUsers', {
         data: null as any,
         token: '',
         pending: false,
+        config: null as TelegramConfigDto | null
     }),
 
     actions: {
+        async init() {
+            const { data } = await useFetch('/api/tg/');
+            const response = data.value as TelegramConfigResponseDto;
+            if (response?.status === 'success') {
+                this.config = response.payload;
+            }
+        },
+
         async fetchAll() {
           this.pending = true;
 
-          const { data } = await useFetch('/api/tg');
+          const { data } = await useFetch('/api/tg/chat');
           const response = data.value as RestListResponseDto;
           if (response?.status === 'success') {
             this.data = response.payload || [];
@@ -24,7 +33,7 @@ export const useTelegramUsersStore = defineStore('telegramUsers', {
         async addNewChat() {
           this.pending = true;
 
-          const { data } = await useFetch('/api/tg/', {
+          const { data } = await useFetch('/api/tg/chat', {
             method: 'post',
             body: {
               token: this.token,
@@ -43,7 +52,7 @@ export const useTelegramUsersStore = defineStore('telegramUsers', {
         async deleteChat(id: string) {
           this.pending = true;
 
-          const { data } = await useFetch(`/api/tg/${id}`, {
+          const { data } = await useFetch(`/api/tg/chat/${id}`, {
             method: 'delete',
           });
 
@@ -58,6 +67,7 @@ export const useTelegramUsersStore = defineStore('telegramUsers', {
 
     getters: {
         getAll: (state): any[] => state.data || [],
+        botName: (state): string => state.config?.botName || '',
     },
 });
 

@@ -36,6 +36,11 @@ export class TelegramService {
     );
   }
 
+  get botName(): string {
+    const botName = this.configService.get('telegram.botName');
+    return botName;
+  }
+
   get apiUrl(): string {
     const apikey = this.configService.get('telegram.apikey');
     return `${TELEGRAM_API_URL}/bot${apikey}`;

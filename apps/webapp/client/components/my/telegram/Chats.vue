@@ -38,7 +38,6 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
 import { useTelegramUsersStore } from '@/stores';
 
 export default defineComponent({

@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Logger, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiSecurity } from '@nestjs/swagger';
-import { ResponseStatusEnum, RestResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
+import { ResponseStatusEnum, RestResponseDto, TelegramConfigResponseDto, TelegramEventMessageInputDto } from '@my/common/dto';
 import { TelegramGuard } from './telegram.guard';
 import { AuthGuard } from '@my/common/guards';
 import { TelegramService } from './telegram.service';
@@ -18,11 +18,25 @@ export class MessengerController {
     private producerService: ProducerService,
   ) {}
 
+  @ApiOperation({ summary: 'Get telegram configs' })
+  @ApiResponse({ status: 200, type: TelegramConfigResponseDto })
+  @Get('')
+  async getConfig() {
+    const result: TelegramConfigResponseDto = {
+      status: ResponseStatusEnum.SUCCESS,
+      payload: {
+        botName: this.telegramService.botName
+      }
+    }
+
+    return result;
+  }
+
   @ApiOperation({ summary: 'Get telegram chats list authorised by a user' })
   @ApiResponse({ status: 200, type: TelegramUsersListResponseDto })
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
-  @Get('')
+  @Get('/chat')
   async getMessages(): Promise<TelegramUsersListResponseDto> {
     const result: TelegramUsersListResponseDto = {
       status: ResponseStatusEnum.ERROR,
@@ -47,7 +61,7 @@ export class MessengerController {
   @ApiResponse({ status: 200, type: RestResponseDto })
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
-  @Delete('/:id')
+  @Delete('/chat/:id')
   async unbind(
     @Param('id') id: string
   ): Promise<RestResponseDto> {
@@ -101,7 +115,7 @@ export class MessengerController {
   @UseGuards(AuthGuard)
   @ApiSecurity('user')
   @ApiOperation({ summary: 'Authorise specific telegram chat to work in users context' })
-  @Post('/')
+  @Post('/chat')
   async bind(
     @Body() input: TelegramBindInputDto,
   ) {

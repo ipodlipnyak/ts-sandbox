@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { RestListResponseDto } from '@my/common';
+import { RestListResponseDto, RestResponseDto } from '@my/common';
 import { IsString } from 'class-validator';
 import { Transform } from 'class-transformer';
 // import { Field, ID } from '@nestjs/graphql';
@@ -49,3 +49,4 @@ export class TelegramBindInputDto {
   @Transform(({ value }) => value.trim())
   readonly token: string;
 }
+

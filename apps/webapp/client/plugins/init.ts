@@ -1,4 +1,4 @@
-import { useGoogleStore, useAuthStore } from '~/stores';
+import { useGoogleStore, useAuthStore, useTelegramUsersStore } from '~/stores';
 // import {defineNuxtPlugin} from 'nuxt/dist/app/nuxt';
 export default defineNuxtPlugin((nuxtApp) => {
     nuxtApp.hook('app:beforeMount', async () => {
@@ -6,5 +6,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       await authStore.fetchUserData();
       const googleStore = useGoogleStore();
       await googleStore.fetchAll();
+      const telegramUsersStore = useTelegramUsersStore();
+      await telegramUsersStore.init();
     })
 })

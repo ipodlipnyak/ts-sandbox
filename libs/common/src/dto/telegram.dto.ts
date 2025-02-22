@@ -1,5 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { RestListResponseDto } from "./rest-response.dto";
+import { RestListResponseDto, RestResponseDto } from "./rest-response.dto";
+
+export class TelegramConfigDto {
+  @ApiProperty({ example: 'botato', description: 'Telegram chat bot name' })
+  botName: string;
+}
+export class TelegramConfigResponseDto extends RestResponseDto {
+  @ApiProperty({ description: 'Telegram public configs' })
+  payload: TelegramConfigDto;
+}
 
 export class TelegramChatDto {
   @ApiProperty({ example: '1111111' })

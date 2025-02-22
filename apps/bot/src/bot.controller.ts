@@ -32,6 +32,7 @@ export class BotController {
 
     const payload = this.parseQueuePayload(data);
     const message = payload.message;
+    this.telegramService.sendChatAction(message.chat.id);
 
     try {
       this.telegramService.reply(message.chat.id, `Simon says ${message.text}`);
@@ -115,7 +116,7 @@ export class BotController {
 
       this.telegramService.reply(message.chat.id, `
         <b>Settings</b>
-          <b>email:</b> <code>${tgUser.user.email}</code>
+        - email: <code>${tgUser.user.email}</code>
         `);
     } catch (e) {
       this.logger.debug(e);
@@ -134,7 +135,7 @@ export class BotController {
 
     try {
       const commandList = await this.telegramService.getMyCommandsList();
-      let reply = '<b>Settings</b>\n<blockquote expandable>';
+      let reply = '<b>Commands:</b>\n<blockquote expandable>';
       commandList.forEach((command) => {
         reply = `${reply}${command.command}: ${command.description}\n`;
       });
