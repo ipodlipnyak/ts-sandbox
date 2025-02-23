@@ -12,12 +12,21 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   const LANDING_PATH_NAME = 'index';
   const SIGNUP_PATH_NAME = 'signup';
   const MY_PATH_NAME = 'my';
-  const route = useRoute();
+  // const route = useRoute();
+  // const router = useRouter();
 
   const onLoginPage = to.name === LOGIN_PATH_NAME;
   const onSignUpPage = to.name === SIGNUP_PATH_NAME;
   const onLandingPage = to.name === LANDING_PATH_NAME;
   const onMyPage = to.name === MY_PATH_NAME;
+
+  if (loggedIn && authStore.failedNavigationRoute) {
+    try {
+      const iWonnaGoThere = authStore.failedNavigationRoute;
+      authStore.rememberFailNavigationRoute('');
+      return navigateTo(iWonnaGoThere);
+    } catch (e) {}
+  }
 
   if (loggedIn && (onLoginPage || onSignUpPage || onLandingPage)) {
     try {
@@ -29,6 +38,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   if (!loggedIn && !onLoginPage && !onLandingPage && !onSignUpPage) {
     try {
+      authStore.rememberFailNavigationRoute(to.fullPath);
       return navigateTo({ name: LANDING_PATH_NAME });
     } catch (e) {
       //

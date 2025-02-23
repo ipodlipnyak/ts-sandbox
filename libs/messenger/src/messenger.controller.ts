@@ -18,69 +18,69 @@ export class MessengerController {
     private producerService: ProducerService,
   ) {}
 
-  /**
-   * Check request and authorise
-   *
-   * @see https://core.telegram.org/widgets/login#checking-authorization
-   * @see https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
-   * @param input
-   * @returns
-   */
-  @ApiOperation({ summary: 'Authorise user by telegram' })
-  @Post('auth')
-  async authorise(
-    @Body() input: TelegramUserAuthoriseDto,
-  ): Promise<RestResponseDto> {
-    const result = {
-      status: ResponseStatusEnum.ERROR,
-      payload: undefined,
-    };
+  // /**
+  //  * Check request and authorise
+  //  *
+  //  * @see https://core.telegram.org/widgets/login#checking-authorization
+  //  * @see https://gist.github.com/anonymous/6516521b1fb3b464534fbc30ea3573c2
+  //  * @param input
+  //  * @returns
+  //  */
+  // @ApiOperation({ summary: 'Authorise user by telegram' })
+  // @Post('auth')
+  // async authorise(
+  //   @Body() input: TelegramUserAuthoriseDto,
+  // ): Promise<RestResponseDto> {
+  //   const result = {
+  //     status: ResponseStatusEnum.ERROR,
+  //     payload: undefined,
+  //   };
 
-    const hash = this.telegramService.generateAuthenticationHash({
-      auth_date: input.auth_date,
-      first_name: input.first_name,
-      id: input.id,
-      username: input.username,
-    });
-    if (hash !== input.hash) {
-      this.logger.debug(`Cant login this man: ${input}`);
-      this.logger.debug(`${hash} !== ${input.hash}`);
-      throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
-    }
+  //   const hash = this.telegramService.generateAuthenticationHash({
+  //     auth_date: input.auth_date,
+  //     first_name: input.first_name,
+  //     id: input.id,
+  //     username: input.username,
+  //   });
+  //   if (hash !== input.hash) {
+  //     this.logger.debug(`Cant login this man: ${input}`);
+  //     this.logger.debug(`${hash} !== ${input.hash}`);
+  //     throw new HttpException('Bad request', HttpStatus.BAD_REQUEST);
+  //   }
 
-    const email = await this.telegramService.getEmailByTelegramId(input.id);
+  //   const email = await this.telegramService.getEmailByTelegramId(input.id);
 
-    const isLoggedIn = await this.userService.loginByEmail(email);
-    const user = await this.userService.getUser();
+  //   const isLoggedIn = await this.userService.loginByEmail(email);
+  //   const user = await this.userService.getUser();
 
-    if (!user) {
-      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
-    }
+  //   if (!user) {
+  //     throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+  //   }
 
-    let isdirty = false;
-    if (!user.firstName) {
-      user.firstName = input.first_name;
-      isdirty = true;
-    }
-    if (!user.lastName) {
-      user.lastName = input.last_name;
-      isdirty = true;
-    }
-    if (!user.pictureUrl) {
-      user.pictureUrl = input.photo_url;
-      isdirty = true;
-    }
-    if (isdirty) {
-      user.save();
-    }
+  //   let isdirty = false;
+  //   if (!user.firstName) {
+  //     user.firstName = input.first_name;
+  //     isdirty = true;
+  //   }
+  //   if (!user.lastName) {
+  //     user.lastName = input.last_name;
+  //     isdirty = true;
+  //   }
+  //   if (!user.pictureUrl) {
+  //     user.pictureUrl = input.photo_url;
+  //     isdirty = true;
+  //   }
+  //   if (isdirty) {
+  //     user.save();
+  //   }
 
-    if (!isLoggedIn) {
-      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
-    }
+  //   if (!isLoggedIn) {
+  //     throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+  //   }
 
-    result.status = ResponseStatusEnum.SUCCESS;
-    return result;
-  }
+  //   result.status = ResponseStatusEnum.SUCCESS;
+  //   return result;
+  // }
 
   @ApiOperation({ summary: 'Get telegram configs' })
   @ApiResponse({ status: 200, type: TelegramConfigResponseDto })

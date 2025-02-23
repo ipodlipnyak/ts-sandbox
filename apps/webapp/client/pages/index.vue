@@ -16,9 +16,11 @@
           ></v-btn>
         </v-col>
       </v-row>
-        <v-row no-gutters justify="center">
-          <MyTelegramLoginButton class="mt-6" />
-        </v-row>
+      <!--
+      <v-row no-gutters justify="center">
+        <MyTelegramLoginButton class="mt-6" />
+      </v-row>
+      -->
     </v-card>
   </v-sheet>
 </template>
