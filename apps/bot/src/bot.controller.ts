@@ -65,7 +65,7 @@ export class BotController {
       }
 
       const token = await this.telegramService.generateBindToken(message);
-      const url = `${this.configService.get('web.urlmy')}/my/settings/?tg-token=${token}`;
+      const url = `${this.configService.get('web.urlmy')}/my/settings/?token=${token}`;
 
       this.telegramService.reply(message.chat.id, `Go to your <a href="${url}">page</a> to authorise this user`);
     } catch (e) {
