@@ -139,7 +139,7 @@ export class BotController {
       commandList.forEach((command) => {
         reply = `${reply}${command.command}: ${command.description}\n`;
       });
-      reply = `${reply}</blockquote expandable>`
+      reply = `${reply}</blockquote>`
 
       this.telegramService.reply(message.chat.id, reply);
     } catch (e) {
