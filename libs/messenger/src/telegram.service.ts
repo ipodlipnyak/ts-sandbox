@@ -241,7 +241,7 @@ export class TelegramService {
   async executeBindToken(token: string, email: string) {
     const payload = await this.cryptoService.decrypt(token);
     const data = JSON.parse(payload) as BindTelegramToEmailDTO;
-    this.bindTelegramUserIdToEmail(data, email);
+    return await this.bindTelegramUserIdToEmail(data, email);
   }
 
   /**
