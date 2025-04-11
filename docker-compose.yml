@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   rabbit:
     container_name: "rabbit"
@@ -25,6 +24,8 @@ services:
   redis:
     container_name: "redis"
     image: "redis:alpine"
+    ports:
+      - "6379:6379"
     expose:
       - 6379
     networks:
@@ -38,7 +39,7 @@ services:
         #ports:
         #  - "3002:3000"
     env_file:
-        - bot.env
+        - docker.env
     links:
       - "redis"
       - "db"
@@ -63,7 +64,7 @@ services:
       - "db"
       - "rabbit"
     env_file:
-      - webapp.env
+      - docker.env
         # restart:
         #   unless-stopped
     command: /bin/bash -c "npm run webapp:start:prod"

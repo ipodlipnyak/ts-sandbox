@@ -3,6 +3,15 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import { RestResponseDto } from './rest-response.dto';
 
+export class MinecraftInputDto {
+  @ApiProperty({
+    example: '123.123.123.123',
+    description: 'Custom ip address',
+    required: false,
+  })
+  ip: string;
+}
+
 export class MinecraftPlayerDto {
   @ApiProperty({
     example: 'email@dot.com',
@@ -27,6 +36,11 @@ export class MinecraftStatusDto {
     description: 'Server status. TERMINATED or RUNNING',
   })
   status: string;
+  @ApiProperty({
+    example: '123.123.231.321',
+    description: 'User`s ip address as it look like from webserver side',
+  })
+  userIp: string;
   @ApiProperty({
     example: '123.123.213.321',
     description: 'External ip to connect to. Empty when server terminated',
