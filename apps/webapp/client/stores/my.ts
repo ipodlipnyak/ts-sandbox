@@ -18,7 +18,7 @@ export const useMyStore = defineStore('my', {
         async fetchMyFriends() {
             this.friendsPending = true;
 
-            const query = gql`{whoamiUserOutputDto, type RestResponseDto {
+            const query = gql`{whoami{
               friends{email, firstName, middleName, lastName, pictureUrl}
             }}`;
             const {data} = await useAsyncQuery(query);
