@@ -19,10 +19,10 @@ import {
   ScoreReponseDto,
   ScoreDto,
   NewUserDto,
-} from '../dto';
-import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from './../models';
-import { AuthGuard } from './../guards';
-import { UserService, RatingService } from './../services';
+} from '@my/common/dto';
+import { Users, USER_EMAIL_EXIST_EXCEPTION, NewUserDataError } from '@my/common/models';
+import { AuthGuard } from '@my/common/guards';
+import { UserService, RatingService } from '@my/common/services';
 import { OAuth2Client } from 'google-auth-library';
 
 @Controller('auth')

@@ -1,5 +1,5 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
-import type { RestResponseDto, WhoAmIDto } from '../../src/dto';
+import type { RestResponseDto, WhoAmIDto } from '../../../../libs/common/src/dto';
 // import { AxiosError } from 'axios';
 
 export const useAuthStore = defineStore('auth', {
@@ -8,10 +8,15 @@ export const useAuthStore = defineStore('auth', {
     // all these properties will have their type inferred automatically
     whoami: null as WhoAmIDto | null,
     errorMessage: '',
+    failedToNavigateAttemptFullPath: '',
   }),
   actions: {
+    rememberFailNavigationRoute(fullPath: string) {
+      this.failedToNavigateAttemptFullPath = fullPath;
+    },
+
     async fetchUserData() {
-      const { data, pending, error, refresh } = await useFetch('/api/auth/');
+      const { data } = await useFetch('/api/auth/');
       const response = data.value as RestResponseDto;
       if (response?.status === 'success') {
         this.whoami = response.payload as WhoAmIDto;
@@ -47,6 +52,7 @@ export const useAuthStore = defineStore('auth', {
   },
 
   getters: {
+    failedNavigationRoute: (state): string => state.failedToNavigateAttemptFullPath || '',
     loggedIn: (state): boolean => !!state.whoami?.email,
     firstName: (state): string => state.whoami?.firstName || '',
     middleName: (state): string => state.whoami?.middleName || '',

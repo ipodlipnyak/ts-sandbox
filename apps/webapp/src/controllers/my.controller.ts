@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { RatingService, UserService } from './../services';
+import { RatingService, UserService } from '@my/common/services';
 import {
   Controller,
   Get,
@@ -23,8 +23,8 @@ import {
   UserResponseDto,
   AddScoreDto,
   UserNameDto,
-} from '../dto';
-import { AuthGuard } from './../guards';
+} from '@my/common/dto';
+import { AuthGuard } from '@my/common/guards';
 
 @Controller('my')
 export class MyController {

@@ -15,4 +15,5 @@ ConfigModule.forRoot({
 export default db();
 */
 
-export { dataSource } from './config/db.config';
+// export { dataSource } from '@my/common/config/db.config';
+export { dataSource } from '@my/common';

@@ -1,0 +1,97 @@
+import { ApiProperty } from "@nestjs/swagger";
+import { RestListResponseDto, RestResponseDto } from "./rest-response.dto";
+
+export class TelegramUserAuthoriseDto {
+  @ApiProperty({ example: '1111111' })
+  id: string;
+  @ApiProperty({ example: 'Testusername' })
+  username: string;
+  @ApiProperty({ example: 'Test Lastname' })
+  last_name: string;
+  @ApiProperty({ example: 'Test Firstname' })
+  first_name: string;
+  @ApiProperty({ example: 'url' })
+  photo_url: string;
+  @ApiProperty({ example: '123456' })
+  auth_date: string;
+  @ApiProperty({ example: '3k23j423bk...234kmk2l3m4' })
+  hash: string;
+}
+
+export class TelegramConfigDto {
+  @ApiProperty({ example: 'botato', description: 'Telegram chat bot name' })
+  botName: string;
+}
+export class TelegramConfigResponseDto extends RestResponseDto {
+  @ApiProperty({ description: 'Telegram public configs' })
+  payload: TelegramConfigDto;
+}
+
+export class TelegramChatDto {
+  @ApiProperty({ example: '1111111' })
+  id: string;
+  @ApiProperty({ example: 'Testusername' })
+  username: string;
+  @ApiProperty({ example: 'Test Lastname' })
+  last_name: string;
+  @ApiProperty({ example: 'Test Firstname' })
+  first_name: string;
+  @ApiProperty({ example: 'private' })
+  type: string;
+}
+
+/**
+ * @see https://core.telegram.org/bots/api#user
+ */
+export class TelegramUserDto {
+  @ApiProperty({ example: '1111111' })
+  id: string;
+  @ApiProperty({ example: 'Testusername' })
+  username: string;
+  @ApiProperty({ example: 'Test Lastname' })
+  last_name: string;
+  @ApiProperty({ example: 'Test Firstname' })
+  first_name: string;
+}
+
+/**
+ * @see https://core.telegram.org/bots/api#message
+ */
+export class TelegramMessageDto {
+  @ApiProperty({ example: '1441645532', description: 'Unicode time stamp' })
+  date: string;
+  @ApiProperty({ example: '1365', description: 'Message id' })
+  message_id: string;
+  @ApiProperty({ example: '/start', description: 'Message text content' })
+  text: string;
+  @ApiProperty({ description: 'Who is sending message' })
+  from: TelegramUserDto;
+  @ApiProperty({ description: 'Which chat' })
+  chat: TelegramChatDto;
+}
+
+export class TelegramEventMessageInputDto {
+  @ApiProperty({ example: '10000', description: '' })
+  update_id: string;
+  @ApiProperty({ description: 'Incoming message' })
+  message: TelegramMessageDto;
+}
+
+export class MessageDto {
+  @ApiProperty({ example: '10000', description: '' })
+  id: string;
+  @ApiProperty({ description: 'Incoming message' })
+  text: string;
+  @ApiProperty({ example: '10000', description: 'Chat id' })
+  chat_id: string;
+}
+
+export class MessagesListResponseDto extends RestListResponseDto {
+  @ApiProperty({ type: MessageDto, isArray: true, description: 'List of recieved messages' })
+  payload: MessageDto[];
+}
+
+export class BotQueuePayloadDTO {
+  arguments: string[];
+  message: TelegramMessageDto;
+}

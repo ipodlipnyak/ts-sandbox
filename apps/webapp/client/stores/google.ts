@@ -1,6 +1,6 @@
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { useAuthStore } from './auth';
-import type { GoogleInitDto, GoogleInitReponseDto, RestResponseDto } from '../../src/dto';
+import type { GoogleInitDto, GoogleInitReponseDto, RestResponseDto } from '../../../../libs/common/src/dto';
 
 export const useGoogleStore = defineStore('google', {
     // arrow function recommended for full type inference

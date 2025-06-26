@@ -1,8 +1,17 @@
-version: "3.8"
 services:
+  rabbit:
+    container_name: "rabbit"
+    #image: rabbitmq:4-management
+    image: rabbitmq:4
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - main
+
   db:
-    # container_name: "db"
-    image: postgres:14
+    container_name: "db"
+    image: postgres:14-bookworm
     volumes:
       - database:/var/lib/postgresql/data
     env_file:
@@ -13,20 +22,39 @@ services:
       - main
 
   redis:
-    # container_name: "redis"
+    container_name: "redis"
     image: "redis:alpine"
+    ports:
+      - "6379:6379"
     expose:
       - 6379
     networks:
       - main
 
-  webapp:
-    container_name: "template-webapp"
+  bot:
+    container_name: "bot"
     build:
       context: ./
-      dockerfile: apps/webapp/Dockerfile
-      args:
-        - GH_REGISTRY_TOKEN
+      dockerfile: Dockerfile
+        #ports:
+        #  - "3002:3000"
+    env_file:
+        - docker.env
+    links:
+      - "redis"
+      - "db"
+      - "rabbit"
+    networks:
+      - main
+    command: /bin/bash -c "npm run bot:start:prod"
+
+  webapp:
+    container_name: "webapp"
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    #  args:
+    #    - GH_REGISTRY_TOKEN
     # image: my/template-server:staging
     profiles: ["webapp"]
     ports:
@@ -34,11 +62,12 @@ services:
     links:
       - "redis"
       - "db"
+      - "rabbit"
     env_file:
-      - apps/webapp/docker.env
+      - docker.env
         # restart:
         #   unless-stopped
-    command: /bin/bash -c "npm run start:prod"
+    command: /bin/bash -c "npm run webapp:start:prod"
     networks:
       - main
         #- traefik-hub

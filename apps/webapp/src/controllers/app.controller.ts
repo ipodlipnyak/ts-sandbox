@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ResponseStatusEnum, RestResponseDto } from '../dto';
+import { ResponseStatusEnum, RestResponseDto } from '@my/common/dto';
 
 @Controller()
 export class AppController {

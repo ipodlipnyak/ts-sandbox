@@ -1,6 +1,6 @@
 <template>
   <v-sheet color="transparent" width="100vw" height="100vh" class="d-flex align-center justify-center">
-    <v-card width="208" color="sand" class="pa-1">
+    <v-card width="268" color="sand" class="pa-1">
       <v-row align="center">
         <v-col>
           <MyGoogleSignInBtn />
@@ -16,11 +16,17 @@
           ></v-btn>
         </v-col>
       </v-row>
+      <!--
+      <v-row no-gutters justify="center">
+        <MyTelegramLoginButton class="mt-6" />
+      </v-row>
+      -->
     </v-card>
   </v-sheet>
 </template>
 
 <script lang="ts">
+
 // import { useDisplay, useLayout } from 'vuetify';
 
 export default defineComponent({

@@ -1,3 +1,87 @@
+## Swarm
+
+Application build to run with orchestrator.
+The most simple way is to use docker swarm.
+For this we will need at least two hosts to run our nodes on them.
+And to allow communication between them secure network should be provided.
+It could be done either by hosting all nodes in one local network,
+or by creating VPN to work as an overlay network.
+Such as wireguard. Since it was included in linux kernel after 5.6 version,
+this seems to be a good way to do it.
+
+So docker swarm + wireguard probably is a best way to selfhost it.
+
+### Wireguard config:
+
+Server:
+```
+[Interface]
+Address = 10.8.8.1/24
+SaveConfig = true
+PostUp = ufw route allow in on %i out on eth0
+PostUp = iptables -t nat -I POSTROUTING -o eth0 -j MASQUERADE
+PreDown = ufw route delete allow in on %i out on eth0
+PreDown = iptables -t nat -D POSTROUTING -o eth0 -j MASQUERADE
+ListenPort = 51820
+PrivateKey = <server private key>
+
+[Peer]
+PublicKey = <client public key>
+AllowedIPs = 10.8.8.2/32
+
+[Peer]
+PublicKey = <client public key>
+AllowedIPs = 10.8.8.3/32
+```
+
+Client:
+```
+[Interface]
+Address = 10.8.8.2/24
+PrivateKey = <client private key>
+
+[Peer]
+PublicKey = <server public key>
+# Wireguard server endpoint to connect
+Endpoint = 66.66.666.666:51820
+AllowedIPs = 10.8.8.0/24
+```
+
+### Docker swarm
+
+Open ports for specific interface (name it `wg` for example) on which wireguard running:
+```bash
+## Should be opened on manager node
+sudo ufw allow in on swarm to any port 2377 proto tcp
+
+## Should be opened on every node
+sudo ufw allow in on wg to any port 7946 proto tcp
+sudo ufw allow in on wg to any port 7946 proto udp
+sudo ufw allow in on wg to any port 4789 proto udp
+```
+
+On manager node initiate swarm and create overlay network accessible from every node.
+```bash
+## initiate and tell to swarm from where manager node is accesible
+docker swarm init --advertise-addr=10.8.8.2
+
+## now create overlay network to which services from different nodes can attache themself
+docker network create -d overlay --attachable swarm-overlay-network
+```
+
+Now join other workers or managers nodes. Remember to advertise to swarm an address from which they can be accessible:
+```bash
+docker swarm join --advertise-addr 10.8.8.3 --token <swarm token provide after its initiation> 10.8.8.2:2377
+```
+
+Now deploy the stack with and have fun:
+```bash
+## --prune to clean old services not mentioned in stack,
+## -d to detach
+## -c to specify configuration file with stack services description
+docker stack deploy --prune -d -c stack-configuration.yml
+```
+
 ## Creds for test
 
 [admin](https://#): `test`

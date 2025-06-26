@@ -25,12 +25,12 @@ import {
   GoogleCalendarAclDto,
 GoogleCalendarDto,
 CalendarAclListResponseDto,
-} from '../dto';
-import { AuthGuard, AdminGuard } from './../guards';
+} from '@my/common/dto';
+import { AuthGuard, AdminGuard } from '@my/common/guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
-import { /* EventsService,*/ UserService } from '../services';
-import { Users } from '../models';
+import { /* EventsService,*/ UserService } from '@my/common/services';
+import { Users } from '@my/common/models';
 import { In } from 'typeorm';
 
 @Controller('calendar')

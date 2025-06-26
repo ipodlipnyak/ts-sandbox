@@ -5,9 +5,9 @@ import {
   RestListResponseDto,
   RatingReponseDto,
   RatingCategoryDto,
-} from '../dto';
-import { AuthGuard } from './../guards';
-import { RatingService } from './../services';
+} from '@my/common/dto';
+import { AuthGuard } from '@my/common/guards';
+import { RatingService } from '@my/common/services';
 
 @Controller('rating')
 export class RatingController {

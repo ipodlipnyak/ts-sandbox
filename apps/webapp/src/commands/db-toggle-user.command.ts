@@ -1,7 +1,7 @@
 import { Command, CommandRunner } from 'nest-commander';
 import { DataSource } from 'typeorm';
 import { InjectDataSource } from '@nestjs/typeorm';
-import { Users } from './../models';
+import { Users } from '@my/common/models';
 
 @Command({
   name: 'db-toggle-user',

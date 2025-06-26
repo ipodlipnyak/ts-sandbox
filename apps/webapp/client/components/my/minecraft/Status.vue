@@ -7,9 +7,16 @@
   >
     <v-toolbar color="transparent">
       <template v-slot:prepend>
-        <v-card-title>
-          <span class="text-uppercase font-weight-bold">Minecraft</span>
-        </v-card-title>
+        <v-row no-gutters>
+          <v-col cols="12">
+            <v-card-title>
+              <span class="text-uppercase font-weight-bold">Minecraft v1.20.4</span>
+            </v-card-title>
+          </v-col>
+          <v-col>
+            <v-card-subtitle class="mt-n4"><span>{{ mcStore.mcUserIpGetter }}</span></v-card-subtitle>
+          </v-col>
+        </v-row>
       </template>
       <template v-slot:append>
         <v-fab-transition>
@@ -33,17 +40,34 @@
     </v-toolbar>
 
     <v-card-item>
-     <v-chip
-      color="white"
-      class="mt-4"
-      size="large"
-      variant="flat"
-      elevation="2"
-      prepend-icon="mdi-content-copy"
-      @click="copyToClipboard(mcStore.mcIpGetter)"
-     >
-      {{ mcStore.mcIpGetter }}
-     </v-chip>
+      <v-sheet height="40" class="mt-4" color="transparent">
+        <v-slide-y-transition hide-on-leave>
+        <div v-if="showSettings">
+          <v-text-field
+            v-model="mcStore.mcUserIp"
+            :rules="[ipCheck]"
+            variant="outlined"
+            density="compact"
+            hide-details
+            label="Enter your ip"
+            clearable
+            bg-color="teal-darken-4"
+          />
+        </div>
+        <div v-else>
+          <v-chip
+           color="white"
+           size="large"
+           variant="flat"
+           elevation="2"
+           prepend-icon="mdi-content-copy"
+           @click="copyToClipboard(mcStore.mcIpGetter)"
+          >
+           {{ mcStore.mcIpGetter }}
+          </v-chip>
+        </div>
+        </v-slide-y-transition>
+      </v-sheet>
     </v-card-item>
 
     <v-card-actions>
@@ -60,6 +84,17 @@
       ></v-switch>
 
       <v-spacer></v-spacer>
+
+      <v-btn
+        :loading="mcStore.isPending"
+        density="compact"
+        size="large"
+        icon="mdi-cog"
+        variant="elevated"
+        elevation="2"
+        color="grey-darken-4"
+        @click="showSettings = !showSettings"
+      ></v-btn>
 
       <v-btn
         :loading="mcStore.isPending"
@@ -82,6 +117,7 @@ import { useMinecraftStore } from '@/stores/minecraft';
 
 export default defineComponent({
   setup(props, ctx) {
+
     const mcStore = useMinecraftStore();
     mcStore.fetchStatus();
     const copyToClipboard = (textToCopy: string) => {
@@ -114,12 +150,20 @@ export default defineComponent({
       }
     );
 
+    const showSettings = ref(false);
+
+    const ipCheck = (ip: string) => {
+      return mcStore.mcIpRegexp.test(ip);
+    }
+
     return {
       copyToClipboard,
       mcStore,
       switchValue,
       switchIndeterminateComputed,
       switchColor,
+      showSettings,
+      ipCheck,
     }
   },
 })

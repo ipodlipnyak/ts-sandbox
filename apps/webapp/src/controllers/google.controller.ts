@@ -18,11 +18,11 @@ import {
   JWTInputDto,
   AuthTokenInputDto,
   GoogleUserInfoDto,
-} from '../dto';
-import { AuthGuard } from './../guards';
+} from '@my/common/dto';
+import { AuthGuard } from '@my/common/guards';
 import { GoogleService } from '@my/google';
 import { UsersService } from '@my/users';
-import { UserService } from '../services';
+import { UserService } from '@my/common/services';
 
 @Controller('google')
 export class GoogleController {
@@ -102,6 +102,10 @@ export class GoogleController {
     const isLoggedIn = await this.userService.loginByEmail(payload.email);
     const user = await this.userService.getUser();
 
+    if (!user) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
+
     // update user name
     let isdirty = false;
     if (!user.firstName) {
@@ -177,6 +181,10 @@ export class GoogleController {
 
     const isLoggedIn = await this.userService.loginByEmail(userInfo.email);
     const user = await this.userService.getUser();
+
+    if (!user) {
+      throw new HttpException('This email is not authorised to login', HttpStatus.BAD_REQUEST);
+    }
 
     // update user name
     let isdirty = false;
